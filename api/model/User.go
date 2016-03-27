@@ -3,6 +3,7 @@ package model
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -34,7 +35,6 @@ type Users []User
 
 type Token struct {
 	Token string
-	User  User
 }
 
 func (u *User) Find(w http.ResponseWriter, r *http.Request) {
@@ -55,23 +55,34 @@ func (u *User) ValidatePassword(password string) bool {
 	return err == nil
 }
 func (u *User) Validate(w http.ResponseWriter, r *http.Request) {
-	username := r.FormValue("username")
-	password := r.FormValue("password")
+	decoder := json.NewDecoder(r.Body)
+
+	var req struct {
+		Username string
+		Password string
+	}
+	err := decoder.Decode(&req)
+
+	log.Println(req.Username)
+	if err != nil {
+		panic(err)
+	}
 
 	status := true
 
 	db := initDb()
-	db.Where("username = ?", username).First(&u)
-	db.Model(&u).Related(&u.Role)
-	if u == nil {
-		status = false
-	}
-	valid := u.ValidatePassword(password)
+	db.Where("username = ?", req.Username).First(&u)
 
-	if !valid {
+	if u.Username != req.Username {
 		status = false
-	}
+	} else {
+		valid := u.ValidatePassword(req.Password)
 
+		if !valid {
+			status = false
+		}
+
+	}
 	println(status)
 
 	w.Header().Set("Content-Type", "application/json")
@@ -107,26 +118,40 @@ func (user User) GenerateToken() Token {
 	}
 	t := Token{
 		Token: tokenString,
-		User:  user,
 	}
 	return t
 }
 
 func (user *User) CheckToken(w http.ResponseWriter, r *http.Request) {
 	t := r.FormValue("token")
-	token, err := jwt.Parse(t, func(token *jwt.Token) (interface{}, error) {
-		// Don't forget to validate the alg is what you expect:
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["secret"])
-		}
-		return SECRET_KEY, nil
-	})
 
-	if err == nil && token.Valid {
+	valid := user.ValidateToken(t)
+
+	if valid {
 		w.Write([]byte("true"))
 	} else {
 		w.Write([]byte("false"))
 	}
+}
+
+func (user *User) ValidateToken(t string) bool {
+	if t == "" {
+		return false
+	}
+	token, err := jwt.Parse(t, func(token *jwt.Token) (interface{}, error) {
+		// Don't forget to validate the alg is what you expect:
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			var secret = string(SECRET_KEY)
+			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header[secret])
+		}
+		return SECRET_KEY, nil
+	})
+
+	if err != nil && !token.Valid {
+		return false
+	}
+
+	return true
 }
 
 func (user *User) List(w http.ResponseWriter, r *http.Request) {

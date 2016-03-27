@@ -27,19 +27,33 @@ func main() {
 	rAuth.HandleFunc("/barang", barang.List)
 
 	//r.Handle("/api", Middleware(rAuth))
-	http.Handle("/", Middleware(r))
+	http.Handle("/", (Middleware(r)))
 	println("Listen and serve at port 7000")
 	log.Fatal(http.ListenAndServe(":7000", nil))
 }
 
 func Middleware(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Add("Access-Control-Allow-Headers", "Content-Type")
+
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
 		matched, _ := regexp.MatchString("/api/.*", r.URL.String())
 		if matched {
 			log.Println("middleware", r.URL)
-			token := r.URL.Query().Get("token")
-			println(token)
-			h.ServeHTTP(w, r)
+			t := r.URL.Query().Get("token")
+			println(t)
+			user := model.User{}
+			validToken := user.ValidateToken(string(t))
+			if validToken {
+				h.ServeHTTP(w, r)
+			} else {
+				w.Write([]byte("Invalid Token"))
+			}
 
 		} else {
 			h.ServeHTTP(w, r)

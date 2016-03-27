@@ -1,9 +1,14 @@
 import auth from '../utils/auth.js'
 import App from '../components/App'
 import Login  from '../components/Login'
+import { connect } from 'react-redux'
+
+function loggedIn() {
+    return !!localStorage.token
+}
 
 function redirectToLogin(nextState, replace) {
-  if (!auth.loggedIn()) {
+  if (!loggedIn()) {
     replace({
       pathname: '/login',
       state: { nextPathname: nextState.location.pathname }
@@ -12,12 +17,12 @@ function redirectToLogin(nextState, replace) {
 }
 
 function redirectToDashboard(nextState, replace) {
-  if (auth.loggedIn()) {
-    replace('/')
+  if (loggedIn()) {
+      replace('/')
   }
 }
 
-export default {
+const Routes = {
   component: App,
   childRoutes: [
     { path: '/logout',
@@ -29,9 +34,8 @@ export default {
       }
     },
 
-    {
+    { onEnter: redirectToLogin,
       childRoutes: [
-        // Unauthenticated routes
         { path: '/barang',
           getComponent: (location, cb) => {
             require.ensure([], (require) => {
@@ -76,13 +80,10 @@ export default {
 
     { path: '/',
       getComponent: (location, cb) => {
-        // Share the path
-        // Dynamically load the correct component
-        if (auth.loggedIn()) {
-          return require.ensure([], (require) => {
-              const Dashboard = require('../components/Dashboard')
-              cb(null, Dashboard)
-          })
+        if (loggedIn()) {
+            return require.ensure([], (require) => {
+                cb(null, require('../components/Dashboard'))
+            })
         }
         return require.ensure([], (require) => {
           cb(null, Login)
@@ -91,7 +92,7 @@ export default {
       indexRoute: {
         getComponent: (location, cb) => {
           // Only load if we're logged in
-          if (auth.loggedIn()) {
+          if (loggedIn()) {
             return require.ensure([], (require) => {
                 const PageOne = require('../components/PageOne')
               cb(null, PageOne)
@@ -120,3 +121,5 @@ export default {
 
   ]
 }
+
+export default Routes

@@ -1,9 +1,9 @@
 import React from 'react'
-import auth from '../utils/auth'
 
 const Logout = React.createClass({
   componentDidMount() {
-    auth.logout()
+      delete localStorage.token
+      return true
   },
 
   render() {
@@ -11,4 +11,4 @@ const Logout = React.createClass({
   }
 })
 
-export default Logout
+module.exports =  Logout
