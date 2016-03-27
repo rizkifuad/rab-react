@@ -1,5 +1,6 @@
 import React from 'react'
 import auth from '../utils/auth'
+import Barang from '../components/Barang'
 
 const Dashboard = React.createClass({
   render() {
@@ -10,10 +11,10 @@ const Dashboard = React.createClass({
         <h1>Dashboard</h1>
         <p>You made it!</p>
         <p>{token}</p>
-        {this.props.children}
+        {this.props.children ? this.props.children : <Barang/>}
       </div>
     )
   }
 })
 
-export default Dashboard
+module.exports = Dashboard
