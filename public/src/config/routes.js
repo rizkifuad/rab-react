@@ -1,4 +1,3 @@
-import auth from '../utils/auth.js'
 import App from '../components/App'
 import Login  from '../components/Login'
 import { connect } from 'react-redux'
@@ -18,12 +17,11 @@ function redirectToLogin(nextState, replace) {
 
 function redirectToDashboard(nextState, replace) {
   if (loggedIn()) {
-      replace('/')
+      replace('/dashboard')
   }
 }
 
 const Routes = {
-  component: App,
   childRoutes: [
     { path: '/logout',
       getComponent: (location, cb) => {
@@ -34,18 +32,6 @@ const Routes = {
       }
     },
 
-    { onEnter: redirectToLogin,
-      childRoutes: [
-        { path: '/barang',
-          getComponent: (location, cb) => {
-            require.ensure([], (require) => {
-                cb(null, require('../components/Barang'))
-            })
-          }
-        }
-        // ...
-      ]
-    },
 
 
     { onEnter: redirectToDashboard,
@@ -63,43 +49,17 @@ const Routes = {
       ]
     },
 
-    { onEnter: redirectToLogin,
-      childRoutes: [
-        // Protected routes that don't share the dashboard UI
-        { path: '/user',
-          getComponent: (location, cb) => {
-            require.ensure([], (require) => {
-                const User = require('../components/User')
-                cb(null, User)
-            })
-          }
-        }
-        // ...
-      ]
-    },
 
     { path: '/',
       getComponent: (location, cb) => {
         if (loggedIn()) {
             return require.ensure([], (require) => {
-                cb(null, require('../components/Dashboard'))
+                cb(null, require('../components/App'))
             })
         }
         return require.ensure([], (require) => {
           cb(null, Login)
         })
-      },
-      indexRoute: {
-        getComponent: (location, cb) => {
-          // Only load if we're logged in
-          if (loggedIn()) {
-            return require.ensure([], (require) => {
-                const PageOne = require('../components/PageOne')
-              cb(null, PageOne)
-            })
-          }
-          return cb()
-        }
       },
       childRoutes: [
         { onEnter: redirectToLogin,
@@ -115,7 +75,39 @@ const Routes = {
             }
             // ...
           ]
-        }
+        },
+
+        { 
+            onEnter: redirectToLogin,
+            childRoutes: [
+                { path: '/barang',
+                    getComponent: (location, cb) => {
+                        require.ensure([], (require) => {
+                            cb(null, require('../components/Barang'))
+                        })
+                    }
+                }
+                // ...
+            ]
+        },
+
+        { 
+            onEnter: redirectToLogin,
+            childRoutes: [
+                // Protected routes that don't share the dashboard UI
+                { path: '/user',
+                    getComponent: (location, cb) => {
+                        require.ensure([], (require) => {
+                            const User = require('../components/User')
+                            cb(null, User)
+                        })
+                    }
+                }
+                // ...
+            ]
+        },
+
+
       ]
     }
 

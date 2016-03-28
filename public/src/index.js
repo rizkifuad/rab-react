@@ -7,15 +7,22 @@ import routes from './config/routes.js'
 import { Provider } from 'react-redux'
 import { compose, createStore, applyMiddleware } from 'redux'
 import ReduxPromise from 'redux-promise'
+import { syncHistoryWithStore, routerReducer, routerMiddleware } from 'react-router-redux'
+
 
 import Login from './components/Login'
 import reducers from './reducers'
 
 let createStoreWithMiddleware = compose(
-    applyMiddleware(ReduxPromise, thunk),
+    applyMiddleware(ReduxPromise, thunk, routerMiddleware(browserHistory)),
     window.devToolsExtension ? window.devToolsExtension() : f => f
 
 )(createStore)
+
+const store = createStoreWithMiddleware(reducers)
+
+const history = syncHistoryWithStore(browserHistory, store)
+
 
 require('../assets/css/material-lite-demo.css')
 require('../assets/css/helpers.css')
@@ -23,8 +30,8 @@ require('../assets/css/main.css')
 
 render(
     (
-        <Provider store={createStoreWithMiddleware(reducers)}>
-        <Router history={browserHistory} routes={routes}/>
+        <Provider store={store}>
+        <Router history={history} routes={routes}/>
         </Provider>
     )
     , document.getElementById('main'))

@@ -1,34 +1,35 @@
 import React from 'react'
-import { Link } from 'react-router'
-import auth from '../utils/auth'
+import Barang from './Barang'
+import Header from './Header'
+import Sidebar from './Sidebar'
+import { connect } from 'react-redux'
 
-const App = React.createClass({
-
-  getInitialState() {
-    return {
-      loggedIn: auth.loggedIn()
-    }
-  },
-
-  updateAuth(loggedIn) {
-    this.setState({
-      loggedIn: !!loggedIn
-    })
-  },
-
-  componentWillMount() {
-    auth.onChange = this.updateAuth
-    auth.login()
-  },
-
+const Dashboard = React.createClass({
   render() {
+
     return (
-      <div>
-        {this.props.children}
-      </div>
+        <div className="mdl-layout__container">
+            <div className="demo-layout mdl-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+                <Header/>
+
+                <Sidebar auth={this.props.auth} />
+
+                <div className="mdl-layout__content mdl-color--grey-100 page" ng-view>
+                    {this.props.children ? this.props.children : <Barang/>}
+                </div>
+
+            </div>
+        </div>
     )
   }
-
 })
 
-export default App
+function mapStateToProps(state) {
+    return {
+        auth: state.auth
+    }
+}
+
+
+const DashboardContainer = connect(mapStateToProps)(Dashboard)
+module.exports = DashboardContainer

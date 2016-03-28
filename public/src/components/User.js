@@ -2,8 +2,8 @@ import React from 'react'
 
 const User = React.createClass({
     render: function() {
-        return (<div className="barang"></div>)
+        return (<div className="barang">user</div>)
     }
 });
 
-export default User
+module.exports = User

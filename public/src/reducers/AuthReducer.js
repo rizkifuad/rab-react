@@ -27,12 +27,11 @@ export default createReducer(initialState, {
 
     },
     [LOGIN_USER_FAILURE]: (state, payload) => {
-        console.log(payload)
         return Object.assign({}, state, {
             'isAuthenticating': false,
             'isAuthenticated': false,
             'token': null,
-            'userName': null,
+            'username': null,
             'statusText': `Authentication Error: ${payload.statusText}`
         });
     },
@@ -40,7 +39,7 @@ export default createReducer(initialState, {
         return Object.assign({}, state, {
             'isAuthenticated': false,
             'token': null,
-            'userName': null,
+            'username': null,
             'statusText': 'You have been successfully logged out.'
         });
     }

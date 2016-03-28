@@ -55,6 +55,7 @@ func (u *User) ValidatePassword(password string) bool {
 	return err == nil
 }
 func (u *User) Validate(w http.ResponseWriter, r *http.Request) {
+
 	decoder := json.NewDecoder(r.Body)
 
 	var req struct {

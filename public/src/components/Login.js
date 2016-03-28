@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import * as actionCreators from '../actions'
+import * as actionCreators from '../actions/ActionAuth'
 require('../../assets/css/login.css')
 
 const Login = React.createClass({
@@ -14,7 +14,6 @@ const Login = React.createClass({
         })
     },
     render: function() {
-        console.log(this.props)
         return (
             <div className="mdl-layout__container">
             {this.props.auth.statusText ? <div className='alert alert-info'>{this.props.auth.statusText} {this.props.username}</div> : ''}
@@ -45,7 +44,11 @@ const Login = React.createClass({
                                         </div>
 
                                         <div className="m-t-20">
-                                            <button type="submit" className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect mdl-color--light-blue">
+                                            <button 
+                                                type="submit" 
+                                                className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect mdl-color--light-blue"
+                                                disabled={this.props.auth.isAuthenticating}
+                                            >
                                                 Login
                                             </button>
                                         </div>

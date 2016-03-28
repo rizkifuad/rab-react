@@ -1,14 +1,23 @@
 import React from 'react'
+import * as actionCreators from '../actions/ActionAuth'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 
 const Logout = React.createClass({
   componentDidMount() {
-      delete localStorage.token
+      this.props.actions.logout()
       return true
   },
 
   render() {
-    return <p>You are now logged out</p>
+      return <p>You are now logged out</p>
   }
 })
 
-module.exports =  Logout
+const mapDispatchToProps = (dispatch) => ({
+  actions : bindActionCreators(actionCreators, dispatch)
+});
+
+let LogoutContainer = connect(null, mapDispatchToProps)(Logout)
+
+module.exports =  LogoutContainer

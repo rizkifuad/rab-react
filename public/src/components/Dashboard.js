@@ -1,20 +1,31 @@
 import React from 'react'
-import auth from '../utils/auth'
-import Barang from '../components/Barang'
+import { Link } from 'react-router'
 
-const Dashboard = React.createClass({
+const App = React.createClass({
+
+  getInitialState() {
+    return {
+      loggedIn: localStorage.token
+    }
+  },
+
+  updateAuth(loggedIn) {
+    this.setState({
+      loggedIn: !!loggedIn
+    })
+  },
+
+  componentWillMount() {
+  },
+
   render() {
-    const token = auth.getToken()
-
     return (
       <div>
-        <h1>Dashboard</h1>
-        <p>You made it!</p>
-        <p>{token}</p>
-        {this.props.children ? this.props.children : <Barang/>}
+        {this.props.children}
       </div>
     )
   }
+
 })
 
-module.exports = Dashboard
+export default App

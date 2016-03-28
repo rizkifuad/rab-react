@@ -1,3 +1,5 @@
+import axios from 'axios'
+
 export function createReducer(initialState, reducerMap) {
     return (state = initialState, action) => {
         const reducer = reducerMap[action.type];
@@ -14,3 +16,13 @@ export function createConstants(...constants) {
     }, {});
 }
 
+const ROOT_URL = "http://localhost:7000/"
+const AUTH_TOKEN = localStorage.token
+
+export function API() {
+    axios.defaults.baseURL = ROOT_URL;
+    axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
+    axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+
+    return axios
+}
