@@ -1,5 +1,6 @@
 var path = require('path');
 var webpack = require('webpack');
+var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 module.exports = {
     // or devtool: 'eval' to debug issues with compiled output:
@@ -18,9 +19,6 @@ module.exports = {
         chunkFilename: '[id].chunk.js',
         publicPath: '/dist/'
     },
-    plugins: [
-        new webpack.HotModuleReplacementPlugin()
-    ],
     module: {
         loaders: [{
             test: /\.js$/,
@@ -28,8 +26,7 @@ module.exports = {
             include: path.join(__dirname, 'src')
         }, {
             test: /\.css$/,
-            loaders: ['style', 'css'],
-            include: path.join(__dirname, 'assets')
+            loader: ExtractTextPlugin.extract('style-loader', 'css-loader?sourceMap'),
         }, {
             test: /\.(jpe?g|png|gif|svg)(?:\?.*|)$/i,
             loaders: [
@@ -37,5 +34,10 @@ module.exports = {
                 'image-webpack'
             ]
         }]
-    }
+    },
+
+    plugins: [
+        new webpack.HotModuleReplacementPlugin(),
+        new ExtractTextPlugin(path.join(__dirname, 'dist/styles.css'))
+    ],
 };

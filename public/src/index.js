@@ -6,21 +6,23 @@ import thunk from 'redux-thunk';
 import routes from './config/routes.js'
 import { Provider } from 'react-redux'
 import { compose, createStore, applyMiddleware } from 'redux'
+import { createHistory } from 'history';
+import { syncHistoryWithStore, routerReducer } from 'react-router-redux'
+
 import ReduxPromise from 'redux-promise'
-import { syncHistoryWithStore, routerReducer, routerMiddleware } from 'react-router-redux'
 
 
 import Login from './components/Login'
 import reducers from './reducers'
 
+
 let createStoreWithMiddleware = compose(
-    applyMiddleware(ReduxPromise, thunk, routerMiddleware(browserHistory)),
+    applyMiddleware(thunk),
     window.devToolsExtension ? window.devToolsExtension() : f => f
 
 )(createStore)
 
 const store = createStoreWithMiddleware(reducers)
-
 const history = syncHistoryWithStore(browserHistory, store)
 
 

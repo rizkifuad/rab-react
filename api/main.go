@@ -22,8 +22,13 @@ func main() {
 
 	rAuth := r.PathPrefix("/api").Subrouter()
 
-	rAuth.HandleFunc("/user/find/{id:[0-9]+}", user.Find)
 	rAuth.HandleFunc("/user", user.List)
+	rAuth.HandleFunc("/user/prepareUpgrade", user.PrepareCreate)
+	rAuth.HandleFunc("/user/prepareUpgrade/{id:[0-9]+}", user.PrepareUpdate)
+	rAuth.HandleFunc("/user/roles", user.ListRole)
+	rAuth.HandleFunc("/user/save", user.Update).Methods("PUT")
+	rAuth.HandleFunc("/user/save", user.Create).Methods("POST")
+
 	rAuth.HandleFunc("/barang", barang.List)
 
 	//r.Handle("/api", Middleware(rAuth))
@@ -36,6 +41,9 @@ func Middleware(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Add("Access-Control-Allow-Headers", "Content-Type")
+		w.Header().Add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers",
+			"Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
 
 		if r.Method == "OPTIONS" {
 			w.WriteHeader(http.StatusOK)
@@ -45,14 +53,15 @@ func Middleware(h http.Handler) http.Handler {
 		matched, _ := regexp.MatchString("/api/.*", r.URL.String())
 		if matched {
 			log.Println("middleware", r.URL)
-			t := r.URL.Query().Get("token")
-			println(t)
+			t := r.Header.Get("Authorization")
+
 			user := model.User{}
 			validToken := user.ValidateToken(string(t))
 			if validToken {
 				h.ServeHTTP(w, r)
 			} else {
-				w.Write([]byte("Invalid Token"))
+				w.WriteHeader(http.StatusUnauthorized)
+				w.Write([]byte("Token expired please relogin"))
 			}
 
 		} else {

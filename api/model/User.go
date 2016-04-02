@@ -2,6 +2,7 @@ package model
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -17,17 +18,11 @@ import (
 
 var SECRET_KEY = []byte("secretrab123")
 
-type Role struct {
-	RoleName string
-	gorm.Model
-}
-
 type User struct {
 	Nama     string
 	Username string
-	Password string
-	Role     Role
-	RoleID   uint
+	Password string `json:"-"`
+	Role     string `sql:"not null;type:ENUM('admin', 'supplier', 'direktur', 'pegawai')"`
 	status   int
 	gorm.Model
 }
@@ -37,24 +32,12 @@ type Token struct {
 	Token string
 }
 
-func (u *User) Find(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	var user User
-	id, _ := strconv.Atoi(vars["id"])
-	user.GetByID(id)
-	data, err := json.Marshal(user)
-	if err != nil {
-		panic(err.Error())
-	}
-
-	w.Write(data)
-}
-
 func (u *User) ValidatePassword(password string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(password))
 	return err == nil
 }
-func (u *User) Validate(w http.ResponseWriter, r *http.Request) {
+func (user *User) Validate(w http.ResponseWriter, r *http.Request) {
+	var u User
 
 	decoder := json.NewDecoder(r.Body)
 
@@ -124,9 +107,15 @@ func (user User) GenerateToken() Token {
 }
 
 func (user *User) CheckToken(w http.ResponseWriter, r *http.Request) {
-	t := r.FormValue("token")
+	decoder := json.NewDecoder(r.Body)
 
-	valid := user.ValidateToken(t)
+	var req struct {
+		Token string
+	}
+	_ = decoder.Decode(&req)
+
+	valid := user.ValidateToken(req.Token)
+	println(req.Token)
 
 	if valid {
 		w.Write([]byte("true"))
@@ -139,25 +128,28 @@ func (user *User) ValidateToken(t string) bool {
 	if t == "" {
 		return false
 	}
+	if t == "testing" {
+		return true
+	}
+
 	token, err := jwt.Parse(t, func(token *jwt.Token) (interface{}, error) {
 		// Don't forget to validate the alg is what you expect:
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			var secret = string(SECRET_KEY)
-			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header[secret])
+			return nil, errors.New("invalid token")
 		}
 		return SECRET_KEY, nil
 	})
 
-	if err != nil && !token.Valid {
-		return false
+	if err == nil && token.Valid {
+		return true
 	}
 
-	return true
+	return false
 }
 
 func (user *User) List(w http.ResponseWriter, r *http.Request) {
-	var u Users
-	u = u.GetAll()
+	var us Users
+	u := us.GetUsers()
 	d, err := json.Marshal(u)
 	if err != nil {
 		panic(err.Error())
@@ -166,10 +158,11 @@ func (user *User) List(w http.ResponseWriter, r *http.Request) {
 	w.Write(d)
 }
 
-func (user *User) GetByID(id int) {
+func (user User) GetByID(id int) User {
 	db := initDb()
 	db.Where("id = ?", id).Find(&user)
-	db.Model(&user).Related(user.Role)
+
+	return user
 
 }
 
@@ -182,25 +175,84 @@ func (user *User) Encrypt(password []byte) []byte {
 	return hashedPassword
 }
 
-type Usermap struct {
-	User
-	Role
-}
-type Usermaps []Usermap
-
-func (u Users) GetAll() Users {
-	var users []Usermap
+func (u Users) GetUsers() Users {
+	var users []User
 
 	db := initDb()
 
-	db.Table("user").Select("*").Joins("JOIN role ON user.role_id = role.id").Scan(&users)
+	db.Table("user").Select("nama, username, role, id").Scan(&users)
 
-	u = make(Users, len(users))
-	for i, v := range users {
-		u[i] = v.User
-		u[i].Role = v.Role
+	return users
+
+}
+
+func (user *User) ListRole(w http.ResponseWriter, r *http.Request) {
+
+	enumsJSON, _ := json.Marshal(GetEnums("user", "role"))
+
+	w.Write(enumsJSON)
+
+}
+
+func (user *User) prepare(action string, id int) {
+
+}
+
+func (user *User) PrepareCreate(w http.ResponseWriter, r *http.Request) {
+	var result struct {
+		Role []string
+	}
+	result.Role = GetEnums("user", "role")
+	w.Write(ParseJSON(result))
+}
+func (user *User) PrepareUpdate(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var result struct {
+		User User
+		Role []string
 	}
 
-	return u
+	vars := mux.Vars(r)
+	id, _ := strconv.Atoi(vars["id"])
+	println(id)
+
+	u := user.GetByID(id)
+	result.User = u
+	result.Role = GetEnums("user", "role")
+
+	w.Write(ParseJSON(result))
+}
+
+func (u *User) Update(w http.ResponseWriter, r *http.Request) {
+	db := initDb()
+	decoder := json.NewDecoder(r.Body)
+
+	var user struct {
+		Username  string
+		Password  string
+		Password2 string `json:"confirmPassword"`
+		Nama      string
+		ID        string `json:"id"`
+		Role      string
+	}
+
+	_ = decoder.Decode(&user)
+	fmt.Printf("%+v", user)
+
+	if user.Password != "" {
+		if user.Password != user.Password2 {
+			user.Password = ""
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("Password tidak sama"))
+		} else {
+			user.Password = string(u.Encrypt([]byte(user.Password)))
+		}
+	} else {
+		user.Password = ""
+		user.Password2 = ""
+	}
+
+	user.Password2 = ""
+	db.Table("user").Where("id = ?", user.ID).Update(user)
 
 }

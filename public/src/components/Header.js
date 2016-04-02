@@ -7,7 +7,7 @@ const Header = React.createClass({
     return (
         <header className="demo-header mdl-layout__header mdl-color--white mdl-color--grey-100 mdl-color-text--grey-600">
             <div className="mdl-layout__header-row">
-                <span className="mdl-layout-title"><a href="#/dashboard">Material Lite</a></span>
+                <span className="mdl-layout-title"><a>Aplikasi Rencana Anggaran Belanja</a></span>
                 <div className="mdl-layout-spacer"></div>
                 <div className="mdl-textfield mdl-js-textfield mdl-textfield--expandable">
                     <label className="mdl-button mdl-js-button mdl-button--icon" htmlFor="search">

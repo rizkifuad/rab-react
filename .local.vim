@@ -5,4 +5,7 @@ function! RunGo()
     endif
 endfunction
 map <leader> :call RunGo()<cr>
-
+set softtabstop=2
+set tabstop=2
+set shiftwidth=2
+autocmd FileType javascript set ft=javascript.jsx

@@ -561,3 +561,9 @@ textarea.noresize { resize:none; }
 
 
 input:-webkit-autofill { -webkit-box-shadow: 0 0 0 1000px white inset; }
+.text-red {
+    color: #ff4081
+}
+.hide {
+  display: none;
+}

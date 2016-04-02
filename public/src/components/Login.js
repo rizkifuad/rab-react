@@ -13,10 +13,18 @@ const Login = React.createClass({
             next: this.props.state ? this.props.state.nextPathname : null
         })
     },
+    componentDidUpdate() {
+      this.refs.username.value = ''
+      this.refs.password.value = ''
+      componentHandler.upgradeDom();
+    },
+    componentDidMount() {
+
+      componentHandler.upgradeDom();
+    }, 
     render: function() {
         return (
             <div className="mdl-layout__container">
-            {this.props.auth.statusText ? <div className='alert alert-info'>{this.props.auth.statusText} {this.props.username}</div> : ''}
                 <div className="demo-layout mdl-layout mdl-layout--fixed-header mdl-js-layout mdl-color--grey-100">
                     <div className="demo-ribbon mdl-color--accent"></div>
                     <main className="demo-main mdl-layout__content">
@@ -33,13 +41,14 @@ const Login = React.createClass({
                                     </h2>
                                 </div>
                                 <div className="p-l-20 p-r-20 p-b-20">
+                                    {this.props.auth.statusText ? <div className='alert alert-info text-red'>{this.props.auth.statusText} {this.props.username}</div> : ''}
                                     <form onSubmit={this.onLoginSubmit}>
                                         <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label textfield-demo">
-                                            <input ref="username" className="mdl-textfield__input" type="text" id="sample3" />
+                                            <input ref="username" className="mdl-textfield__input" type="text" id="sample3" autoComplete="off" />
                                             <label className="mdl-textfield__label" htmlFor="sample3">Username</label>
                                         </div>
                                         <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label textfield-demo">
-                                            <input ref="password" className="mdl-textfield__input" type="password" id="sample3" />
+                                            <input ref="password" className="mdl-textfield__input" type="password" id="sample3" autoComplete="off"  />
                                             <label className="mdl-textfield__label" htmlFor="sample3">Password</label>
                                         </div>
 

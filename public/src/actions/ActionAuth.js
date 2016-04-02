@@ -1,10 +1,9 @@
 import CONSTANTS from '../constants'
 import { browserHistory } from 'react-router'
 import axios from 'axios'
+import { ROOT_URL } from '../utils/'
 
-const ROOT_URL = "http://localhost:7000/"
 const {LOGIN_USER_REQUEST, LOGIN_USER_SUCCESS, LOGIN_USER_FAILURE, LOGOUT_USER} = CONSTANTS
-//console.log(a)
 
 export function loginUserRequest() {
     return {
@@ -12,12 +11,13 @@ export function loginUserRequest() {
     }
 }
 export function loginUserSuccess(resp) {
-    localStorage.setItem('token', resp.Token)
-    return {
-        type: LOGIN_USER_SUCCESS,
-        payload: resp
-    }
+  localStorage.setItem('token', resp.Token)
+  return {
+    type: LOGIN_USER_SUCCESS,
+    payload: resp
+  }
 }
+
 
 export function loginUserFailure(error) {
     delete localStorage.token
@@ -25,15 +25,15 @@ export function loginUserFailure(error) {
         type: LOGIN_USER_FAILURE,
         payload: {
             status: false,
-            statusText: error.message ? error.message : "Incorrect username or password"
+            statusText: error && error.message ? error.message : "Token expired"
         }
     }
 }
 
+
 export function authenticate(user) {
     return function (dispatch) {
         dispatch(loginUserRequest())
-        console.log('Authenticating...')
         const url = `${ROOT_URL}auth`
         axios({
             method: 'POST',
@@ -47,15 +47,45 @@ export function authenticate(user) {
             dispatch(loginUserSuccess(resp.data))
             browserHistory.push(redirect)
         }).catch(function(err) {
-            dispatch(loginUserFailure(err))
+          if (err.data) {
+            err = Error(err.data.Message)
+          }
+          dispatch(loginUserFailure(Error (err)))
         })
     }
 }
 
 export function logout() {
     delete localStorage.token
-    browserHistory.push('/')
+    browserHistory.push('/login')
     return {
         type: LOGOUT_USER,
     }
 }
+export function checkAuth() {
+    return function(dispatch) {
+        if (!!localStorage.token) {
+          let resp = {Token : localStorage.token}
+          const url = `${ROOT_URL}checkToken`
+          axios({
+            method: 'POST',
+            url: url,
+            data: {token: resp.Token},
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded'
+            }
+          }).then(function(response) {
+            if (response.data) {
+              dispatch(loginUserSuccess(resp))
+            } else {
+              dispatch(loginUserFailure())
+              browserHistory.push('/login')
+            }
+          })
+        } else {
+            browserHistory.push('/login')
+        }
+
+    }
+}
+
