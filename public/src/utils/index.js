@@ -36,3 +36,15 @@ export function serializeForm(refs) {
   return data
   
 }
+export function Dispatch(dispatcher, action, data) {
+  dispatcher(action(data))
+}
+
+export function Fallback(dispatcher, action, response) {
+    if (response.status == 401) {
+      dispatcher(loginUserFailure(Error(response.data)))
+      browserHistory.push('/login')
+    } else {
+      dispatcher(action(response.data))
+    }
+}

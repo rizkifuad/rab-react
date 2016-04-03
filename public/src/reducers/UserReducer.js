@@ -2,13 +2,17 @@ import { createReducer } from '../utils'
 import CONSTANTS from '../constants'
 
 const { 
-  GET_USERS, 
+  FETCHING, 
   GET_USERS_SUCCESS, 
   GET_USERS_FAILURE, 
   SELECT_USER, 
+
   PREPARE_UPGRADE_USER_SUCCESS, 
   PREPARE_UPGRADE_USER_FAILURE, 
-  FETCHING, 
+
+  CREATE_USER_SUCCESS,
+  CREATE_USER_FAILURE,
+
   UPDATE_USER_SUCCESS, 
   UPDATE_USER_FAILURE } = CONSTANTS
 
@@ -21,7 +25,10 @@ const initialState = {
     selected: [],
     upgradeData: {},
     fetching: true,
-    error: ''
+    status: {
+      error: false,
+      message: ''
+    }
 };
 
 export default createReducer(initialState, {
@@ -34,8 +41,12 @@ export default createReducer(initialState, {
     [GET_USERS_SUCCESS]: (state, payload) => {
         return Object.assign({}, state, {
           upgradeData: {},
-            data: payload,
-            fetching: false
+          data: payload,
+          fetching: false,
+          status: {
+            error: false,
+            message: ''
+          }
         });
     },
     [SELECT_USER]: (state, payload) => {
@@ -47,19 +58,46 @@ export default createReducer(initialState, {
         return Object.assign({}, state, {
           upgradeData: payload,
           fetching: false,
-          error: ''
+          status: {
+            error: false,
+            message: ''
+          }
         });
     },
     [UPDATE_USER_SUCCESS]: (state, payload) => {
         return Object.assign({}, state, {
           fetching: false,
-          error: ''
+          status: {
+            error: false,
+            message: ''
+          }
         });
     },
     [UPDATE_USER_FAILURE]: (state, payload) => {
         return Object.assign({}, state, {
           fetching: false,
-          error: payload
+          status: {
+            error: true,
+            message: payload
+          }
+        });
+    },
+    [CREATE_USER_SUCCESS]: (state, payload) => {
+        return Object.assign({}, state, {
+          fetching: false,
+          status: {
+            error: false,
+            message: ''
+          }
+        });
+    },
+    [CREATE_USER_FAILURE]: (state, payload) => {
+        return Object.assign({}, state, {
+          fetching: false,
+          status: {
+            error: true,
+            message: payload
+          }
         });
     }
 });

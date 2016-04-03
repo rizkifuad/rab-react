@@ -20,7 +20,7 @@ var SECRET_KEY = []byte("secretrab123")
 
 type User struct {
 	Nama     string
-	Username string
+	Username string `gorm:"not null;unique"`
 	Password string `json:"-"`
 	Role     string `sql:"not null;type:ENUM('admin', 'supplier', 'direktur', 'pegawai')"`
 	status   int
@@ -236,23 +236,81 @@ func (u *User) Update(w http.ResponseWriter, r *http.Request) {
 		Role      string
 	}
 
+	var updatedUser User
+
+	_ = decoder.Decode(&user)
+
+	updatedUser.Username = user.Username
+	updatedUser.Nama = user.Nama
+	updatedUser.Role = user.Role
+
+	if user.Password != "" || user.Password2 != "" {
+		if user.Password != user.Password2 {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("Password tidak sama"))
+			return
+		} else {
+			updatedUser.Password = string(u.Encrypt([]byte(user.Password)))
+		}
+	}
+
+	fmt.Printf("%+v", updatedUser)
+	db.Table("user").Where("id = ?", user.ID).Update(updatedUser)
+
+	w.Write([]byte("true"))
+
+}
+
+func (u *User) Create(w http.ResponseWriter, r *http.Request) {
+	db := initDb()
+	decoder := json.NewDecoder(r.Body)
+
+	var user struct {
+		Username  string
+		Password  string
+		Password2 string `json:"confirmPassword"`
+		Nama      string
+		Role      string
+	}
+
 	_ = decoder.Decode(&user)
 	fmt.Printf("%+v", user)
 
-	if user.Password != "" {
+	status := true
+	msg := ""
+
+	if user.Password != "" || user.Password2 != "" {
 		if user.Password != user.Password2 {
-			user.Password = ""
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Password tidak sama"))
+			status = false
+			msg = "Password tidak sama"
 		} else {
 			user.Password = string(u.Encrypt([]byte(user.Password)))
 		}
 	} else {
-		user.Password = ""
-		user.Password2 = ""
+		status = false
+		msg = "Password kosong"
 	}
 
-	user.Password2 = ""
-	db.Table("user").Where("id = ?", user.ID).Update(user)
+	if user.Username == "" {
+		status = false
+		msg = "Username kosong"
+	}
+
+	if !status {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(msg))
+		return
+	}
+
+	newUser := User{
+		Username: user.Username,
+		Nama:     user.Nama,
+		Password: user.Password,
+		Role:     user.Role,
+	}
+
+	println(user.Password2)
+	//db.Table("user").Where("id = ?", user.ID).Update(user)
+	db.Create(&newUser)
 
 }

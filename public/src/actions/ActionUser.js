@@ -1,19 +1,24 @@
 import CONSTANTS from '../constants'
 import { browserHistory } from 'react-router'
-import { API, serializeForm } from '../utils/'
+import { API, serializeForm, Dispatch, Fallback } from '../utils/'
 import axios from 'axios'
 import { loginUserFailure } from './ActionAuth'
 
 const { 
-  GET_USERS, 
+  FETCHING, 
   GET_USERS_SUCCESS, 
   GET_USERS_FAILURE, 
   SELECT_USER, 
+
   PREPARE_UPGRADE_USER_SUCCESS, 
   PREPARE_UPGRADE_USER_FAILURE, 
-  FETCHING, 
+
+  CREATE_USER_SUCCESS,
+  CREATE_USER_FAILURE,
+
   UPDATE_USER_SUCCESS, 
   UPDATE_USER_FAILURE } = CONSTANTS
+
 
 export function fetching(action) {
   return {
@@ -41,9 +46,9 @@ export function getUsers() {
     let request = API().get('/api/user')
     dispatch(fetching('GET_USERS'))
     request.then(function(response) {
-      dispatch(getUsersSuccess(response.data))
+      Dispatch(dispatch, getUsersSuccess,response.data)
     }).catch(function(err) {
-      Dispatch(dispatch, getUsersFailure, err)
+      Fallback(dispatch, getUsersFailure, err)
     })
   }
 }
@@ -87,9 +92,9 @@ export function prepareUpgrade(type, id) {
   dispatch(fetching('PREPARE_UPGRADE_USER'))
     const request = API().get(url)
     request.then(function(response) {
-      dispatch(prepareUpgradeSuccess(response.data))
+      Dispatch(dispatch, prepareUpgradeSuccess, response.data)
     }).catch(function(err) {
-      Dispatch(dispatch, prepareUpgradeFailure, err)
+      Fallback(dispatch, prepareUpgradeFailure, err)
     })
   }
 
@@ -110,14 +115,6 @@ export function updateUserFailure(data) {
     payload: data
   }
 }
-function Dispatch(dispatcher, action, response) {
-    if (response.status == 401) {
-      dispatcher(loginUserFailure(Error(response.data)))
-      browserHistory.push('/login')
-    } else {
-      dispatcher(action(response.data))
-    }
-}
 
 
 export function update(formData) {
@@ -128,9 +125,41 @@ export function update(formData) {
 
     dispatch(fetching('UPDATE_USER'))
     request.then(function(response) {
-      dispatch(updateUserSuccess(response.data))
+      Dispatch(dispatch, updateUserSuccess, response.data)
     }).catch(function(err) {
-      Dispatch(dispatch, updateUserFailure, err)
+      Fallback(dispatch, updateUserFailure, err)
+    })
+  }
+}
+
+
+export function createUserSuccess(data) {
+  browserHistory.push('/user')
+  return {
+    type: CREATE_USER_SUCCESS,
+    payload: data
+  }
+}
+
+export function createUserFailure(data) {
+  return {
+    type: CREATE_USER_FAILURE,
+    payload: data
+  }
+}
+
+
+export function create(formData) {
+  return dispatch => {
+    const url = '/api/user/save'
+    const data = serializeForm(formData)
+    const request = API().post(url, data)
+
+    dispatch(fetching('CREATE_USER'))
+    request.then(function(response) {
+      Dispatch(dispatch, createUserSuccess,response.data)
+    }).catch(function(err) {
+      Fallback(dispatch, createUserFailure, err)
     })
   }
 }
