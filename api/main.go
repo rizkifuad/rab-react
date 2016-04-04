@@ -64,7 +64,7 @@ func Middleware(h http.Handler) http.Handler {
 				w.WriteHeader(http.StatusUnauthorized)
 				w.Write(model.ParseJSON(model.APIMessage{
 					Error:   true,
-					Message: "Token expired please reloggin",
+					Message: "Token expired",
 				}))
 			}
 
