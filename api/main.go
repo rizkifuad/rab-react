@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"rizki/rab/api/model"
 
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
 )
 
@@ -25,7 +26,6 @@ func main() {
 	rAuth.HandleFunc("/user", user.List)
 	rAuth.HandleFunc("/user/prepareUpgrade", user.PrepareCreate)
 	rAuth.HandleFunc("/user/prepareUpgrade/{id:[0-9]+}", user.PrepareUpdate)
-	rAuth.HandleFunc("/user/roles", user.ListRole)
 	rAuth.HandleFunc("/user/save", user.Update).Methods("PUT")
 	rAuth.HandleFunc("/user/save", user.Create).Methods("POST")
 
@@ -50,6 +50,7 @@ func Middleware(h http.Handler) http.Handler {
 			return
 		}
 
+		w.Header().Set("Content-Type", "application/json")
 		matched, _ := regexp.MatchString("/api/.*", r.URL.String())
 		if matched {
 			log.Println("middleware", r.URL)
@@ -61,7 +62,10 @@ func Middleware(h http.Handler) http.Handler {
 				h.ServeHTTP(w, r)
 			} else {
 				w.WriteHeader(http.StatusUnauthorized)
-				w.Write([]byte("Token expired please relogin"))
+				w.Write(model.ParseJSON(model.APIMessage{
+					Error:   true,
+					Message: "Token expired please reloggin",
+				}))
 			}
 
 		} else {

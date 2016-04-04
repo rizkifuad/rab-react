@@ -7,21 +7,29 @@ const initialState = {
     username: null,
     isAuthenticated: false,
     isAuthenticating: false,
-    statusText: null
+    status: {
+      error: false,
+      message: ''
+    }
+
 };
 export default createReducer(initialState, {
     [LOGIN_USER_REQUEST]: (state, payload) => {
         return Object.assign({}, state, {
             'isAuthenticating': true,
-            'statusText': null
+            'status': {
+              error: false,
+              message: ''
+            }
         });
     },
     [LOGIN_USER_SUCCESS]: (state, payload) => {
+      localStorage.setItem('token', payload.Message)
         return Object.assign({}, state, {
             'isAuthenticating': false,
             'isAuthenticated': true,
-            'token': payload.Token,
-            'username': jwtDecode(payload.Token).username,
+            'token': payload.Message,
+            'username': jwtDecode(payload.Message).username,
         });
 
     },
@@ -31,7 +39,10 @@ export default createReducer(initialState, {
             'isAuthenticated': false,
             'token': null,
             'username': null,
-            'statusText': `${payload.statusText}`
+            'status': {
+              error: payload.Error,
+              message: payload.Message
+            }
         });
     },
     [LOGOUT_USER]: (state, payload) => {
@@ -39,7 +50,10 @@ export default createReducer(initialState, {
             'isAuthenticated': false,
             'token': null,
             'username': null,
-            'statusText': 'You have been successfully logged out.'
+            'status': {
+              error: false,
+              message: "You have been successfully logout"
+            }
         });
     }
 });

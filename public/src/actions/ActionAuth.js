@@ -11,7 +11,7 @@ export function loginUserRequest() {
     }
 }
 export function loginUserSuccess(resp) {
-  localStorage.setItem('token', resp.Token)
+  localStorage.setItem('token', resp.Message)
   return {
     type: LOGIN_USER_SUCCESS,
     payload: resp
@@ -23,10 +23,7 @@ export function loginUserFailure(error) {
     delete localStorage.token
     return {
         type: LOGIN_USER_FAILURE,
-        payload: {
-            status: false,
-            statusText: error && error.message ? error.message : "Token expired"
-        }
+        payload: error  
     }
 }
 
@@ -47,10 +44,7 @@ export function authenticate(user) {
             dispatch(loginUserSuccess(resp.data))
             browserHistory.push(redirect)
         }).catch(function(err) {
-          if (err.data) {
-            err = Error(err.data.Message)
-          }
-          dispatch(loginUserFailure(Error (err)))
+          dispatch(loginUserFailure(err.data))
         })
     }
 }
@@ -65,22 +59,20 @@ export function logout() {
 export function checkAuth() {
     return function(dispatch) {
         if (!!localStorage.token) {
-          let resp = {Token : localStorage.token}
+          let resp = {Message : localStorage.token}
           const url = `${ROOT_URL}checkToken`
           axios({
             method: 'POST',
             url: url,
-            data: {token: resp.Token},
+            data: {token: resp.Message},
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded'
             }
           }).then(function(response) {
-            if (response.data) {
-              dispatch(loginUserSuccess(resp))
-            } else {
-              dispatch(loginUserFailure())
-              browserHistory.push('/login')
-            }
+            dispatch(loginUserSuccess(resp))
+          }).catch(function(err) {
+            dispatch(loginUserFailure(err.data))
+            browserHistory.push('/login')
           })
         } else {
             browserHistory.push('/login')

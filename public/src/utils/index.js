@@ -1,6 +1,7 @@
 import axios from 'axios'
 import jwtDecode from 'jwt-decode'
 import { browserHistory } from 'react-router'
+import { loginUserFailure } from '../actions/ActionAuth'
 
 export function createReducer(initialState, reducerMap) {
     return (state = initialState, action) => {
@@ -42,7 +43,7 @@ export function Dispatch(dispatcher, action, data) {
 
 export function Fallback(dispatcher, action, response) {
     if (response.status == 401) {
-      dispatcher(loginUserFailure(Error(response.data)))
+      dispatcher(loginUserFailure(response.data))
       browserHistory.push('/login')
     } else {
       dispatcher(action(response.data))

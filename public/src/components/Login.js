@@ -41,7 +41,7 @@ const Login = React.createClass({
                                     </h2>
                                 </div>
                                 <div className="p-l-20 p-r-20 p-b-20">
-                                    {this.props.auth.statusText ? <div className='alert alert-info text-red'>{this.props.auth.statusText} {this.props.username}</div> : ''}
+                                    {this.props.auth.status && this.props.auth.status.error ? <div className='alert alert-info text-red'>{this.props.auth.status.message}</div> : ''}
                                     <form onSubmit={this.onLoginSubmit}>
                                         <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label textfield-demo">
                                             <input ref="username" className="mdl-textfield__input" type="text" id="sample3" autoComplete="off" />

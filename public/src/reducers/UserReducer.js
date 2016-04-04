@@ -68,8 +68,8 @@ export default createReducer(initialState, {
         return Object.assign({}, state, {
           fetching: false,
           status: {
-            error: false,
-            message: ''
+            error: payload.Error,
+            message: payload.Message
           }
         });
     },
@@ -77,8 +77,8 @@ export default createReducer(initialState, {
         return Object.assign({}, state, {
           fetching: false,
           status: {
-            error: true,
-            message: payload
+            error: payload.Error,
+            message: payload.Message
           }
         });
     },
@@ -86,8 +86,8 @@ export default createReducer(initialState, {
         return Object.assign({}, state, {
           fetching: false,
           status: {
-            error: false,
-            message: ''
+            error: payload.Error,
+            message: payload.Message
           }
         });
     },

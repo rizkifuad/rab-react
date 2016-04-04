@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"net/http"
 	"regexp"
 	"rizki/rab/api/config"
 	"strings"
@@ -49,4 +50,16 @@ func ParseJSON(data interface{}) []byte {
 	}
 
 	return jsonData
+}
+
+type APIMessage struct {
+	Error   bool
+	Message string
+}
+
+type Service interface {
+	List(w http.ResponseWriter, r *http.Request)
+	PrepareCreate(w http.ResponseWriter, r *http.Request)
+	PrepareUpdate(w http.ResponseWriter, r *http.Request)
+	Update(w http.ResponseWriter, r *http.Request)
 }

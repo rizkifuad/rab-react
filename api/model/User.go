@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -28,68 +27,12 @@ type User struct {
 }
 type Users []User
 
-type Token struct {
-	Token string
-}
-
 func (u *User) ValidatePassword(password string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(password))
 	return err == nil
 }
-func (user *User) Validate(w http.ResponseWriter, r *http.Request) {
-	var u User
 
-	decoder := json.NewDecoder(r.Body)
-
-	var req struct {
-		Username string
-		Password string
-	}
-	err := decoder.Decode(&req)
-
-	log.Println(req.Username)
-	if err != nil {
-		panic(err)
-	}
-
-	status := true
-
-	db := initDb()
-	db.Where("username = ?", req.Username).First(&u)
-
-	if u.Username != req.Username {
-		status = false
-	} else {
-		valid := u.ValidatePassword(req.Password)
-
-		if !valid {
-			status = false
-		}
-
-	}
-	println(status)
-
-	w.Header().Set("Content-Type", "application/json")
-	if status {
-		t := u.GenerateToken()
-		token, _ := json.Marshal(t)
-		w.Write(token)
-	} else {
-		res := struct {
-			Status  bool
-			Message string
-		}{
-			false,
-			"Incorrect username or password",
-		}
-		result, _ := json.Marshal(res)
-		w.WriteHeader(http.StatusUnauthorized)
-		w.Write(result)
-	}
-
-}
-
-func (user User) GenerateToken() Token {
+func (user User) GenerateToken() string {
 	token := jwt.New(jwt.SigningMethodHS256)
 	// Set some claims
 	token.Claims["username"] = user.Username
@@ -100,10 +43,7 @@ func (user User) GenerateToken() Token {
 	if err != nil {
 		panic(err.Error())
 	}
-	t := Token{
-		Token: tokenString,
-	}
-	return t
+	return tokenString
 }
 
 func (user *User) CheckToken(w http.ResponseWriter, r *http.Request) {
@@ -115,12 +55,16 @@ func (user *User) CheckToken(w http.ResponseWriter, r *http.Request) {
 	_ = decoder.Decode(&req)
 
 	valid := user.ValidateToken(req.Token)
-	println(req.Token)
+	var result APIMessage
 
 	if valid {
-		w.Write([]byte("true"))
+		result.Error = false
+		w.Write(ParseJSON(result))
 	} else {
-		w.Write([]byte("false"))
+		result.Error = true
+		result.Message = "Invalid token"
+		w.WriteHeader(http.StatusUnauthorized)
+		w.Write(ParseJSON(result))
 	}
 }
 
@@ -154,25 +98,21 @@ func (user *User) List(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err.Error())
 	}
-	w.Header().Set("Content-Type", "application/json")
 	w.Write(d)
 }
 
-func (user User) GetByID(id int) User {
+func (user *User) GetByID(id int) {
 	db := initDb()
 	db.Where("id = ?", id).Find(&user)
 
-	return user
-
 }
 
-func (user *User) Encrypt(password []byte) []byte {
-	hashedPassword, err := bcrypt.GenerateFromPassword(password, bcrypt.DefaultCost)
+func (user *User) Encrypt(password string) string {
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(string(hashedPassword))
-	return hashedPassword
+	return string(hashedPassword)
 }
 
 func (u Users) GetUsers() Users {
@@ -186,18 +126,6 @@ func (u Users) GetUsers() Users {
 
 }
 
-func (user *User) ListRole(w http.ResponseWriter, r *http.Request) {
-
-	enumsJSON, _ := json.Marshal(GetEnums("user", "role"))
-
-	w.Write(enumsJSON)
-
-}
-
-func (user *User) prepare(action string, id int) {
-
-}
-
 func (user *User) PrepareCreate(w http.ResponseWriter, r *http.Request) {
 	var result struct {
 		Role []string
@@ -206,7 +134,6 @@ func (user *User) PrepareCreate(w http.ResponseWriter, r *http.Request) {
 	w.Write(ParseJSON(result))
 }
 func (user *User) PrepareUpdate(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
 	var result struct {
 		User User
 		Role []string
@@ -216,101 +143,60 @@ func (user *User) PrepareUpdate(w http.ResponseWriter, r *http.Request) {
 	id, _ := strconv.Atoi(vars["id"])
 	println(id)
 
-	u := user.GetByID(id)
-	result.User = u
+	user.GetByID(id)
+	result.User = *user
 	result.Role = GetEnums("user", "role")
 
 	w.Write(ParseJSON(result))
 }
 
-func (u *User) Update(w http.ResponseWriter, r *http.Request) {
-	db := initDb()
-	decoder := json.NewDecoder(r.Body)
-
-	var user struct {
-		Username  string
-		Password  string
-		Password2 string `json:"confirmPassword"`
-		Nama      string
-		ID        string `json:"id"`
-		Role      string
+func (input *UserInput) ValidateInput(action string) (*User, APIMessage) {
+	result := APIMessage{
+		Error:   false,
+		Message: fmt.Sprintf("Successfully %s user", action),
 	}
 
-	var updatedUser User
+	var user User
 
-	_ = decoder.Decode(&user)
-
-	updatedUser.Username = user.Username
-	updatedUser.Nama = user.Nama
-	updatedUser.Role = user.Role
-
-	if user.Password != "" || user.Password2 != "" {
-		if user.Password != user.Password2 {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Password tidak sama"))
-			return
+	if input.Password != "" || input.Password2 != "" {
+		if input.Password != input.Password2 {
+			result.Error = true
+			result.Message = "Password tidak sama"
 		} else {
-			updatedUser.Password = string(u.Encrypt([]byte(user.Password)))
+			user.Password = user.Encrypt(input.Password)
 		}
 	}
 
-	fmt.Printf("%+v", updatedUser)
-	db.Table("user").Where("id = ?", user.ID).Update(updatedUser)
+	if input.Username == "" {
+		result.Error = true
+		result.Message = "inputname kosong"
+	}
 
-	w.Write([]byte("true"))
+	switch action {
+	case "CREATE":
+		if input.Password == "" || input.Password2 == "" {
+			result.Error = true
+			result.Message = "Password kosong"
+		}
+	}
+
+	if result.Error {
+		return &user, result
+	}
+
+	user.Nama = input.Nama
+	user.Role = input.Role
+	user.Username = input.Username
+
+	return &user, result
 
 }
 
-func (u *User) Create(w http.ResponseWriter, r *http.Request) {
-	db := initDb()
-	decoder := json.NewDecoder(r.Body)
-
-	var user struct {
-		Username  string
-		Password  string
-		Password2 string `json:"confirmPassword"`
-		Nama      string
-		Role      string
-	}
-
-	_ = decoder.Decode(&user)
-	fmt.Printf("%+v", user)
-
-	status := true
-	msg := ""
-
-	if user.Password != "" || user.Password2 != "" {
-		if user.Password != user.Password2 {
-			status = false
-			msg = "Password tidak sama"
-		} else {
-			user.Password = string(u.Encrypt([]byte(user.Password)))
-		}
-	} else {
-		status = false
-		msg = "Password kosong"
-	}
-
-	if user.Username == "" {
-		status = false
-		msg = "Username kosong"
-	}
-
-	if !status {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(msg))
-		return
-	}
-
-	newUser := User{
-		Username: user.Username,
-		Nama:     user.Nama,
-		Password: user.Password,
-		Role:     user.Role,
-	}
-
-	println(user.Password2)
-	//db.Table("user").Where("id = ?", user.ID).Update(user)
-	db.Create(&newUser)
-
+type UserInput struct {
+	Username  string
+	Password  string
+	Password2 string `json:"confirmPassword"`
+	Nama      string
+	ID        string `json:"id"`
+	Role      string
 }
