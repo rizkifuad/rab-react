@@ -159,6 +159,7 @@ export function create(formData) {
     request.then(function(response) {
       Dispatch(dispatch, createUserSuccess,response.data)
     }).catch(function(err) {
+      console.log(err)
       Fallback(dispatch, createUserFailure, err)
     })
   }

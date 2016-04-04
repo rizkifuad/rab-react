@@ -1,6 +1,8 @@
-import { createReducer } from '../utils'
+import { handleError, createReducer } from '../utils'
 import CONSTANTS from '../constants'
 import jwtDecode from 'jwt-decode';
+
+
 const {LOGIN_USER_REQUEST, LOGIN_USER_SUCCESS, LOGIN_USER_FAILURE, LOGOUT_USER} = CONSTANTS
 const initialState = {
     token: null,
@@ -35,18 +37,7 @@ export default createReducer(initialState, {
 
     },
     [LOGIN_USER_FAILURE]: (state, payload) => {
-      console.log(payload.message)
-      if (!payload.data) {
-        payload = {
-          Error: true,
-          Message: payload.message
-        }
-      } else {
-        payload = {
-          Error: true,
-          Message: payload.data.Message
-        }
-      }
+      payload = handleError(payload)
         return Object.assign({}, state, {
             'isAuthenticating': false,
             'isAuthenticated': false,

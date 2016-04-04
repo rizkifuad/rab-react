@@ -169,7 +169,7 @@ func (input *UserInput) ValidateInput(action string) (*User, APIMessage) {
 
 	if input.Username == "" {
 		result.Error = true
-		result.Message = "inputname kosong"
+		result.Message = "Username kosong"
 	}
 
 	switch action {

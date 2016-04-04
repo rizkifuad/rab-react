@@ -1,5 +1,6 @@
-import { createReducer } from '../utils'
+import { handleError, createReducer } from '../utils'
 import CONSTANTS from '../constants'
+
 
 const { 
   FETCHING, 
@@ -65,6 +66,7 @@ export default createReducer(initialState, {
         });
     },
     [UPDATE_USER_SUCCESS]: (state, payload) => {
+      payload = handleError(payload)
         return Object.assign({}, state, {
           fetching: false,
           status: {
@@ -74,6 +76,7 @@ export default createReducer(initialState, {
         });
     },
     [UPDATE_USER_FAILURE]: (state, payload) => {
+      payload = handleError(payload)
         return Object.assign({}, state, {
           fetching: false,
           status: {
@@ -83,6 +86,7 @@ export default createReducer(initialState, {
         });
     },
     [CREATE_USER_SUCCESS]: (state, payload) => {
+      payload = handleError(payload)
         return Object.assign({}, state, {
           fetching: false,
           status: {
@@ -92,11 +96,13 @@ export default createReducer(initialState, {
         });
     },
     [CREATE_USER_FAILURE]: (state, payload) => {
+      payload = handleError(payload)
+      console.log(payload)
         return Object.assign({}, state, {
           fetching: false,
           status: {
-            error: true,
-            message: payload
+            error: payload.Error,
+            message: payload.Message
           }
         });
     }

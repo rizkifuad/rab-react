@@ -46,6 +46,23 @@ export function Fallback(dispatcher, action, response) {
       dispatcher(loginUserFailure(response.data))
       browserHistory.push('/login')
     } else {
-      dispatcher(action(response.data))
+      dispatcher(action(response))
     }
+}
+export function handleError(error) {
+
+  console.log(error)
+  if (!error.data) {
+    error = {
+      Error: true,
+      Message: error.message
+    }
+  } else {
+    error = {
+      Error: error.data.Error,
+      Message: error.data.Message
+    }
+  }
+
+  return error
 }
