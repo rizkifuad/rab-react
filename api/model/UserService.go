@@ -65,12 +65,14 @@ func (u *User) Validate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	db := initDb()
-	db.Where("username = ?", req.Username).First(&u)
+	var user User
+	db.Where("username = ?", req.Username).Find(&user)
 
-	if u.Username != req.Username {
+	if user.Username != req.Username {
 		result.Error = true
 	} else {
-		valid := u.ValidatePassword(req.Password)
+		valid := user.ValidatePassword(req.Password)
+		println(user.Encrypt("admin"))
 
 		if !valid {
 			result.Error = true
@@ -79,7 +81,7 @@ func (u *User) Validate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !result.Error {
-		token := u.GenerateToken()
+		token := user.GenerateToken()
 		result.Message = string(token)
 		w.Write(ParseJSON(result))
 	} else {
