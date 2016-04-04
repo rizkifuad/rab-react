@@ -24,7 +24,6 @@ export default createReducer(initialState, {
         });
     },
     [LOGIN_USER_SUCCESS]: (state, payload) => {
-      localStorage.setItem('token', payload.Message)
         return Object.assign({}, state, {
             'isAuthenticating': false,
             'isAuthenticated': true,
@@ -34,6 +33,18 @@ export default createReducer(initialState, {
 
     },
     [LOGIN_USER_FAILURE]: (state, payload) => {
+      console.log(payload.message)
+      if (!payload.data) {
+        payload = {
+          Error: true,
+          Message: payload.message
+        }
+      } else {
+        payload = {
+          Error: true,
+          Message: payload.data.Message
+        }
+      }
         return Object.assign({}, state, {
             'isAuthenticating': false,
             'isAuthenticated': false,

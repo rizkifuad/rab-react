@@ -133,7 +133,7 @@ func (user *User) PrepareCreate(w http.ResponseWriter, r *http.Request) {
 	result.Role = GetEnums("user", "role")
 	w.Write(ParseJSON(result))
 }
-func (user *User) PrepareUpdate(w http.ResponseWriter, r *http.Request) {
+func (u *User) PrepareUpdate(w http.ResponseWriter, r *http.Request) {
 	var result struct {
 		User User
 		Role []string
@@ -141,10 +141,10 @@ func (user *User) PrepareUpdate(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"])
-	println(id)
+	u.ID = uint(id)
 
-	user.GetByID(id)
-	result.User = *user
+	u.GetByID(id)
+	result.User = *u
 	result.Role = GetEnums("user", "role")
 
 	w.Write(ParseJSON(result))

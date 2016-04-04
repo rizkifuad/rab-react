@@ -44,7 +44,7 @@ export function authenticate(user) {
             dispatch(loginUserSuccess(resp.data))
             browserHistory.push(redirect)
         }).catch(function(err) {
-          dispatch(loginUserFailure(err.data))
+          dispatch(loginUserFailure(err))
         })
     }
 }
@@ -71,7 +71,7 @@ export function checkAuth() {
           }).then(function(response) {
             dispatch(loginUserSuccess(resp))
           }).catch(function(err) {
-            dispatch(loginUserFailure(err.data))
+            dispatch(loginUserFailure(err))
             browserHistory.push('/login')
           })
         } else {
