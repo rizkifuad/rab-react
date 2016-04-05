@@ -109,6 +109,60 @@ const Routes = {
           ]
         },
 
+        { 
+          childRoutes: [
+            // Protected routes that don't share the dashboard UI
+            { path: '/barang/add',
+              getComponent: (location, cb) => {
+                require.ensure([], (require) => {
+                  cb(null, require('../components/BarangUpgrade'))
+                })
+              }
+            }
+          ]
+        },
+
+
+        { 
+          childRoutes: [
+            // Protected routes that don't share the dashboard UI
+            { path: '/supplier',
+              getComponent: (location, cb) => {
+                require.ensure([], (require) => {
+                  cb(null, require('../components/Supplier'))
+                })
+              }
+            }
+          ]
+        },
+
+
+        { 
+          childRoutes: [
+            // Protected routes that don't share the dashboard UI
+            { path: '/supplier/add',
+              getComponent: (location, cb) => {
+                require.ensure([], (require) => {
+                  cb(null, require('../components/SupplierUpgrade'))
+                })
+              }
+            }
+          ]
+        },
+
+        { 
+          childRoutes: [
+            // Protected routes that don't share the dashboard UI
+            { path: '/supplier/edit/:supplierId',
+              getComponent: (location, cb) => {
+                require.ensure([], (require) => {
+                  cb(null, require('../components/SupplierUpgrade'))
+                })
+              }
+            }
+          ]
+        },
+
       ]
     }
 

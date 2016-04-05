@@ -2,6 +2,7 @@ var path = require('path');
 var webpack = require('webpack');
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
+
 module.exports = {
     // or devtool: 'eval' to debug issues with compiled output:
     devtool: 'source-map',
@@ -37,7 +38,7 @@ module.exports = {
     },
 
     plugins: [
-        new webpack.HotModuleReplacementPlugin(),
-        new ExtractTextPlugin(path.join(__dirname, 'dist/styles.css'))
+      new webpack.HotModuleReplacementPlugin(),
+      new ExtractTextPlugin(path.join(__dirname, 'dist/styles.css'))
     ],
 };

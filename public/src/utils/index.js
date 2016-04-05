@@ -14,7 +14,7 @@ export function createReducer(initialState, reducerMap) {
     };
 }
 export function createConstants(...constants) {
-    return constants.reduce((acc, constant) => {
+    return   constants.reduce((acc, constant) => {
         acc[constant] = constant;
         return acc;
     }, {});

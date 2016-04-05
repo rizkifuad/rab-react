@@ -15,6 +15,7 @@ func main() {
 
 	user := model.User{}
 	barang := model.Barang{}
+	supplier := supplier.Barang{}
 
 	r := mux.NewRouter()
 	//r.HandleFunc("/auth", auth)
@@ -33,6 +34,11 @@ func main() {
 	rAuth.HandleFunc("/barang/prepareUpgrade/{id:[0-9]+}", barang.PrepareUpdate)
 	rAuth.HandleFunc("/barang/save", barang.Update).Methods("PUT")
 	rAuth.HandleFunc("/barang/save", barang.Create).Methods("POST")
+
+	rAuth.HandleFunc("/supplier", supplier.List)
+	rAuth.HandleFunc("/supplier/prepareUpgrade/{id:[0-9]+}", supplier.PrepareUpdate)
+	rAuth.HandleFunc("/supplier/save", supplier.Update).Methods("PUT")
+	rAuth.HandleFunc("/supplier/save", supplier.Create).Methods("POST")
 
 	//r.Handle("/api", Middleware(rAuth))
 	http.Handle("/", (Middleware(r)))

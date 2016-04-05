@@ -1,10 +1,10 @@
 import { browserHistory } from 'react-router'
 import axios from 'axios'
-//import { ROOT_URL } from '../config/'
-import { CONSTANTS } from '../constants'
+import { ROOT_URL } from '../config/'
+import CONSTANTS from '../constants/index'
 console.log(CONSTANTS)
 
-//const {LOGIN_USER_REQUEST, LOGIN_USER_SUCCESS, LOGIN_USER_FAILURE, LOGOUT_USER} = CONSTANTS
+const {LOGIN_USER_REQUEST, LOGIN_USER_SUCCESS, LOGIN_USER_FAILURE, LOGOUT_USER} = CONSTANTS
 
 export function loginUserRequest() {
     return {

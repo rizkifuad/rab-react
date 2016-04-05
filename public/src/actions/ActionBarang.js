@@ -1,6 +1,6 @@
-import CONSTANTS from '../constants'
 import { browserHistory } from 'react-router'
 import { API, serializeForm, Dispatch, Fallback } from '../utils/'
+import CONSTANTS from '../constants/index'
 
 const { 
   FETCHING, 

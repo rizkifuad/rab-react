@@ -12,12 +12,6 @@ type Barang struct {
 	gorm.Model
 }
 
-type Supplier struct {
-	NamaSuplier string
-	Alamat      string
-	gorm.Model
-}
-
 func (barang *Barang) GetBarangs() []Barang {
 	db := initDb()
 	var barangs []Barang
