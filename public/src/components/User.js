@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux'
 import * as actionCreators from '../actions/ActionUser'
 import { Link, browserHistory } from 'react-router'
 import $ from 'jquery'
+import TopBar from '../views/TopBar'
 
 
 class User extends React.Component {
@@ -115,15 +116,15 @@ class User extends React.Component {
 
     }
 
+    const title = "Data user"
+    const description = "Manajemen user aplikasi"
     return (
       <section className="tables-data">
-        <div className="mdl-color--blue-grey ml-header relative clear mdl-grid">
-          <div className="mdl-cell mdl-cell--6-col p-20">
-            <h3 className="mdl-color-text--white m-t-20 m-b-5">Data User</h3>
-            <h4 className="mdl-color-text--blue-grey-100 m-b-20 no-m-t w100">Manajemen data user aplikasi dan role-nya</h4>
-
-          </div>
-        </div>
+        <TopBar
+          color="blue-grey"
+          title={title}
+          description={description}
+        />
         <div className="mdl-grid mdl-grid--no-spacing">
 
           <div className="mdl-cell mdl-cell--3-col mdl-cell--12-col-tablet mdl-cell--12-col-phone mdl-color--grey-100">
@@ -154,11 +155,8 @@ class User extends React.Component {
                 <div className="mdl-card__title">
                   <h2 className="mdl-card__title-text"></h2>
                 </div>
-
                 {UserTable}
                 <div id="p2" className={this.isFetching()}></div>
-
-
 
               </div>
             </div>

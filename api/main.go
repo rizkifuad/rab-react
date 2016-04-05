@@ -30,6 +30,9 @@ func main() {
 	rAuth.HandleFunc("/user/save", user.Create).Methods("POST")
 
 	rAuth.HandleFunc("/barang", barang.List)
+	rAuth.HandleFunc("/barang/prepareUpgrade/{id:[0-9]+}", barang.PrepareUpdate)
+	rAuth.HandleFunc("/barang/save", barang.Update).Methods("PUT")
+	rAuth.HandleFunc("/barang/save", barang.Create).Methods("POST")
 
 	//r.Handle("/api", Middleware(rAuth))
 	http.Handle("/", (Middleware(r)))

@@ -2,6 +2,7 @@ import axios from 'axios'
 import jwtDecode from 'jwt-decode'
 import { browserHistory } from 'react-router'
 import { loginUserFailure } from '../actions/ActionAuth'
+import { ROOT_URL } from '../config'
 
 export function createReducer(initialState, reducerMap) {
     return (state = initialState, action) => {
@@ -18,12 +19,10 @@ export function createConstants(...constants) {
         return acc;
     }, {});
 }
-const URL = "http://localhost:7000/"
 
-export var ROOT_URL = URL
 export function API() {
   axios.defaults.headers.common['Authorization'] =  localStorage.token;
-  axios.defaults.baseURL = URL;
+  axios.defaults.baseURL = ROOT_URL;
   axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
   axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded';
   return axios
@@ -50,8 +49,6 @@ export function Fallback(dispatcher, action, response) {
     }
 }
 export function handleError(error) {
-
-  console.log(error)
   if (!error.data) {
     error = {
       Error: true,

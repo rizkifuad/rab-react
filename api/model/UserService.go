@@ -4,6 +4,9 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
+
+	"github.com/gorilla/mux"
 )
 
 func (u *User) Update(w http.ResponseWriter, r *http.Request) {
@@ -90,4 +93,52 @@ func (u *User) Validate(w http.ResponseWriter, r *http.Request) {
 		w.Write(ParseJSON(result))
 	}
 
+}
+func (user *User) PrepareCreate(w http.ResponseWriter, r *http.Request) {
+	var result struct {
+		Role []string
+	}
+	result.Role = GetEnums("user", "role")
+	w.Write(ParseJSON(result))
+}
+func (u *User) PrepareUpdate(w http.ResponseWriter, r *http.Request) {
+	var result struct {
+		User User
+		Role []string
+	}
+
+	vars := mux.Vars(r)
+	id, _ := strconv.Atoi(vars["id"])
+	u.ID = uint(id)
+
+	u.GetByID(id)
+	result.User = *u
+	result.Role = GetEnums("user", "role")
+
+	w.Write(ParseJSON(result))
+}
+func (user *User) CheckToken(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+
+	var req struct {
+		Token string
+	}
+	_ = decoder.Decode(&req)
+
+	valid := user.ValidateToken(req.Token)
+	var result APIMessage
+
+	if valid {
+		result.Error = false
+		w.Write(ParseJSON(result))
+	} else {
+		result.Error = true
+		result.Message = "Invalid token"
+		w.WriteHeader(http.StatusUnauthorized)
+		w.Write(ParseJSON(result))
+	}
+}
+func (user *User) List(w http.ResponseWriter, r *http.Request) {
+	users := user.GetUsers()
+	w.Write(ParseJSON(users))
 }

@@ -1,17 +1,13 @@
 package model
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
-	"net/http"
-	"strconv"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/dgrijalva/jwt-go"
-	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
 )
 
@@ -46,28 +42,6 @@ func (user User) GenerateToken() string {
 	return tokenString
 }
 
-func (user *User) CheckToken(w http.ResponseWriter, r *http.Request) {
-	decoder := json.NewDecoder(r.Body)
-
-	var req struct {
-		Token string
-	}
-	_ = decoder.Decode(&req)
-
-	valid := user.ValidateToken(req.Token)
-	var result APIMessage
-
-	if valid {
-		result.Error = false
-		w.Write(ParseJSON(result))
-	} else {
-		result.Error = true
-		result.Message = "Invalid token"
-		w.WriteHeader(http.StatusUnauthorized)
-		w.Write(ParseJSON(result))
-	}
-}
-
 func (user *User) ValidateToken(t string) bool {
 	if t == "" {
 		return false
@@ -91,16 +65,6 @@ func (user *User) ValidateToken(t string) bool {
 	return false
 }
 
-func (user *User) List(w http.ResponseWriter, r *http.Request) {
-	var us Users
-	u := us.GetUsers()
-	d, err := json.Marshal(u)
-	if err != nil {
-		panic(err.Error())
-	}
-	w.Write(d)
-}
-
 func (user *User) GetByID(id int) {
 	db := initDb()
 	db.Where("id = ?", id).Find(&user)
@@ -115,7 +79,7 @@ func (user *User) Encrypt(password string) string {
 	return string(hashedPassword)
 }
 
-func (u Users) GetUsers() Users {
+func (user *User) GetUsers() Users {
 	var users []User
 
 	db := initDb()
@@ -124,30 +88,6 @@ func (u Users) GetUsers() Users {
 
 	return users
 
-}
-
-func (user *User) PrepareCreate(w http.ResponseWriter, r *http.Request) {
-	var result struct {
-		Role []string
-	}
-	result.Role = GetEnums("user", "role")
-	w.Write(ParseJSON(result))
-}
-func (u *User) PrepareUpdate(w http.ResponseWriter, r *http.Request) {
-	var result struct {
-		User User
-		Role []string
-	}
-
-	vars := mux.Vars(r)
-	id, _ := strconv.Atoi(vars["id"])
-	u.ID = uint(id)
-
-	u.GetByID(id)
-	result.User = *u
-	result.Role = GetEnums("user", "role")
-
-	w.Write(ParseJSON(result))
 }
 
 func (input *UserInput) ValidateInput(action string) (*User, APIMessage) {

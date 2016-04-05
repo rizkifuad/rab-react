@@ -2,6 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import * as actionCreators from '../actions/ActionUser'
+import TopBar from '../views/TopBar'
 let ACTION = 'CREATE'
 
 class UserUpgrade extends React.Component {
@@ -76,15 +77,17 @@ class UserUpgrade extends React.Component {
     }
 
 
+    const title = ACTION == 'CREATE' ? 'Tambah User' : 'Edit User'
+    const description = 'Edit user yang terdaftar pada aplikasi.'
+    const color = ACTION == 'CREATE' ? 'brown' : 'amber'
     return (
 
       <section className="text-fields">
-        <div className="mdl-color--amber ml-header relative clear">
-          <div className="p-20">
-            <h3 className="mdl-color-text--white m-t-20 m-b-5">{ACTION} User</h3>
-            <h4 className="mdl-color-text--amber-100 m-b-20 no-m-t w100">Edit user yang terdaftar pada aplikasi.</h4>
-          </div>
-        </div>
+        <TopBar
+          color={color}
+          title={title}
+          description={description}
+        />
 
         <div className="mdl-grid mdl-grid--no-spacing">
 
@@ -98,7 +101,7 @@ class UserUpgrade extends React.Component {
           </div>
 
           <div className="mdl-cell mdl-cell--9-col mdl-cell--12-col-tablet mdl-cell--12-col-phone no-p-l">
-            <div className="p-20 ml-card-holder">
+            <div className="p-20 ml-card-holder ml-card-holder-first">
               <div className="mdl-card mdl-shadow--1dp">
                 <div className="p-30">
                   {this.props.user.status && this.props.user.status.error  ? <div className='alert alert-info text-red'>{this.props.user.status.message}</div> : ''}
