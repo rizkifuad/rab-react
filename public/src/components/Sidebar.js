@@ -59,6 +59,7 @@ const Sidebar = React.createClass({
                     <MenuItem link="/dashboard" name="Dashboard" icon="dashboard"/>
                     <MenuItem link="/user" name="User" icon="recent_actors"/>
                     <MenuItem link="/barang" name="Barang" icon="work"/>
+                    <MenuItem link="/supplier" name="Supplier" icon="business"/>
                     <MenuItem link="/rab" name="RAB" icon="format_list_numbered"/>
                     <MenuItem link="/report" name="Report" icon="assessment"/>
                     <MenuItem link="/logout" name="Logout" icon="exit_to_app"/>

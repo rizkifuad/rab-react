@@ -122,6 +122,19 @@ const Routes = {
           ]
         },
 
+        { 
+          childRoutes: [
+            // Protected routes that don't share the dashboard UI
+            { path: '/barang/edit/:barangId',
+              getComponent: (location, cb) => {
+                require.ensure([], (require) => {
+                  cb(null, require('../components/BarangUpgrade'))
+                })
+              }
+            }
+          ]
+        },
+
 
         { 
           childRoutes: [

@@ -15,7 +15,7 @@ func main() {
 
 	user := model.User{}
 	barang := model.Barang{}
-	supplier := supplier.Barang{}
+	supplier := model.Supplier{}
 
 	r := mux.NewRouter()
 	//r.HandleFunc("/auth", auth)

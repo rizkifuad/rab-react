@@ -7,8 +7,8 @@ import (
 )
 
 type Supplier struct {
-	NamaSuplier string
-	Alamat      string
+	NamaSupplier string
+	Alamat       string
 	gorm.Model
 }
 
