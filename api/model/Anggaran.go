@@ -90,8 +90,5 @@ func (input *AnggaranInput) ValidateInput(action string) (*Anggaran, APIMessage)
 	anggaran.BlokRumah = input.BlokRumah
 	anggaran.Keterangan = input.Keterangan
 
-	fmt.Printf("%+v", input.Barang[0])
-	fmt.Printf("%+v", input.Jumlah[0])
-
 	return &anggaran, result
 }
