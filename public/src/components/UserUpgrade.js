@@ -55,6 +55,9 @@ class UserUpgrade extends React.Component {
   }
 
 
+  componentWillUnmount() {
+    ACTION = 'CREATE'
+  }
 
   render() {
     let user = this.props.user.upgradeData.User
@@ -109,25 +112,25 @@ class UserUpgrade extends React.Component {
                     <input ref="id" type="hidden" value={user ? user.ID : ''}/>
                     <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                       <input ref="nama" className="mdl-textfield__input" type="text" id="sample2" />
-                      <label className="mdl-textfield__label" htmlhtmlFor="sample2">Nama</label>
+                      <label className="mdl-textfield__label" htmlFor="sample2">Nama</label>
                     </div>
                     <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                       <input ref="username" className="mdl-textfield__input" type="text" id="sample2" />
-                      <label className="mdl-textfield__label" htmlhtmlFor="sample2">Username</label>
+                      <label className="mdl-textfield__label" htmlFor="sample2">Username</label>
                     </div>
                     <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                       <input ref="password" className="mdl-textfield__input" type="password" id="sample2" />
-                      <label className="mdl-textfield__label" htmlhtmlFor="sample2">Password</label>
+                      <label className="mdl-textfield__label" htmlFor="sample2">Password</label>
                     </div>
                     <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                       <input ref="confirmPassword" className="mdl-textfield__input" type="password" id="sample2" />
-                      <label className="mdl-textfield__label" htmlhtmlFor="sample2">Confirm Password</label>
+                      <label className="mdl-textfield__label" htmlFor="sample2">Confirm Password</label>
                     </div>
                     <div className="mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label">
                       <select ref="role" className="mdl-selectfield__select" defaultValue={user ? user.Role : ''}>
                         {roleSelect}
                       </select>
-                      <label className="mdl-selectfield__label" htmlhtmlhtmlFor="gender">Role</label>
+                      <label className="mdl-selectfield__label" htmlhtmlFor="gender">Role</label>
                       <span className="mdl-selectfield__error">Pilih role user</span>
                     </div>
                     <div className="m-t-20">
@@ -140,6 +143,9 @@ class UserUpgrade extends React.Component {
               </div>
             </div>
           </div>
+
+
+
 
         </div>  
       </section>

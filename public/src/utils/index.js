@@ -30,6 +30,8 @@ export function API() {
 export function serializeForm(refs) {
   const data = Object.assign({}, refs)
   for (var prop in data) {
+    console.log(prop)
+    console.log(data[prop])
     data[prop] = data[prop].value
   }
 

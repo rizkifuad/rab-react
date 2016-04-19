@@ -23,6 +23,10 @@ class BarangUpgrade extends React.Component {
 
   }
 
+  componentWillUnmount() {
+    ACTION = 'CREATE'
+  }
+
   componentDidUpdate() {
     let barang = this.props.barang.upgradeData
 

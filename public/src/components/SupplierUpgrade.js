@@ -23,6 +23,10 @@ class SupplierUpgrade extends React.Component {
 
   }
 
+  componentWillUnmount() {
+    ACTION = 'CREATE'
+  }
+
   componentDidUpdate() {
     let supplier = this.props.supplier.upgradeData
 
