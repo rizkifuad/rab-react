@@ -10,11 +10,12 @@ module.exports = {
     output: {
         path: path.join(__dirname, 'dist'),
         filename: 'bundle.js',
-        publicPath: '/static/'
+        chunkFilename: '[id].chunk.js',
+        publicPath: '/dist/'
     },
     plugins: [
       new webpack.optimize.OccurrenceOrderPlugin(),
-      new ExtractTextPlugin("styles.css"),
+      new ExtractTextPlugin('styles.css'),
       new webpack.DefinePlugin({
         'process.env': {
                 'NODE_ENV': JSON.stringify('production')
@@ -33,8 +34,7 @@ module.exports = {
             include: path.join(__dirname, 'src')
         }, {
             test: /\.css$/,
-            loaders: ExtractTextPlugin.extract('style', 'css'),
-            include: path.join(__dirname, 'assets')
+            loader: ExtractTextPlugin.extract('style-loader', 'css-loader?sourceMap'),
         }, {
             test: /\.(jpe?g|png|gif|svg)(?:\?.*|)$/i,
             loaders: [
@@ -42,5 +42,5 @@ module.exports = {
                 'image-webpack'
             ]
         }]
-    }
+    },
 };
