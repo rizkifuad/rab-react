@@ -56,12 +56,11 @@ const Sidebar = React.createClass({
                 </header>
 
                 <ul ml-menu close-others="false" className="demo-navigation mdl-navigation">
-                    <MenuItem link="/dashboard" name="Dashboard" icon="dashboard"/>
                     <MenuItem link="/user" name="User" icon="recent_actors"/>
                     <MenuItem link="/barang" name="Barang" icon="work"/>
                     <MenuItem link="/supplier" name="Supplier" icon="business"/>
                     <MenuItem link="/anggaran" name="RAB" icon="format_list_numbered"/>
-                    <MenuItem link="/report" name="Report" icon="assessment"/>
+                    <MenuItem link="/project_order" name="Project Order" icon="local_shipping"/>
                     <MenuItem link="/logout" name="Logout" icon="exit_to_app"/>
                 </ul>
             </div>

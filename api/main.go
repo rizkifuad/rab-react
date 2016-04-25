@@ -17,6 +17,7 @@ func main() {
 	barang := model.Barang{}
 	supplier := model.Supplier{}
 	anggaran := model.Anggaran{}
+	projectOrder := model.ProjectOrder{}
 
 	r := mux.NewRouter()
 	//r.HandleFunc("/auth", auth)
@@ -46,6 +47,12 @@ func main() {
 	rAuth.HandleFunc("/anggaran/prepareUpgrade/{id:[0-9]+}", anggaran.PrepareUpdate)
 	rAuth.HandleFunc("/anggaran/save", anggaran.Update).Methods("PUT")
 	rAuth.HandleFunc("/anggaran/save", anggaran.Create).Methods("POST")
+
+	rAuth.HandleFunc("/project_order/{id:[0-9]+}", projectOrder.List)
+	rAuth.HandleFunc("/project_order/prepareUpgrade", projectOrder.PrepareCreate)
+	rAuth.HandleFunc("/project_order/prepareUpgrade/{id:[0-9]+}", projectOrder.PrepareUpdate)
+	rAuth.HandleFunc("/project_order/save", projectOrder.Update).Methods("PUT")
+	rAuth.HandleFunc("/project_order/save", projectOrder.Create).Methods("POST")
 
 	//r.Handle("/api", Middleware(rAuth))
 	http.Handle("/", (Middleware(r)))

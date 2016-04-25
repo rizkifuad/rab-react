@@ -1,6 +1,7 @@
 import App from '../components/App'
 import Login  from '../components/Login'
 import { connect } from 'react-redux'
+import { createRoutes } from '../utils'
 
 
 const Routes = {
@@ -8,8 +9,8 @@ const Routes = {
     { path: '/logout',
       getComponent: (location, cb) => {
         require.ensure([], (require) => {
-            const Logout = require('../components/Logout')
-            cb(null, Logout)
+          const Logout = require('../components/Logout')
+          cb(null, Logout)
         })
       }
     },
@@ -23,7 +24,7 @@ const Routes = {
         { path: '/login',
           getComponent: (location, cb) => {
             require.ensure([], (require) => {
-                cb(null, Login)
+              cb(null, Login)
             })
           }
         }
@@ -34,37 +35,22 @@ const Routes = {
 
     { path: '/',
       getComponent: (location, cb) => {
-          return require.ensure([], (require) => {
-              cb(null, require('../components/App'))
-          })
+        return require.ensure([], (require) => {
+          cb(null, require('../components/App'))
+        })
       },
       childRoutes: [
         { 
           childRoutes: [
-            // Protected nested routes for the dashboard
-            { path: '/page2',
+            { path: '/barang',
               getComponent: (location, cb) => {
                 require.ensure([], (require) => {
-                    const PageTwo = require('../components/PageTwo')
-                    cb(null, PageTwo)
+                  cb(null, require('../components/Barang'))
                 })
               }
             }
             // ...
           ]
-        },
-
-        { 
-            childRoutes: [
-                { path: '/barang',
-                    getComponent: (location, cb) => {
-                        require.ensure([], (require) => {
-                            cb(null, require('../components/Barang'))
-                        })
-                    }
-                }
-                // ...
-            ]
         },
 
         { 
@@ -155,7 +141,7 @@ const Routes = {
             { path: '/anggaran/add',
               getComponent: (location, cb) => {
                 require.ensure([], (require) => {
-                  cb(null, require('../components/anggaranUpgrade'))
+                  cb(null, require('../components/AnggaranUpgrade'))
                 })
               }
             }
@@ -168,7 +154,7 @@ const Routes = {
             { path: '/anggaran/edit/:anggaranId',
               getComponent: (location, cb) => {
                 require.ensure([], (require) => {
-                  cb(null, require('../components/anggaranUpgrade'))
+                  cb(null, require('../components/AnggaranUpgrade'))
                 })
               }
             }
@@ -213,6 +199,34 @@ const Routes = {
             }
           ]
         },
+
+        { 
+          childRoutes: [
+            // Protected routes that don't share the dashboard UI
+            { path: '/project_order',
+              getComponent: (location, cb) => {
+                require.ensure([], (require) => {
+                  cb(null, require('../components/ProjectOrder'))
+                })
+              }
+            }
+          ]
+        },
+
+
+        {
+          childRoutes: [
+            // Protected routes that don't share the dashboard UI
+            { path: '/project_order/detail/:anggaranId',
+              getComponent: (location, cb) => {
+                require.ensure([], (require) => {
+                  cb(null, require('../components/ProjectOrderUpgrade'))
+                })
+              }
+            }
+          ]
+        },
+
 
       ]
     }

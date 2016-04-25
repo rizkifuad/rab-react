@@ -65,3 +65,15 @@ export function handleError(error) {
 
   return error
 }
+
+export function createRoutes(path, component) {
+  return [
+    { path: path,
+      getComponent: (location, cb) => {
+        require.ensure([], (require) => {
+          cb(null, require(component))
+        })
+      }
+    }
+  ]
+}

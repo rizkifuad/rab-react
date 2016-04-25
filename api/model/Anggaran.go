@@ -92,3 +92,18 @@ func (input *AnggaranInput) ValidateInput(action string) (*Anggaran, APIMessage)
 
 	return &anggaran, result
 }
+
+type BarangAnggaran struct {
+	BarangId   string
+	NamaBarang string
+	Jumlah     int
+}
+
+func (anggaran *Anggaran) GetBarang(anggaranId int) []BarangAnggaran {
+	db := initDb()
+	var barang []BarangAnggaran
+	db.Table("anggaran_detail ad").Select("DISTINCT ad.barang_id, nama_barang, jumlah").Joins("barang b ON b.barangId = ad.barangId").Scan(&barang)
+	fmt.Printf("%+v", barang)
+
+	return barang
+}
