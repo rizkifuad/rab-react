@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import * as actionCreators from '../actions/ActionAnggaran'
+import * as actionCreators from '../actions/ActionProjectOrder'
 import TopBar from '../views/TopBar'
 let ACTION = 'CREATE'
 
@@ -114,7 +114,7 @@ class BarangInput extends React.Component {
 
 }
 
-class AnggaranUpgrade extends React.Component {
+class ProjectOrderUpgrade extends React.Component {
   constructor(props) {
     super(props)
     this.handleSave = this.handleSave.bind(this)
@@ -126,13 +126,13 @@ class AnggaranUpgrade extends React.Component {
 
   componentWillMount(){
     this.setState({barangInput:0,  items: [] })
-    let anggaranId  = this.props.params.anggaranId ? this.props.params.anggaranId : null
-    if (anggaranId) {
+    let orderId  = this.props.params.orderId ? this.props.params.orderId : null
+    if (orderId) {
       ACTION = 'UPDATE'
       this.setState({
-        anggaranId
+        orderId
       })
-      this.props.actions.prepareUpgrade(ACTION, anggaranId)
+      this.props.actions.prepareUpgrade(ACTION, orderId)
     } else {
       this.props.actions.prepareUpgrade(ACTION)
     }
@@ -144,16 +144,16 @@ class AnggaranUpgrade extends React.Component {
   }
 
   componentDidUpdate() {
-    let upgradeData = this.props.anggaran.upgradeData
+    let upgradeData = this.props.order.upgradeData
     if (this.firstTime && upgradeData.Items) {
       this.setState({barangInput: upgradeData.Items.length})
       this.firstTime = false
     }
 
-    if (upgradeData.Anggaran) {
-      this.refs.lokasi.value = upgradeData.Anggaran.Lokasi
-      this.refs.blokRumah.value = upgradeData.Anggaran.BlokRumah
-      this.refs.keterangan.value = upgradeData.Anggaran.Keterangan
+    if (upgradeData.ProjectOrder) {
+      this.refs.lokasi.value = upgradeData.ProjectOrder.Lokasi
+      this.refs.blokRumah.value = upgradeData.ProjectOrder.BlokRumah
+      this.refs.keterangan.value = upgradeData.ProjectOrder.Keterangan
       componentHandler.upgradeDom();
     }
 
@@ -203,13 +203,13 @@ class AnggaranUpgrade extends React.Component {
 
 
   render() {
-    let upgradeData = this.props.anggaran.upgradeData
+    let upgradeData = this.props.order.upgradeData
 
-    const title = ACTION == 'CREATE' ? 'Tambah Anggaran' : 'Edit Anggaran'
-    const description = 'Edit anggaran yang terdaftar pada aplikasi.'
+    const title = ACTION == 'CREATE' ? 'Tambah ProjectOrder' : 'Edit ProjectOrder'
+    const description = 'Edit order yang terdaftar pada aplikasi.'
     const color = ACTION == 'CREATE' ? 'brown' : 'amber'
-    let barangs = this.props.anggaran.upgradeData.Barangs
-    console.log(this.props.anggaran.upgradeData.Items)
+    let barangs = this.props.order.upgradeData.Barangs
+    console.log(this.props.order.upgradeData.Items)
 
     return (
 
@@ -226,8 +226,8 @@ class AnggaranUpgrade extends React.Component {
           <div className="mdl-cell mdl-cell--3-col mdl-cell--12-col-tablet mdl-cell--12-col-phone mdl-color--grey-100 no-p-l">
             <div className="p-40 p-r-20 p-20--small">
               <div className=" mdl-color-text--blue-grey-400">
-                <h3><i className="material-icons f-left m-r-5">format_align_left</i> Anggaran</h3>
-                <p>Input data anggaran untuk menunjang anggaran.</p>
+                <h3><i className="material-icons f-left m-r-5">format_align_left</i> ProjectOrder</h3>
+                <p>Input data order untuk menunjang order.</p>
               </div>
             </div>
           </div>
@@ -236,8 +236,8 @@ class AnggaranUpgrade extends React.Component {
             <div className="p-20 ml-card-holder ml-card-holder-first">
               <div className="mdl-card mdl-shadow--1dp">
                 <div className="p-30">
-                  {this.props.anggaran.status && this.props.anggaran.status.error  ? <div className='alert alert-info text-red'>{this.props.anggaran.status.message}</div> : ''}
-                  <input ref="id" type="hidden" value={upgradeData.Anggaran ? upgradeData.Anggaran.ID : ''}/>
+                  {this.props.order.status && this.props.order.status.error  ? <div className='alert alert-info text-red'>{this.props.order.status.message}</div> : ''}
+                  <input ref="id" type="hidden" value={upgradeData.ProjectOrder ? upgradeData.ProjectOrder.ID : ''}/>
                   <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                     <input ref="lokasi" className="mdl-textfield__input" type="text" id="sample2" />
                     <label className="mdl-textfield__label" htmlFor="sample2">Lokasi</label>
@@ -274,7 +274,7 @@ class AnggaranUpgrade extends React.Component {
               <div className="mdl-card mdl-shadow--1dp">
                 <div className="p-30">
 
-                  <BarangInput barangs={barangs} ref="barangs" count={this.state.barangInput} handleDelete={this.handleDelete} items={this.props.anggaran.upgradeData ? this.props.anggaran.upgradeData.Items : []}/>
+                  <BarangInput barangs={barangs} ref="barangs" count={this.state.barangInput} handleDelete={this.handleDelete} items={this.props.order.upgradeData ? this.props.order.upgradeData.Items : []}/>
 
                   <div className="mdl-grid">
                     <div className=" m-t-20">
@@ -303,7 +303,7 @@ class AnggaranUpgrade extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    anggaran: state.anggaran
+    order: state.order
   }
 }
 
@@ -311,5 +311,5 @@ const mapDispatchToProps = (dispatch) => ({
   actions : bindActionCreators(actionCreators, dispatch)
 });
 
-const AnggaranUpgradeContainer = connect(mapStateToProps, mapDispatchToProps)(AnggaranUpgrade)
-module.exports = AnggaranUpgradeContainer
+const ProjectOrderUpgradeContainer = connect(mapStateToProps, mapDispatchToProps)(ProjectOrderUpgrade)
+module.exports = ProjectOrderUpgradeContainer

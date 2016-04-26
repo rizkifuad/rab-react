@@ -38,7 +38,7 @@ const Sidebar = React.createClass({
                         </div>
                         <div className="f-left">
                             <h4 className="mdl-color-text--white m-t-6 no-m-b">R.A.B</h4>
-                            <div className="mdl-color-text--blue-grey-400 f12"><i className=" material-icons f12">place</i> Gresik, Indonesia</div>
+                            <div className="mdl-color-text--blue-grey-400 f12"><i className=" material-icons f12">place</i></div>
                         </div>
                     </div>
                     <div className="demo-avatar-dropdown">
