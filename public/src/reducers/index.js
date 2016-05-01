@@ -4,6 +4,7 @@ import user from './UserReducer'
 import barang from './BarangReducer'
 import supplier from './SupplierReducer'
 import anggaran from './AnggaranReducer'
+import order from './ProjectOrderReducer'
 import { syncHistoryWithStore, routerReducer } from 'react-router-redux'
 
 const rootReducers = combineReducers({
@@ -12,6 +13,7 @@ const rootReducers = combineReducers({
     barang,
     supplier,
     anggaran,
+    order,
     routing: routerReducer
 
 })

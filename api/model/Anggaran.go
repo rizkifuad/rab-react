@@ -102,7 +102,7 @@ type BarangAnggaran struct {
 func (anggaran *Anggaran) GetBarang(anggaranId int) []BarangAnggaran {
 	db := initDb()
 	var barang []BarangAnggaran
-	db.Table("anggaran_detail ad").Select("DISTINCT ad.barang_id, nama_barang, jumlah").Joins("barang b ON b.barangId = ad.barangId").Scan(&barang)
+	db.Table("anggaran_detail ad").Select("ad.barang_id, nama_barang, sum(jumlah) jumlah").Joins("JOIN barang b ON b.id = ad.barang_id").Where("ad.anggaran_id = ? and ad.deleted_at IS NULL", anggaranId).Group("barang_id").Scan(&barang)
 	fmt.Printf("%+v", barang)
 
 	return barang

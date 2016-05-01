@@ -2,6 +2,7 @@ package model
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -9,7 +10,7 @@ import (
 )
 
 func (order *ProjectOrder) Update(w http.ResponseWriter, r *http.Request) {
-	db := initDb()
+	//db := initDb()
 	decoder := json.NewDecoder(r.Body)
 
 	var input ProjectOrderInput
@@ -23,18 +24,22 @@ func (order *ProjectOrder) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	db.Table("project_order").Where("id = ?", input.ID).Update(order)
+	//db.Table("project_order").Where("id = ?", input.ID).Update(order)
 
 	w.Write(ParseJSON(result))
 
 }
 
 func (order *ProjectOrder) Create(w http.ResponseWriter, r *http.Request) {
+	println("Save")
 	db := initDb()
 	decoder := json.NewDecoder(r.Body)
+	fmt.Printf("%v", r.Body)
 
 	var input ProjectOrderInput
 	_ = decoder.Decode(&input)
+
+	fmt.Printf("%+v", input)
 
 	order, result := input.ValidateInput("CREATE")
 	if result.Error {
@@ -61,6 +66,7 @@ func (order *ProjectOrder) PrepareCreate(w http.ResponseWriter, r *http.Request)
 }
 
 func (order *ProjectOrder) PrepareUpdate(w http.ResponseWriter, r *http.Request) {
+	println("menggila")
 
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"])

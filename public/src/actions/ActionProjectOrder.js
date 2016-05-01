@@ -132,7 +132,7 @@ export function update(formData, barangs) {
 
 
 export function createProjectOrderSuccess(data) {
-  browserHistory.push('/project_order')
+  window.location.reload()
   return {
     type: CREATE_PROJECT_ORDER_SUCCESS,
     payload: data
@@ -147,10 +147,10 @@ export function createProjectOrderFailure(data) {
 }
 
 
-export function create(formData, barangs) {
+export function create(formData) {
   return dispatch => {
     const url = '/api/project_order/save'
-    const data = Object.assign(serializeForm(formData), barangs)
+    const data = formData
     const request = API().post(url, data)
 
     dispatch(fetching('CREATE_PROJECT_ORDER'))

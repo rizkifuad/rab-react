@@ -2,7 +2,9 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import * as actionCreators from '../actions/ActionProjectOrder'
+import { browserHistory } from 'react-router'
 import TopBar from '../views/TopBar'
+import moment from 'moment'
 let ACTION = 'CREATE'
 
 
@@ -62,8 +64,9 @@ class BarangInput extends React.Component {
 
     if (this.props.barangs) {
       BarangList = this.props.barangs.map((barang) => {
+        console.log('barangas', barang)
         return (
-          <option key={barang.ID} value={barang.ID}>{barang.NamaBarang}</option>
+          <option key={barang.BarangId} value={barang.BarangId}>{barang.NamaBarang}</option>
 
         )
       })
@@ -96,11 +99,6 @@ class BarangInput extends React.Component {
             </div>
           </div>
 
-          <div className="mdl-cell mdl-cell--3-col">
-                <button onClick={this.props.handleDelete} className="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-js-ripple-effect mdl-button--accent">
-                  <i className="material-icons">delete forever</i>
-                </button>
-          </div>
         </div>
       )
     }
@@ -119,14 +117,15 @@ class ProjectOrderUpgrade extends React.Component {
     super(props)
     this.handleSave = this.handleSave.bind(this)
     this.handleBarangInput = this.handleBarangInput.bind(this)
-    this.handleTambahBarang = this.handleTambahBarang.bind(this)
-    this.handleDelete = this.handleDelete.bind(this)
+    this.handleKembali = this.handleKembali.bind(this)
+    this.handleTambahOrder = this.handleTambahOrder.bind(this)
     this.firstTime = true
   }
 
   componentWillMount(){
-    this.setState({barangInput:0,  items: [] })
+    this.setState({barangInput:1,  items: [] })
     let orderId  = this.props.params.orderId ? this.props.params.orderId : null
+    console.log('orderid', orderId)
     if (orderId) {
       ACTION = 'UPDATE'
       this.setState({
@@ -150,10 +149,10 @@ class ProjectOrderUpgrade extends React.Component {
       this.firstTime = false
     }
 
-    if (upgradeData.ProjectOrder) {
-      this.refs.lokasi.value = upgradeData.ProjectOrder.Lokasi
-      this.refs.blokRumah.value = upgradeData.ProjectOrder.BlokRumah
-      this.refs.keterangan.value = upgradeData.ProjectOrder.Keterangan
+    if (upgradeData.Anggaran) {
+      //this.refs.lokasi.value = upgradeData.ProjectOrder.Lokasi
+      //this.refs.blokRumah.value = upgradeData.ProjectOrder.BlokRumah
+      //this.refs.keterangan.value = upgradeData.ProjectOrder.Keterangan
       componentHandler.upgradeDom();
     }
 
@@ -170,15 +169,15 @@ class ProjectOrderUpgrade extends React.Component {
   }
 
   handleSave(e) {
-    e.preventDefault()
-    let barangs = this.refs.barangs.state.item
-    if (ACTION == 'CREATE') {
-      console.log(this.refs)
-      this.props.actions.create(this.refs, barangs)
-    } else if (ACTION == 'UPDATE') {
-      console.log(this.refs)
-      this.props.actions.update(this.refs, barangs)
-    }
+    //e.preventDefault()
+    //let barangs = this.refs.barangs.state.item
+    //if (ACTION == 'CREATE') {
+      //console.log(this.refs)
+      //this.props.actions.create(this.refs, barangs)
+    //} else if (ACTION == 'UPDATE') {
+      //console.log(this.refs)
+      //this.props.actions.update(this.refs, barangs)
+    //}
 
   }
 
@@ -188,19 +187,27 @@ class ProjectOrderUpgrade extends React.Component {
     console.log(this.refs.barangs.state.item)
   }
 
-  handleTambahBarang() {
-    this.setState({
-      barangInput: this.state.barangInput+1
-    })
-  }
-
-  handleDelete() {
-    this.setState({
-      barangInput: this.state.barangInput-1
-    })
+  handleKembali() {
+    browserHistory.push('/project_order')
   }
 
 
+  handleTambahOrder(e) {
+    e.preventDefault()
+    console.log('barang', this.refs.barangs.state.item)
+    const upgradeData = this.props.order.upgradeData
+    const addData = this.refs.barangs.state.item
+    console.log('upgradata', upgradeData)
+
+    const data = {
+      anggaran_id: upgradeData.Anggaran.ID + "",
+      barang_id: addData.barang[0],
+      jumlah: addData.jumlah[0]
+    }
+    console.log('data', data)
+
+    this.props.actions.create(data)
+  }
 
   render() {
     let upgradeData = this.props.order.upgradeData
@@ -211,6 +218,71 @@ class ProjectOrderUpgrade extends React.Component {
     let barangs = this.props.order.upgradeData.Barangs
     console.log(this.props.order.upgradeData.Items)
 
+    let OrderList = null
+    let i = 0
+    if (upgradeData.Order && upgradeData.Order.length > 0) {
+      console.log('upgradedata', upgradeData)
+      OrderList = upgradeData.Order.map((order) => {
+        i++
+      const b= barangs.find(function(bar) {
+        console.log('bar', bar, order.BarangId)
+        console.log(bar.BarangId, order.BarangId, bar.ID == parseInt(order.BarangId))
+        return parseInt(bar.BarangId) == parseInt(order.BarangId)
+      })
+      console.log('b', b)
+          return (
+            <tr key={order.ID}>
+              <td>{i}</td>
+              <td>{b.NamaBarang}</td>
+              <td>{order.Jumlah}</td>
+              <td>{moment(order.CreatedAt).format('YYYY-MM-DD')}</td>
+            </tr>
+          )
+      })
+    }
+    let OrderTable = null
+
+    if(upgradeData.Order && upgradeData.Order.length > 0) {
+      OrderTable =  (
+        <div>
+          <table ref="mdl_table" className="mdl-data-table ml-table-striped mdl-js-data-table ">
+            <colgroup>
+              <col className="auto-cell-size p-r-20"/>
+            </colgroup>
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>Nama Barang</th>
+                <th>Jumlah</th>
+                <th>Tanggal order</th>
+              </tr>
+            </thead>
+            <tbody>
+              { OrderList }
+            </tbody>
+          </table>
+
+          <div className="hide ml-data-table-pager p-10 t-center">
+            <span className="disabled previous">
+
+              <button  className="mdl-button">«</button>
+              <button  className="mdl-button">1</button>
+              <button  className="mdl-button">2</button>
+              <button  className="mdl-button">3</button>
+              <button  className="mdl-button">4</button>
+              <button  className="mdl-button">5</button>
+              <button  className="mdl-button">»</button>
+            </span>
+          </div>
+        </div>
+
+      )
+
+    } else if(this.props.order.fetching === false){
+      OrderTable = (
+        <h2 className="t-center">No order found</h2>
+      )
+    }
     return (
 
       <form onSubmit={this.handleSave}>
@@ -226,8 +298,11 @@ class ProjectOrderUpgrade extends React.Component {
           <div className="mdl-cell mdl-cell--3-col mdl-cell--12-col-tablet mdl-cell--12-col-phone mdl-color--grey-100 no-p-l">
             <div className="p-40 p-r-20 p-20--small">
               <div className=" mdl-color-text--blue-grey-400">
-                <h3><i className="material-icons f-left m-r-5">format_align_left</i> ProjectOrder</h3>
-                <p>Input data order untuk menunjang order.</p>
+                <h3><i className="material-icons f-left m-r-5">format_align_left</i> Anggaran</h3>
+                <p>Lokasi: {upgradeData.Anggaran ? upgradeData.Anggaran.Lokasi : ''}<br/>
+                  Blok Rumah: {upgradeData.Anggaran ? upgradeData.Anggaran.BlokRumah : ''}<br/>
+                  Keterangan: {upgradeData.Anggaran ? upgradeData.Anggaran.Keterangan : ''}<br/>
+                      </p>
               </div>
             </div>
           </div>
@@ -238,22 +313,9 @@ class ProjectOrderUpgrade extends React.Component {
                 <div className="p-30">
                   {this.props.order.status && this.props.order.status.error  ? <div className='alert alert-info text-red'>{this.props.order.status.message}</div> : ''}
                   <input ref="id" type="hidden" value={upgradeData.ProjectOrder ? upgradeData.ProjectOrder.ID : ''}/>
-                  <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                    <input ref="lokasi" className="mdl-textfield__input" type="text" id="sample2" />
-                    <label className="mdl-textfield__label" htmlFor="sample2">Lokasi</label>
-                  </div>
-                  <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                    <input ref="blokRumah" className="mdl-textfield__input" type="text" id="sample2" />
-                    <label className="mdl-textfield__label" htmlFor="sample2">Blok Rumah</label>
-                  </div>
-                  <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                    <textarea ref="keterangan" className="mdl-textfield__input"/>
-                    <label className="mdl-textfield__label" htmlFor="sample2">Keterangan</label>
-                  </div>
-                  <div className="m-t-20">
-                    <button type="submit" className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">
-                      Simpan
-                    </button>
+                  <div className="mdl-cell mdl-cell--9-col  mdl-cell--12-col-tablet mdl-cell--12-col-phone">
+                        {OrderTable}
+
                   </div>
                 </div>
               </div>
@@ -264,7 +326,7 @@ class ProjectOrderUpgrade extends React.Component {
             <div className="p-40 p-r-20 p-20--small">
               <div className=" mdl-color-text--blue-grey-400">
                 <h3><i className="material-icons f-left m-r-5">format_align_left</i> Barang</h3>
-                <p>List barang yang akan dianggarkan pada projek ini.</p>
+                <p>Tambah order pada anggaran</p>
               </div>
             </div>
           </div>
@@ -274,17 +336,17 @@ class ProjectOrderUpgrade extends React.Component {
               <div className="mdl-card mdl-shadow--1dp">
                 <div className="p-30">
 
-                  <BarangInput barangs={barangs} ref="barangs" count={this.state.barangInput} handleDelete={this.handleDelete} items={this.props.order.upgradeData ? this.props.order.upgradeData.Items : []}/>
+                  <BarangInput barangs={barangs} ref="barangs" count={this.state.barangInput}  />
 
                   <div className="mdl-grid">
                     <div className=" m-t-20">
-                      <button type="button" onClick={this.handleTambahBarang} className="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
-                        Tambah Barang
+                      <button type="button" onClick={this.handleKembali} className="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
+                        Kembali
                       </button>
                     </div>
                     <div className="p-l-20 m-t-20">
-                      <button type="submit" className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">
-                        Simpan
+                      <button onClick={this.handleTambahOrder} type="submit" className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">
+                        Tambah Order
                       </button>
                     </div>
                   </div>

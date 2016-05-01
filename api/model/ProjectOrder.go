@@ -18,7 +18,7 @@ func (order *ProjectOrder) GetOrders(id int) []ProjectOrder {
 	db := initDb()
 	var orders []ProjectOrder
 
-	db.Table("order").Select("*").Where("anggaran_id = ?", id).Find(&orders)
+	db.Table("project_order").Select("*").Where("anggaran_id = ?", id).Find(&orders)
 	return orders
 }
 
@@ -28,10 +28,9 @@ func (order *ProjectOrder) GetByID(id int) {
 }
 
 type ProjectOrderInput struct {
-	AnggaranId string
-	BarangId   string
-	Jumlah     string
-	ID         string `json:"id"`
+	AnggaranId string `json:"anggaran_id"`
+	BarangId   string `json:"barang_id"`
+	Jumlah     string `json:"jumlah"`
 }
 
 func (input *ProjectOrderInput) ValidateInput(action string) (*ProjectOrder, APIMessage) {
@@ -40,6 +39,8 @@ func (input *ProjectOrderInput) ValidateInput(action string) (*ProjectOrder, API
 		Message: fmt.Sprintf("Successfully %s order", action),
 	}
 	var order ProjectOrder
+
+	fmt.Printf("%+v", input)
 
 	if input.AnggaranId == "" {
 		result.Error = true
