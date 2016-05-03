@@ -14,6 +14,17 @@ type ProjectOrder struct {
 	gorm.Model
 }
 
+func (order *ProjectOrder) CountBarang(id int, barangId int) int {
+	db := initDb()
+
+	var result struct {
+		Jumlah int
+	}
+
+	db.Table("project_order").Select("sum(jumlah) as jumlah").Where("anggaran_id=? AND barang_id=?", id, barangId).Scan(&result)
+	return result.Jumlah
+}
+
 func (order *ProjectOrder) GetOrders(id int) []ProjectOrder {
 	db := initDb()
 	var orders []ProjectOrder

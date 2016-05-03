@@ -154,10 +154,22 @@ export function create(formData) {
     const request = API().post(url, data)
 
     dispatch(fetching('CREATE_PROJECT_ORDER'))
-    request.then(function(response) {
-      Dispatch(dispatch, createProjectOrderSuccess,response.data)
-    }).catch(function(err) {
-      Fallback(dispatch, createProjectOrderFailure, err)
+    //checking dl
+    console.log('menggila,w')
+    API().get('/api/project_order/check/' + formData.anggaran_id + '/' + formData.barang_id + '/' + formData.jumlah)
+    .then(function(res) {
+      if (res.data.Error) {
+        let r = confirm(res.data.Message)
+        if (r == true) {
+          request.then(function(response) {
+            Dispatch(dispatch, createProjectOrderSuccess,response.data)
+          }).catch(function(err) {
+            Fallback(dispatch, createProjectOrderFailure, err)
+          })
+        } else {
+
+        }
+      }
     })
   }
 }

@@ -21,6 +21,19 @@ type AnggaranDetail struct {
 	gorm.Model
 }
 
+func (anggaranDetail *AnggaranDetail) CountBarang(id int, barangId int) int {
+	db := initDb()
+
+	var result struct {
+		Jumlah int
+	}
+
+	db.Table("anggaran_detail").Select("sum(jumlah) as jumlah").Where("anggaran_id=? AND barang_id=?", id, barangId).Scan(&result)
+	fmt.Printf("%+v", result)
+	return result.Jumlah
+
+}
+
 func (anggaran *Anggaran) UpdateDetails(id string, items []AnggaranDetail) {
 	db := initDb()
 	db.Delete(AnggaranDetail{}, "anggaran_id = ?", id)

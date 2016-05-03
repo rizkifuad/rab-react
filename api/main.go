@@ -51,6 +51,7 @@ func main() {
 	rAuth.HandleFunc("/project_order/{id:[0-9]+}", projectOrder.List)
 	rAuth.HandleFunc("/project_order/prepareUpgrade", projectOrder.PrepareCreate)
 	rAuth.HandleFunc("/project_order/prepareUpgrade/{id:[0-9]+}", projectOrder.PrepareUpdate)
+	rAuth.HandleFunc("/project_order/check/{id:[0-9]+}/{barangId:[0-9]+}/{jumlah:[0-9]+}", projectOrder.Check)
 	rAuth.HandleFunc("/project_order/save", projectOrder.Update).Methods("PUT")
 	rAuth.HandleFunc("/project_order/save", projectOrder.Create).Methods("POST")
 

@@ -96,3 +96,35 @@ func (order *ProjectOrder) List(w http.ResponseWriter, r *http.Request) {
 	orders := order.GetOrders(id)
 	w.Write(ParseJSON(orders))
 }
+func (order *ProjectOrder) Check(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, _ := strconv.Atoi(vars["id"])
+	jumlah, _ := strconv.Atoi(vars["jumlah"])
+	barangId, _ := strconv.Atoi(vars["barangId"])
+
+	var anggaranDetail AnggaranDetail
+
+	totalAnggaran := anggaranDetail.CountBarang(id, barangId)
+	totalOrder := order.CountBarang(id, barangId)
+
+	totalOrders := totalOrder + jumlah
+
+	var result struct {
+		Error   bool
+		Message string
+	}
+
+	result.Error = false
+	result.Message = ""
+
+	if totalOrders > totalAnggaran {
+		result.Error = true
+		result.Message = "Total order sudah melebihi total anggaran. Apakah anda ingin melanjutkan?"
+	}
+	w.Write(ParseJSON(result))
+
+	println(totalAnggaran)
+	println(totalOrder)
+	println(jumlah)
+
+}
