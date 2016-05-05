@@ -24,12 +24,10 @@ func (order *TotalOrder) GetTotalOrder(id int) []TotalOrder {
 	db := initDb()
 
 	var result []TotalOrder
-	db.Table("project_order po").
-		Select("nama_barang, sum(po.jumlah) as jumlah_order, sum(ad.jumlah) as jumlah_anggaran, sum(po.jumlah) > sum(ad.jumlah) as status").
-		Joins("join anggaran_detail ad on ad.anggaran_id=po.anggaran_id").
-		Joins("join barang b on b.id=po.barang_id").
-		Group("po.barang_id").
-		Where("po.anggaran_id=?", id).Find(&result)
+
+	db.Raw("select *, jumlah_order > jumlah_anggaran as status from (select barang_id, sum(jumlah) as jumlah_order from project_order po  where anggaran_id=? and deleted_at is null group by barang_id) po,(select barang_id, sum(jumlah) as jumlah_anggaran from anggaran_detail ad where anggaran_id=? and deleted_at is null group by barang_id) ad  join barang b on b.id=barang_id where po.barang_id=ad.barang_id;", id, id).
+		Scan(&result)
+
 	return result
 }
 
