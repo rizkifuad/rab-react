@@ -218,8 +218,75 @@ class ProjectOrderUpgrade extends React.Component {
     let barangs = this.props.order.upgradeData.Barangs
     console.log(this.props.order.upgradeData.Items)
 
-    let OrderList = null
+
+    let TotalOrderList = null
     let i = 0
+    if (upgradeData.TotalOrder && upgradeData.TotalOrder.length > 0) {
+      console.log('upgradedata', upgradeData)
+      TotalOrderList = upgradeData.TotalOrder.map((total_order) => {
+        i++
+          let color = 'none'
+          if (total_order.Status == 1) {
+            color = '#FFC1C1'
+          }
+          return (
+            <tr key={i} style={{background:  color}}>
+              <td>{i}</td>
+              <td>{total_order.NamaBarang}</td>
+              <td>{total_order.JumlahAnggaran}</td>
+              <td>{total_order.JumlahOrder}</td>
+              <td>{total_order.Status == 1? 'Melebihi' : ''}</td>
+            </tr>
+          )
+      })
+    }
+    let TotalOrderTable = null
+
+    if(upgradeData.TotalOrder && upgradeData.TotalOrder.length > 0) {
+      TotalOrderTable =  (
+        <div>
+          <table ref="mdl_table" className="mdl-data-table ml-table-striped mdl-js-data-table ">
+            <colgroup>
+              <col className="auto-cell-size p-r-20"/>
+            </colgroup>
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>Nama Barang</th>
+                <th>Jumlah Anggaran</th>
+                <th>Jumlah Order</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              { TotalOrderList }
+            </tbody>
+          </table>
+
+          <div className="hide ml-data-table-pager p-10 t-center">
+            <span className="disabled previous">
+
+              <button  className="mdl-button">«</button>
+              <button  className="mdl-button">1</button>
+              <button  className="mdl-button">2</button>
+              <button  className="mdl-button">3</button>
+              <button  className="mdl-button">4</button>
+              <button  className="mdl-button">5</button>
+              <button  className="mdl-button">»</button>
+            </span>
+          </div>
+        </div>
+
+      )
+
+    } else if(this.props.order.fetching === false){
+      TotalOrderTable = (
+        <h2 className="t-center">No order found</h2>
+      )
+    }
+
+    let OrderList = null
+    i = 0
     if (upgradeData.Order && upgradeData.Order.length > 0) {
       console.log('upgradedata', upgradeData)
       OrderList = upgradeData.Order.map((order) => {
@@ -313,9 +380,15 @@ class ProjectOrderUpgrade extends React.Component {
                 <div className="p-30">
                   {this.props.order.status && this.props.order.status.error  ? <div className='alert alert-info text-red'>{this.props.order.status.message}</div> : ''}
                   <input ref="id" type="hidden" value={upgradeData.ProjectOrder ? upgradeData.ProjectOrder.ID : ''}/>
-                  <div className="mdl-cell mdl-cell--9-col  mdl-cell--12-col-tablet mdl-cell--12-col-phone">
+                  <h3 className="t-center">History Order</h3>
+                  <div className="mdl-cell mdl-cell--12-col  mdl-cell--12-col-tablet mdl-cell--12-col-phone">
                         {OrderTable}
 
+
+                  </div>
+                  <h3 className="t-center">Total Order</h3>
+                  <div className="mdl-cell mdl-cell--12-col  mdl-cell--12-col-tablet mdl-cell--12-col-phone">
+                        {TotalOrderTable}
                   </div>
                 </div>
               </div>

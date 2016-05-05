@@ -13,6 +13,25 @@ type ProjectOrder struct {
 	Jumlah     int
 	gorm.Model
 }
+type TotalOrder struct {
+	NamaBarang     string
+	JumlahAnggaran uint
+	JumlahOrder    uint
+	Status         int
+}
+
+func (order *TotalOrder) GetTotalOrder(id int) []TotalOrder {
+	db := initDb()
+
+	var result []TotalOrder
+	db.Table("project_order po").
+		Select("nama_barang, sum(po.jumlah) as jumlah_order, sum(ad.jumlah) as jumlah_anggaran, sum(po.jumlah) > sum(ad.jumlah) as status").
+		Joins("join anggaran_detail ad on ad.anggaran_id=po.anggaran_id").
+		Joins("join barang b on b.id=po.barang_id").
+		Group("po.barang_id").
+		Where("po.anggaran_id=?", id).Find(&result)
+	return result
+}
 
 func (order *ProjectOrder) CountBarang(id int, barangId int) int {
 	db := initDb()

@@ -75,17 +75,20 @@ func (order *ProjectOrder) PrepareUpdate(w http.ResponseWriter, r *http.Request)
 	order.GetByID(id)
 
 	var result struct {
-		Anggaran Anggaran
-		Order    []ProjectOrder
-		Barangs  []BarangAnggaran
+		Anggaran   Anggaran
+		Order      []ProjectOrder
+		Barangs    []BarangAnggaran
+		TotalOrder []TotalOrder
 	}
 
 	var anggaran Anggaran
+	var totalOrder TotalOrder
 	anggaran.GetByID(id)
 
 	result.Order = order.GetOrders(id)
 	result.Anggaran = anggaran
 	result.Barangs = anggaran.GetBarang(id)
+	result.TotalOrder = totalOrder.GetTotalOrder(id)
 
 	w.Write(ParseJSON(result))
 }
