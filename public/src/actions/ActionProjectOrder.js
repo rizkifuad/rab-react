@@ -14,6 +14,9 @@ const {
   CREATE_PROJECT_ORDER_SUCCESS,
   CREATE_PROJECT_ORDER_FAILURE,
 
+  APPROVE_ORDER_SUCCESS,
+  APPROVE_ORDER_FAILURE,
+
   UPDATE_PROJECT_ORDER_SUCCESS, 
   UPDATE_PROJECT_ORDER_FAILURE } = CONSTANTS
 
@@ -36,6 +39,35 @@ export function getProjectOrdersFailure(data) {
   return {
     type: GET_PROJECT_ORDERS_FAILURE,
     payload: data
+  }
+}
+
+
+export function approveOrderSuccess(data) {
+  return {
+    type: APPROVE_ORDER_SUCCESS,
+    payload: data
+  }
+}
+
+
+export function approveOrderFailure(data) {
+  return {
+    type: APPROVE_ORDER_FAILURE,
+    payload: data
+  }
+}
+
+export function approveOrder(id) {
+  return function(dispatch) {
+    let request = API().get('/api/project_order/cetak_order/'+id)
+    dispatch(fetching('APPROVE_ORDER'))
+    request.then(function(response) {
+      Dispatch(dispatch, approveOrderSuccess, response)
+      dispatch(prepareUpgrade('UPDATE', response.data.AnggaranId))
+    }).catch(function(err) {
+      Fallback(dispatch, approveOrderFailure, err)
+    })
   }
 }
 
@@ -132,7 +164,7 @@ export function update(formData, barangs) {
 
 
 export function createProjectOrderSuccess(data) {
-  window.location.reload()
+  //window.location.reload()
   return {
     type: CREATE_PROJECT_ORDER_SUCCESS,
     payload: data
@@ -155,7 +187,6 @@ export function create(formData) {
 
     dispatch(fetching('CREATE_PROJECT_ORDER'))
     //checking dl
-    console.log('menggila,w')
     API().get('/api/project_order/check/' + formData.anggaran_id + '/' + formData.barang_id + '/' + formData.jumlah)
     .then(function(res) {
       if (res.data.Error) {
@@ -163,6 +194,7 @@ export function create(formData) {
         if (r == true) {
           request.then(function(response) {
             Dispatch(dispatch, createProjectOrderSuccess,response.data)
+            dispatch(prepareUpgrade('UPDATE', formData.anggaran_id))
           }).catch(function(err) {
             Fallback(dispatch, createProjectOrderFailure, err)
           })

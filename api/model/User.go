@@ -17,7 +17,7 @@ type User struct {
 	Nama     string
 	Username string `gorm:"not null;unique"`
 	Password string `json:"-"`
-	Role     string `sql:"not null;type:ENUM('admin', 'supplier', 'direktur', 'pegawai')"`
+	Role     string `sql:"not null;type:ENUM('admin', 'supplier', 'direktur', 'pegawai', 'manager')"`
 	status   int
 	gorm.Model
 }
@@ -32,6 +32,7 @@ func (user User) GenerateToken() string {
 	token := jwt.New(jwt.SigningMethodHS256)
 	// Set some claims
 	token.Claims["username"] = user.Username
+	token.Claims["role"] = user.Role
 	token.Claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
 	// Sign and get the complete encoded token as a string
 	tokenString, err := token.SignedString(SECRET_KEY)

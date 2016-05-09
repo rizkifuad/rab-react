@@ -561,9 +561,20 @@ textarea.noresize { resize:none; }
 
 
 input:-webkit-autofill { -webkit-box-shadow: 0 0 0 1000px white inset; }
-.text-red {
-    color: #ff4081
+.text-red, .t-red{
+  color: #ff4081
+}
+.t-blue {
+  color: blue;
+}
+.t-green {
+  color: green;
 }
 .hide {
   display: none;
+}
+.mdl-button-mini {
+    height: 27px;
+    line-height: 20px;
+    font-size: small;
 }

@@ -119,6 +119,7 @@ class ProjectOrderUpgrade extends React.Component {
     this.handleBarangInput = this.handleBarangInput.bind(this)
     this.handleKembali = this.handleKembali.bind(this)
     this.handleTambahOrder = this.handleTambahOrder.bind(this)
+    //this.handleApprove = this.handleApprove.bind(this)
     this.firstTime = true
   }
 
@@ -209,6 +210,11 @@ class ProjectOrderUpgrade extends React.Component {
     this.props.actions.create(data)
   }
 
+  handleApprove(id) {
+    console.log('menggila', id)
+    this.props.actions.approveOrder(id)
+  }
+
   render() {
     let upgradeData = this.props.order.upgradeData
 
@@ -218,6 +224,7 @@ class ProjectOrderUpgrade extends React.Component {
     let barangs = this.props.order.upgradeData.Barangs
     console.log(this.props.order.upgradeData.Items)
 
+    const auth = this.props.auth
 
     let TotalOrderList = null
     let i = 0
@@ -288,23 +295,39 @@ class ProjectOrderUpgrade extends React.Component {
     let OrderList = null
     i = 0
     if (upgradeData.Order && upgradeData.Order.length > 0) {
-      console.log('upgradedata', upgradeData)
       OrderList = upgradeData.Order.map((order) => {
         i++
       const b= barangs.find(function(bar) {
-        console.log('bar', bar, order.BarangId)
-        console.log(bar.BarangId, order.BarangId, bar.ID == parseInt(order.BarangId))
         return parseInt(bar.BarangId) == parseInt(order.BarangId)
       })
-      console.log('b', b)
-          return (
-            <tr key={order.ID}>
-              <td>{i}</td>
-              <td>{b.NamaBarang}</td>
-              <td>{order.Jumlah}</td>
-              <td>{moment(order.CreatedAt).format('YYYY-MM-DD')}</td>
-            </tr>
-          )
+      let status = null
+
+      console.log('if', order.ID, auth.role)
+      if ((order.Status == 0 || !order.Status) && auth.role == 'manager') {
+        status = (
+          <button onClick={this.handleApprove.bind(this, order.ID)} type="button" className="mdl-button mdl-button-mini mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
+            Approve
+          </button>
+        )
+      } else if (order.Status == 0 || !order.Status) {
+        status = (<p className="t-red">Belum di Setujui</p>)
+      }
+      else if (order.Status == 1) {
+        status = (<p className="t-green">Disetujui</p>)
+      } else if (order.Status == 2) {
+        status = (<p className="t-blue">Dicetak</p>)
+      }
+      return (
+        <tr key={order.ID}>
+          <td>{i}</td>
+          <td>{b.NamaBarang}</td>
+          <td>{order.Jumlah}</td>
+          <td>{moment(order.CreatedAt).format('YYYY-MM-DD HH:mm')}</td>
+          <td>
+            {status}
+          </td>
+        </tr>
+      )
       })
     }
     let OrderTable = null
@@ -322,6 +345,7 @@ class ProjectOrderUpgrade extends React.Component {
                 <th>Nama Barang</th>
                 <th>Jumlah</th>
                 <th>Tanggal order</th>
+                <th>Status</th>
               </tr>
             </thead>
             <tbody>
@@ -438,7 +462,8 @@ class ProjectOrderUpgrade extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    order: state.order
+    order: state.order,
+    auth: state.auth
   }
 }
 

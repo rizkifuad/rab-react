@@ -7,6 +7,7 @@ const {LOGIN_USER_REQUEST, LOGIN_USER_SUCCESS, LOGIN_USER_FAILURE, LOGOUT_USER} 
 const initialState = {
     token: null,
     username: null,
+    role: null,
     isAuthenticated: false,
     isAuthenticating: false,
     status: {
@@ -33,6 +34,7 @@ export default createReducer(initialState, {
             'isAuthenticated': true,
             'token': payload.Message,
             'username': jwtDecode(payload.Message).username,
+            'role': jwtDecode(payload.Message).role,
         });
 
     },
@@ -43,6 +45,7 @@ export default createReducer(initialState, {
             'isAuthenticated': false,
             'token': null,
             'username': null,
+            'role': null,
             'status': {
               error: payload.Error,
               message: payload.Message
@@ -54,6 +57,7 @@ export default createReducer(initialState, {
             'isAuthenticated': false,
             'token': null,
             'username': null,
+            'role': null,
             'status': {
               error: false,
               message: "You have been successfully logout"

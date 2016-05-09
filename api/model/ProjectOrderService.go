@@ -131,3 +131,19 @@ func (order *ProjectOrder) Check(w http.ResponseWriter, r *http.Request) {
 	println(jumlah)
 
 }
+
+func (porder *ProjectOrder) Approve(w http.ResponseWriter, r *http.Request) {
+	db := initDb()
+	vars := mux.Vars(r)
+	id, _ := strconv.Atoi(vars["id"])
+
+	var order ProjectOrder
+
+	order.GetByID(id)
+	order.Status = 1
+
+	db.Table("project_order").Where("id = ?", id).Update(order)
+
+	w.Write(ParseJSON(order))
+
+}
