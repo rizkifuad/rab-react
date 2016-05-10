@@ -17,6 +17,10 @@ const {
   APPROVE_ORDER_SUCCESS,
   APPROVE_ORDER_FAILURE,
 
+
+  CETAK_ORDER_SUCCESS,
+  CETAK_ORDER_FAILURE,
+
   UPDATE_PROJECT_ORDER_SUCCESS, 
   UPDATE_PROJECT_ORDER_FAILURE } = CONSTANTS
 
@@ -43,33 +47,6 @@ export function getProjectOrdersFailure(data) {
 }
 
 
-export function approveOrderSuccess(data) {
-  return {
-    type: APPROVE_ORDER_SUCCESS,
-    payload: data
-  }
-}
-
-
-export function approveOrderFailure(data) {
-  return {
-    type: APPROVE_ORDER_FAILURE,
-    payload: data
-  }
-}
-
-export function approveOrder(id) {
-  return function(dispatch) {
-    let request = API().get('/api/project_order/cetak_order/'+id)
-    dispatch(fetching('APPROVE_ORDER'))
-    request.then(function(response) {
-      Dispatch(dispatch, approveOrderSuccess, response)
-      dispatch(prepareUpgrade('UPDATE', response.data.AnggaranId))
-    }).catch(function(err) {
-      Fallback(dispatch, approveOrderFailure, err)
-    })
-  }
-}
 
 export function getProjectOrders() {
   return function(dispatch) {
@@ -202,6 +179,63 @@ export function create(formData) {
 
         }
       }
+    })
+  }
+}
+
+export function approveOrderSuccess(data) {
+  return {
+    type: APPROVE_ORDER_SUCCESS,
+    payload: data
+  }
+}
+
+
+export function approveOrderFailure(data) {
+  return {
+    type: APPROVE_ORDER_FAILURE,
+    payload: data
+  }
+}
+
+export function approveOrder(id) {
+  return function(dispatch) {
+    let request = API().get('/api/project_order/approve/'+id)
+    dispatch(fetching('APPROVE_ORDER'))
+    request.then(function(response) {
+      Dispatch(dispatch, approveOrderSuccess, response)
+      dispatch(prepareUpgrade('UPDATE', response.data.AnggaranId))
+    }).catch(function(err) {
+      Fallback(dispatch, approveOrderFailure, err)
+    })
+  }
+}
+
+
+export function cetakOrderSuccess(data) {
+  return {
+    type: CETAK_ORDER_SUCCESS,
+    payload: data
+  }
+}
+
+
+export function cetakOrderFailure(data) {
+  return {
+    type: CETAK_ORDER_FAILURE,
+    payload: data
+  }
+}
+
+export function cetakOrder(id) {
+  return function(dispatch) {
+    let request = API().get('/api/project_order/cetak/'+id)
+    dispatch(fetching('CETAK_ORDER'))
+    request.then(function(response) {
+      Dispatch(dispatch, cetakOrderSuccess, response)
+      dispatch(prepareUpgrade('UPDATE', response.data.AnggaranId))
+    }).catch(function(err) {
+      Fallback(dispatch, cetakOrderFailure, err)
     })
   }
 }

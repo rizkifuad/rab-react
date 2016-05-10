@@ -147,3 +147,21 @@ func (porder *ProjectOrder) Approve(w http.ResponseWriter, r *http.Request) {
 	w.Write(ParseJSON(order))
 
 }
+
+func (order *ProjectOrder) CetakOrder(w http.ResponseWriter, r *http.Request) {
+	db := initDb()
+	vars := mux.Vars(r)
+	id, _ := strconv.Atoi(vars["id"])
+
+	var result struct {
+		Max int
+	}
+	db.Raw("select ifnull(max(cetak),0) as max from project_order where anggaran_id=?", id).
+		Scan(&result)
+	nextCetak := result.Max + 1
+
+	db.Exec("UPDATE project_order SET Cetak=?, status=2 WHERE status = 1 and anggaran_id=?", nextCetak, id)
+
+	w.Write(ParseJSON(order))
+
+}

@@ -52,8 +52,9 @@ func main() {
 	rAuth.HandleFunc("/project_order/prepareUpgrade", projectOrder.PrepareCreate)
 	rAuth.HandleFunc("/project_order/prepareUpgrade/{id:[0-9]+}", projectOrder.PrepareUpdate)
 	rAuth.HandleFunc("/project_order/check/{id:[0-9]+}/{barangId:[0-9]+}/{jumlah:[0-9]+}", projectOrder.Check)
-	rAuth.HandleFunc("/project_order/save", projectOrder.Update).Methods("PUT")
-	rAuth.HandleFunc("/project_order/cetak_order/{id:[0-9]+}", projectOrder.Approve).Methods("GET")
+	rAuth.HandleFunc("/project_order/save", projectOrder.Create).Methods("POST")
+	rAuth.HandleFunc("/project_order/approve/{id:[0-9]+}", projectOrder.Approve).Methods("GET")
+	rAuth.HandleFunc("/project_order/cetak/{id:[0-9]+}", projectOrder.CetakOrder).Methods("GET")
 
 	//r.Handle("/api", Middleware(rAuth))
 	http.Handle("/", (Middleware(r)))

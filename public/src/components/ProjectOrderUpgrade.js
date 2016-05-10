@@ -119,6 +119,7 @@ class ProjectOrderUpgrade extends React.Component {
     this.handleBarangInput = this.handleBarangInput.bind(this)
     this.handleKembali = this.handleKembali.bind(this)
     this.handleTambahOrder = this.handleTambahOrder.bind(this)
+    //this.handleCetak = this.handleCetak.bind(this)
     //this.handleApprove = this.handleApprove.bind(this)
     this.firstTime = true
   }
@@ -213,6 +214,13 @@ class ProjectOrderUpgrade extends React.Component {
   handleApprove(id) {
     console.log('menggila', id)
     this.props.actions.approveOrder(id)
+  }
+
+  handleCetak(id) {
+    let i = confirm('Apakah anda yakin mencetak order yang sudah disetujui?')
+    if (i) {
+      this.props.actions.cetakOrder(id)
+    }
   }
 
   render() {
@@ -315,7 +323,7 @@ class ProjectOrderUpgrade extends React.Component {
       else if (order.Status == 1) {
         status = (<p className="t-green">Disetujui</p>)
       } else if (order.Status == 2) {
-        status = (<p className="t-blue">Dicetak</p>)
+        status = (<p className="t-blue">Dicetak({order.Cetak})</p>)
       }
       return (
         <tr key={order.ID}>
@@ -374,6 +382,21 @@ class ProjectOrderUpgrade extends React.Component {
         <h2 className="t-center">No order found</h2>
       )
     }
+    let LeftDetail = null
+    if (upgradeData.Anggaran) {
+      LeftDetail = (
+        <div>
+        <p>Lokasi: {upgradeData.Anggaran ? upgradeData.Anggaran.Lokasi : ''}<br/>
+          Blok Rumah: {upgradeData.Anggaran ? upgradeData.Anggaran.BlokRumah : ''}<br/>
+          Keterangan: {upgradeData.Anggaran ? upgradeData.Anggaran.Keterangan : ''}<br/>
+        </p>
+
+        <button type="button" onClick={this.handleCetak.bind(this, upgradeData.Anggaran.ID)} className="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
+          Cetak
+        </button>
+      </div>
+      )
+    }
     return (
 
       <form onSubmit={this.handleSave}>
@@ -390,10 +413,7 @@ class ProjectOrderUpgrade extends React.Component {
             <div className="p-40 p-r-20 p-20--small">
               <div className=" mdl-color-text--blue-grey-400">
                 <h3><i className="material-icons f-left m-r-5">format_align_left</i> Anggaran</h3>
-                <p>Lokasi: {upgradeData.Anggaran ? upgradeData.Anggaran.Lokasi : ''}<br/>
-                  Blok Rumah: {upgradeData.Anggaran ? upgradeData.Anggaran.BlokRumah : ''}<br/>
-                  Keterangan: {upgradeData.Anggaran ? upgradeData.Anggaran.Keterangan : ''}<br/>
-                      </p>
+                {LeftDetail}
               </div>
             </div>
           </div>

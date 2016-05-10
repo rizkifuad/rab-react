@@ -48,9 +48,7 @@ const Sidebar = React.createClass({
                             <i className="material-icons f14">menu</i>
                         </button>
                         <ul className="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" htmlFor="accbtn">
-                            <li className="mdl-menu__item">Elan@space.com</li>
-                            <li className="mdl-menu__item">Cloud@strife.com</li>
-                            <li className="mdl-menu__item">Add another account</li>
+                            <li className="mdl-menu__item">Logout</li>
                         </ul>
                     </div>
                 </header>
@@ -61,6 +59,7 @@ const Sidebar = React.createClass({
                     <MenuItem link="/supplier" name="Supplier" icon="business"/>
                     <MenuItem link="/anggaran" name="RAB" icon="format_list_numbered"/>
                     <MenuItem link="/project_order" name="Project Order" icon="local_shipping"/>
+                    <MenuItem link="/pembayaran" name="Pembayaran" icon="payment"/>
                     <MenuItem link="/logout" name="Logout" icon="exit_to_app"/>
                 </ul>
             </div>
