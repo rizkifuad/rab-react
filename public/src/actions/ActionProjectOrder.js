@@ -160,7 +160,6 @@ export function create(formData) {
   return dispatch => {
     const url = '/api/project_order/save'
     const data = formData
-    const request = API().post(url, data)
 
     dispatch(fetching('CREATE_PROJECT_ORDER'))
     //checking dl
@@ -169,6 +168,7 @@ export function create(formData) {
       if (res.data.Error) {
         let r = confirm(res.data.Message)
         if (r == true) {
+          const request = API().post(url, data)
           request.then(function(response) {
             Dispatch(dispatch, createProjectOrderSuccess,response.data)
             dispatch(prepareUpgrade('UPDATE', formData.anggaran_id))
@@ -178,6 +178,15 @@ export function create(formData) {
         } else {
 
         }
+      } else {
+
+          const request = API().post(url, data)
+          request.then(function(response) {
+            Dispatch(dispatch, createProjectOrderSuccess,response.data)
+            dispatch(prepareUpgrade('UPDATE', formData.anggaran_id))
+          }).catch(function(err) {
+            Fallback(dispatch, createProjectOrderFailure, err)
+          })
       }
     })
   }
@@ -233,7 +242,7 @@ export function cetakOrder(id) {
     dispatch(fetching('CETAK_ORDER'))
     request.then(function(response) {
       Dispatch(dispatch, cetakOrderSuccess, response)
-      dispatch(prepareUpgrade('UPDATE', response.data.AnggaranId))
+      dispatch(prepareUpgrade('UPDATE', id))
     }).catch(function(err) {
       Fallback(dispatch, cetakOrderFailure, err)
     })
