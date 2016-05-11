@@ -148,6 +148,22 @@ func (porder *ProjectOrder) Approve(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func (porder *ProjectOrder) Tolak(w http.ResponseWriter, r *http.Request) {
+	db := initDb()
+	vars := mux.Vars(r)
+	id, _ := strconv.Atoi(vars["id"])
+
+	var order ProjectOrder
+
+	order.GetByID(id)
+	order.Status = 3
+
+	db.Table("project_order").Where("id = ?", id).Update(order)
+
+	w.Write(ParseJSON(order))
+
+}
+
 func (order *ProjectOrder) CetakOrder(w http.ResponseWriter, r *http.Request) {
 	db := initDb()
 	vars := mux.Vars(r)

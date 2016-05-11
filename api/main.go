@@ -54,6 +54,7 @@ func main() {
 	rAuth.HandleFunc("/project_order/check/{id:[0-9]+}/{barangId:[0-9]+}/{jumlah:[0-9]+}", projectOrder.Check)
 	rAuth.HandleFunc("/project_order/save", projectOrder.Create).Methods("POST")
 	rAuth.HandleFunc("/project_order/approve/{id:[0-9]+}", projectOrder.Approve).Methods("GET")
+	rAuth.HandleFunc("/project_order/tolak/{id:[0-9]+}", projectOrder.Tolak).Methods("GET")
 	rAuth.HandleFunc("/project_order/cetak/{id:[0-9]+}", projectOrder.CetakOrder).Methods("GET")
 
 	//r.Handle("/api", Middleware(rAuth))

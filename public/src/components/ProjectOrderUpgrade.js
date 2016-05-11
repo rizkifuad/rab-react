@@ -212,8 +212,12 @@ class ProjectOrderUpgrade extends React.Component {
   }
 
   handleApprove(id) {
-    console.log('menggila', id)
     this.props.actions.approveOrder(id)
+  }
+
+
+  handleTolak(id) {
+    this.props.actions.tolakOrder(id)
   }
 
   handleCetak(id) {
@@ -313,9 +317,15 @@ class ProjectOrderUpgrade extends React.Component {
       console.log('if', order.ID, auth.role)
       if ((order.Status == 0 || !order.Status) && auth.role == 'manager') {
         status = (
-          <button onClick={this.handleApprove.bind(this, order.ID)} type="button" className="mdl-button mdl-button-mini mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
+          <div>
+          <button onClick={this.handleApprove.bind(this, order.ID)} type="button" className="mdl-button mdl-button-mini mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">
             Approve
           </button>
+          &nbsp;
+          <button onClick={this.handleTolak.bind(this, order.ID)} type="button" className="mdl-button mdl-button-mini mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
+            Tolak
+          </button>
+        </div>
         )
       } else if (order.Status == 0 || !order.Status) {
         status = (<p className="t-red">Belum di Setujui</p>)
@@ -324,6 +334,8 @@ class ProjectOrderUpgrade extends React.Component {
         status = (<p className="t-green">Disetujui</p>)
       } else if (order.Status == 2) {
         status = (<p className="t-blue">Dicetak({order.Cetak})</p>)
+      } else if (order.Status == 3) {
+        status = (<p className="t-red">Ditolak</p>)
       }
       return (
         <tr key={order.ID}>

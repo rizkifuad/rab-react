@@ -9,7 +9,7 @@ const Header = React.createClass({
         <div className="mdl-layout__header-row">
           <span className="mdl-layout-title"><a>Aplikasi Rencana Anggaran Belanja</a></span>
           <div className="mdl-layout-spacer"></div>
-          <div className="mdl-textfield mdl-js-textfield mdl-textfield--expandable">
+          <div className="hide mdl-textfield mdl-js-textfield mdl-textfield--expandable">
             <label className="mdl-button mdl-js-button mdl-button--icon" htmlFor="search">
               <i className="material-icons">search</i>
             </label>
@@ -18,10 +18,10 @@ const Header = React.createClass({
               <label className="mdl-textfield__label" htmlFor="search">Enter your query...</label>
             </div>
           </div>
-          <button className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="hdrbtn">
+          <button className="hide mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="hdrbtn">
             <i className="material-icons">more_vert</i>
           </button>
-          <ul className="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" htmlFor="hdrbtn">
+          <ul className="hide mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" htmlFor="hdrbtn">
             <li className="mdl-menu__item">About</li>
             <li className="mdl-menu__item">Contact</li>
             <li className="mdl-menu__item">Legal information</li>

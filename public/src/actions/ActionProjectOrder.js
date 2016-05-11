@@ -18,6 +18,9 @@ const {
   APPROVE_ORDER_FAILURE,
 
 
+  TOLAK_ORDER_SUCCESS,
+  TOLAK_ORDER_FAILURE,
+
   CETAK_ORDER_SUCCESS,
   CETAK_ORDER_FAILURE,
 
@@ -191,6 +194,35 @@ export function create(formData) {
     })
   }
 }
+
+export function tolakOrderSuccess(data) {
+  return {
+    type: TOLAK_ORDER_SUCCESS,
+    payload: data
+  }
+}
+
+
+export function tolakOrderFailure(data) {
+  return {
+    type: TOLAK_ORDER_FAILURE,
+    payload: data
+  }
+}
+
+export function tolakOrder(id) {
+  return function(dispatch) {
+    let request = API().get('/api/project_order/tolak/'+id)
+    dispatch(fetching('TOLAK_ORDER'))
+    request.then(function(response) {
+      Dispatch(dispatch, tolakOrderSuccess, response)
+      dispatch(prepareUpgrade('UPDATE', response.data.AnggaranId))
+    }).catch(function(err) {
+      Fallback(dispatch, tolakOrderFailure, err)
+    })
+  }
+}
+
 
 export function approveOrderSuccess(data) {
   return {

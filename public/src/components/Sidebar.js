@@ -38,16 +38,16 @@ const Sidebar = React.createClass({
                         </div>
                         <div className="f-left">
                             <h4 className="mdl-color-text--white m-t-6 no-m-b">R.A.B</h4>
-                            <div className="mdl-color-text--blue-grey-400 f12"><i className=" material-icons f12">place</i></div>
+                            <div className="hide mdl-color-text--blue-grey-400 f12"><i className=" material-icons f12">place</i></div>
                         </div>
                     </div>
                     <div className="demo-avatar-dropdown">
                         <span>{ username }</span>
                         <div className="mdl-layout-spacer"></div>
-                        <button id="accbtn" className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+                        <button id="accbtn" className="hide mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
                             <i className="material-icons f14">menu</i>
                         </button>
-                        <ul className="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" htmlFor="accbtn">
+                        <ul className="hide mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" htmlFor="accbtn">
                             <li className="mdl-menu__item">Logout</li>
                         </ul>
                     </div>
