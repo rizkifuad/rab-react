@@ -10,7 +10,7 @@ import (
 )
 
 func (u *User) Update(w http.ResponseWriter, r *http.Request) {
-	db := initDb()
+	//db := initDb()
 	decoder := json.NewDecoder(r.Body)
 
 	var input UserInput
@@ -31,7 +31,7 @@ func (u *User) Update(w http.ResponseWriter, r *http.Request) {
 }
 
 func (u *User) Create(w http.ResponseWriter, r *http.Request) {
-	db := initDb()
+	//db := initDb()
 	decoder := json.NewDecoder(r.Body)
 
 	var input UserInput
@@ -67,7 +67,7 @@ func (u *User) Validate(w http.ResponseWriter, r *http.Request) {
 		Error: false,
 	}
 
-	db := initDb()
+	//db := initDb()
 	var user User
 	db.Where("username = ?", req.Username).Find(&user)
 

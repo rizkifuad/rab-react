@@ -67,7 +67,7 @@ func (user *User) ValidateToken(t string) bool {
 }
 
 func (user *User) GetByID(id int) {
-	db := initDb()
+	//db := initDb()
 	db.Where("id = ?", id).Find(&user)
 
 }
@@ -83,7 +83,7 @@ func (user *User) Encrypt(password string) string {
 func (user *User) GetUsers() Users {
 	var users []User
 
-	db := initDb()
+	//db := initDb()
 
 	db.Table("user").Select("nama, username, role, id").Scan(&users)
 

@@ -10,7 +10,7 @@ import (
 )
 
 func (order *ProjectOrder) Update(w http.ResponseWriter, r *http.Request) {
-	//db := initDb()
+	////db := initDb()
 	decoder := json.NewDecoder(r.Body)
 
 	var input ProjectOrderInput
@@ -32,7 +32,7 @@ func (order *ProjectOrder) Update(w http.ResponseWriter, r *http.Request) {
 
 func (order *ProjectOrder) Create(w http.ResponseWriter, r *http.Request) {
 	println("Save")
-	db := initDb()
+	//db := initDb()
 	decoder := json.NewDecoder(r.Body)
 	fmt.Printf("%v", r.Body)
 
@@ -133,7 +133,7 @@ func (order *ProjectOrder) Check(w http.ResponseWriter, r *http.Request) {
 }
 
 func (porder *ProjectOrder) Approve(w http.ResponseWriter, r *http.Request) {
-	db := initDb()
+	//db := initDb()
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"])
 
@@ -149,7 +149,7 @@ func (porder *ProjectOrder) Approve(w http.ResponseWriter, r *http.Request) {
 }
 
 func (porder *ProjectOrder) Tolak(w http.ResponseWriter, r *http.Request) {
-	db := initDb()
+	//db := initDb()
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"])
 
@@ -165,7 +165,7 @@ func (porder *ProjectOrder) Tolak(w http.ResponseWriter, r *http.Request) {
 }
 
 func (order *ProjectOrder) CetakOrder(w http.ResponseWriter, r *http.Request) {
-	db := initDb()
+	//db := initDb()
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"])
 
@@ -177,6 +177,12 @@ func (order *ProjectOrder) CetakOrder(w http.ResponseWriter, r *http.Request) {
 	nextCetak := result.Max + 1
 
 	db.Exec("UPDATE project_order SET Cetak=?, status=2 WHERE status = 1 and anggaran_id=?", nextCetak, id)
+
+	//should insert this into pembayaran
+
+	var pembayaran Pembayaran
+
+	pembayaran.SaveOrder(id, nextCetak)
 
 	w.Write(ParseJSON(order))
 

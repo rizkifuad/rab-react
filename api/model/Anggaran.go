@@ -22,7 +22,7 @@ type AnggaranDetail struct {
 }
 
 func (anggaranDetail *AnggaranDetail) CountBarang(id int, barangId int) int {
-	db := initDb()
+	//db := initDb()
 
 	var result struct {
 		Jumlah int
@@ -35,7 +35,7 @@ func (anggaranDetail *AnggaranDetail) CountBarang(id int, barangId int) int {
 }
 
 func (anggaran *Anggaran) UpdateDetails(id string, items []AnggaranDetail) {
-	db := initDb()
+	//db := initDb()
 	db.Delete(AnggaranDetail{}, "anggaran_id = ?", id)
 
 	for _, anggaran_detail := range items {
@@ -44,7 +44,7 @@ func (anggaran *Anggaran) UpdateDetails(id string, items []AnggaranDetail) {
 }
 
 func (anggaran *Anggaran) GetDetails(id int) []AnggaranDetail {
-	db := initDb()
+	//db := initDb()
 	var details []AnggaranDetail
 
 	db.Table("anggaran_detail").Select("*").Where("anggaran_id = ?", id).Find(&details)
@@ -52,7 +52,7 @@ func (anggaran *Anggaran) GetDetails(id int) []AnggaranDetail {
 }
 
 func (anggaran *Anggaran) GetAnggarans() []Anggaran {
-	db := initDb()
+	//db := initDb()
 	var anggarans []Anggaran
 
 	db.Table("anggaran").Select("*").Find(&anggarans)
@@ -60,7 +60,7 @@ func (anggaran *Anggaran) GetAnggarans() []Anggaran {
 }
 
 func (anggaran *Anggaran) GetByID(id int) {
-	db := initDb()
+	//db := initDb()
 	db.Where("id = ?", id).Find(&anggaran)
 }
 
@@ -113,7 +113,7 @@ type BarangAnggaran struct {
 }
 
 func (anggaran *Anggaran) GetBarang(anggaranId int) []BarangAnggaran {
-	db := initDb()
+	//db := initDb()
 	var barang []BarangAnggaran
 	db.Table("anggaran_detail ad").Select("ad.barang_id, nama_barang, sum(jumlah) jumlah").Joins("JOIN barang b ON b.id = ad.barang_id").Where("ad.anggaran_id = ? and ad.deleted_at IS NULL", anggaranId).Group("barang_id").Scan(&barang)
 	fmt.Printf("%+v", barang)

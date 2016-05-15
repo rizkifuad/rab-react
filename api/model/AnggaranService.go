@@ -9,7 +9,7 @@ import (
 )
 
 func (anggaran *Anggaran) Update(w http.ResponseWriter, r *http.Request) {
-	db := initDb()
+	////db := initDb()
 	decoder := json.NewDecoder(r.Body)
 
 	var input AnggaranInput
@@ -52,7 +52,7 @@ func (anggaran *Anggaran) Update(w http.ResponseWriter, r *http.Request) {
 }
 
 func (anggaran *Anggaran) Create(w http.ResponseWriter, r *http.Request) {
-	db := initDb()
+	//db := initDb()
 	decoder := json.NewDecoder(r.Body)
 
 	var input AnggaranInput

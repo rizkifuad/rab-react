@@ -9,7 +9,7 @@ import (
 )
 
 func (supplier *Supplier) Update(w http.ResponseWriter, r *http.Request) {
-	db := initDb()
+	//db := initDb()
 	decoder := json.NewDecoder(r.Body)
 
 	var input SupplierInput
@@ -30,7 +30,7 @@ func (supplier *Supplier) Update(w http.ResponseWriter, r *http.Request) {
 }
 
 func (supplier *Supplier) Create(w http.ResponseWriter, r *http.Request) {
-	db := initDb()
+	//db := initDb()
 	decoder := json.NewDecoder(r.Body)
 
 	var input SupplierInput

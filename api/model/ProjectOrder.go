@@ -23,7 +23,7 @@ type TotalOrder struct {
 }
 
 func (order *TotalOrder) GetTotalOrder(id int) []TotalOrder {
-	db := initDb()
+	//db := initDb()
 
 	var result []TotalOrder
 
@@ -34,7 +34,7 @@ func (order *TotalOrder) GetTotalOrder(id int) []TotalOrder {
 }
 
 func (order *ProjectOrder) CountBarang(id int, barangId int) int {
-	db := initDb()
+	//db := initDb()
 
 	var result struct {
 		Jumlah int
@@ -45,7 +45,7 @@ func (order *ProjectOrder) CountBarang(id int, barangId int) int {
 }
 
 func (order *ProjectOrder) GetOrders(id int) []ProjectOrder {
-	db := initDb()
+	//db := initDb()
 	var orders []ProjectOrder
 
 	db.Table("project_order").Select("*").Where("anggaran_id = ?", id).Find(&orders)
@@ -53,7 +53,7 @@ func (order *ProjectOrder) GetOrders(id int) []ProjectOrder {
 }
 
 func (order *ProjectOrder) GetByID(id int) {
-	db := initDb()
+	//db := initDb()
 	db.Where("id = ?", id).Find(&order)
 }
 

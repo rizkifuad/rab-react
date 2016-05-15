@@ -8,9 +8,13 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
+	"github.com/jinzhu/gorm"
 )
 
+var db gorm.DB
+
 func main() {
+	model.Init()
 	model.Migrate()
 
 	user := model.User{}

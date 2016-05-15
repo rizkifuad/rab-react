@@ -12,6 +12,12 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
+var db *gorm.DB
+
+func Init() {
+	db = initDb()
+}
+
 func initDb() *gorm.DB {
 	db, err := gorm.Open(config.DRIVER, config.CONN)
 	if err != nil {

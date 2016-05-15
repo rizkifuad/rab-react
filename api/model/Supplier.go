@@ -13,7 +13,7 @@ type Supplier struct {
 }
 
 func (supplier *Supplier) GetSuppliers() []Supplier {
-	db := initDb()
+	//db := initDb()
 	var suppliers []Supplier
 
 	db.Table("supplier").Select("*").Find(&suppliers)
@@ -21,7 +21,7 @@ func (supplier *Supplier) GetSuppliers() []Supplier {
 }
 
 func (supplier *Supplier) GetByID(id int) {
-	db := initDb()
+	//db := initDb()
 	db.Where("id = ?", id).Find(&supplier)
 }
 
