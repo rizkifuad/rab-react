@@ -77,3 +77,14 @@ export function createRoutes(path, component) {
     }
   ]
 }
+
+export function print(divName) {
+ var divToPrint=document.getElementById(divName);
+   var newWin= window.open("");
+   newWin.document.write('<link rel="stylesheet" href="http://localhost:3000/assets/css/print.css">')
+   newWin.document.write(divToPrint.outerHTML);
+   setTimeout(function() {
+     newWin.print();
+   }, 500)
+   //newWin.close();
+}

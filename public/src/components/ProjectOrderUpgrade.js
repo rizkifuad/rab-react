@@ -5,6 +5,8 @@ import * as actionCreators from '../actions/ActionProjectOrder'
 import { browserHistory } from 'react-router'
 import TopBar from '../views/TopBar'
 import moment from 'moment'
+import { print } from '../utils/index'
+import $ from 'jquery'
 let ACTION = 'CREATE'
 
 
@@ -221,9 +223,18 @@ class ProjectOrderUpgrade extends React.Component {
   }
 
   handleCetak(id) {
-    let i = confirm('Apakah anda yakin mencetak order yang sudah disetujui?')
-    if (i) {
-      this.props.actions.cetakOrder(id)
+    let upgradeData = this.props.order.upgradeData
+    var approved = upgradeData.Order.filter(function(e) {
+      return e.Status == '1'
+    })
+    if (approved.length > 0) {
+      let i = confirm('Apakah anda yakin mencetak order yang sudah disetujui?')
+      if (i) {
+        this.props.actions.cetakOrder(id)
+        print('order-table')
+      }
+    } else {
+      alert('Tidak ada barang yang pending')
     }
   }
 
@@ -315,6 +326,7 @@ class ProjectOrderUpgrade extends React.Component {
       let status = null
 
       console.log('if', order.ID, auth.role)
+      var printClass = ""
       if ((order.Status == 0 || !order.Status) && auth.role == 'manager') {
         status = (
           <div>
@@ -332,13 +344,14 @@ class ProjectOrderUpgrade extends React.Component {
       }
       else if (order.Status == 1) {
         status = (<p className="t-green">Disetujui</p>)
+        printClass = "print-row"
       } else if (order.Status == 2) {
         status = (<p className="t-blue">Dicetak({order.Cetak})</p>)
       } else if (order.Status == 3) {
         status = (<p className="t-red">Ditolak</p>)
       }
       return (
-        <tr key={order.ID}>
+        <tr key={order.ID} className={printClass}>
           <td>{i}</td>
           <td>{b.NamaBarang}</td>
           <td>{order.Jumlah}</td>
@@ -354,13 +367,13 @@ class ProjectOrderUpgrade extends React.Component {
 
     if(upgradeData.Order && upgradeData.Order.length > 0) {
       OrderTable =  (
-        <div>
+        <div id="order-table">
           <table ref="mdl_table" className="mdl-data-table ml-table-striped mdl-js-data-table ">
             <colgroup>
               <col className="auto-cell-size p-r-20"/>
             </colgroup>
             <thead>
-              <tr>
+              <tr className="print-row">
                 <th>No</th>
                 <th>Nama Barang</th>
                 <th>Jumlah</th>

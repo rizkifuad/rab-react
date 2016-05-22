@@ -3,7 +3,6 @@ package model
 import (
 	"fmt"
 	"strconv"
-	"time"
 
 	"github.com/jinzhu/gorm"
 )
@@ -28,15 +27,22 @@ func (pembayaran *Pembayaran) SaveOrder(anggaranId int, cetak int) {
 
 	fmt.Printf("%+v", bayars)
 	for _, b := range bayars {
-		b.CreatedAt = time.Now()
-		b.UpdatedAt = time.Now()
-		db.Create(b)
+		db.Create(&b)
 	}
 }
 
-func (pembayaran *Pembayaran) GetByID(id int) {
-	db := initDb()
-	db.Where("id = ?", id).Find(&pembayaran)
+func (pembayaran *Pembayaran) GetPembayarans() []Pembayaran {
+	var pembayarans []Pembayaran
+	db.Table("pembayaran").
+		Group("anggaran_id, cetak, barang_id").
+		Scan(&pembayarans)
+
+	return pembayarans
+}
+
+func (pembayaran *Pembayaran) GetByID(anggaranId int, cetak int) {
+	//db := initDb()
+	db.Where("anggaran_id = ?, cetak = ?", anggaranId, cetak).Find(&pembayaran)
 }
 
 type PembayaranInput struct {
