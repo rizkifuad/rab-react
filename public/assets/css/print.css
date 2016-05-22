@@ -41,6 +41,12 @@ tr:nth-child(odd) td { background: #FEFEFE; }
 tr td:hover { background: #666; color: #FFF; } /* Hover cell effect! */
 
 .hide{display:none}
+.print-hide{
+  display:none;
+}
+.print-show{
+  display:block;
+}
 @media print {
   table { 
     color: #333;
@@ -85,4 +91,13 @@ tr td:hover { background: #666; color: #FFF; } /* Hover cell effect! */
     display: none;
   }
   .hide{display:none}
+
+.print-show{
+  display:block;
+}
+
+.print-hide{
+  display:none;
+}
+
 }

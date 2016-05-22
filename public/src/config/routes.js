@@ -240,6 +240,18 @@ const Routes = {
             }
           ]
         },
+        { 
+          childRoutes: [
+            // Protected routes that don't share the dashboard UI
+            { path: '/pembayaran/edit/:pembayaranId',
+              getComponent: (location, cb) => {
+                require.ensure([], (require) => {
+                  cb(null, require('../components/PembayaranUpgrade'))
+                })
+              }
+            }
+          ]
+        },
       ]
     }
 

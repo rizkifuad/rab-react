@@ -60,6 +60,8 @@ func (pembayaran *Pembayaran) PrepareUpdate(w http.ResponseWriter, r *http.Reque
 }
 
 func (pembayaran *Pembayaran) List(w http.ResponseWriter, r *http.Request) {
-	pembayarans := pembayaran.GetPembayarans()
+	vars := mux.Vars(r)
+	id, _ := strconv.Atoi(vars["id"])
+	pembayarans := pembayaran.GetPembayarans(id)
 	w.Write(ParseJSON(pembayarans))
 }

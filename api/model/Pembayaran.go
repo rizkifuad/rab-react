@@ -31,10 +31,19 @@ func (pembayaran *Pembayaran) SaveOrder(anggaranId int, cetak int) {
 	}
 }
 
-func (pembayaran *Pembayaran) GetPembayarans() []Pembayaran {
-	var pembayarans []Pembayaran
+type PembayaranDetail struct {
+	Pembayaran
+	JenisBarang int
+	ListBarang  string
+	ListOrders  string
+}
+
+func (pembayaran *Pembayaran) GetPembayarans(id int) []PembayaranDetail {
+	var pembayarans []PembayaranDetail
 	db.Table("pembayaran").
-		Group("anggaran_id, cetak, barang_id").
+		Select("*, count(barang_id) jenis_barang, GROUP_CONCAT(barang_id SEPARATOR ',') list_barang, GROUP_CONCAT(list_order SEPARATOR ',') list_orders").
+		Where("anggaran_id = ?", id).
+		Group("anggaran_id, cetak").
 		Scan(&pembayarans)
 
 	return pembayarans

@@ -3,7 +3,7 @@ import { API, serializeForm, Dispatch, Fallback } from '../utils/'
 import CONSTANTS from '../constants/index'
 
 const { 
-  FETCHING, 
+  FETCHING_PEMBAYARAN,
   GET_PEMBAYARANS_SUCCESS, 
   GET_PEMBAYARANS_FAILURE, 
   SELECT_PEMBAYARAN, 
@@ -20,7 +20,7 @@ const {
 
 export function fetching(action) {
   return {
-    type: FETCHING,
+    type: FETCHING_PEMBAYARAN,
     payload: action
   }
 }
@@ -39,9 +39,9 @@ export function getPembayaransFailure(data) {
   }
 }
 
-export function getPembayarans() {
+export function getPembayarans(id) {
   return function(dispatch) {
-    let request = API().get('/api/pembayaran')
+    let request = API().get('/api/pembayaran/'+id)
     dispatch(fetching('GET_PEMBAYARANS'))
     request.then(function(response) {
       Dispatch(dispatch, getPembayaransSuccess,response.data)

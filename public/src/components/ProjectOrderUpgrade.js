@@ -367,7 +367,7 @@ class ProjectOrderUpgrade extends React.Component {
 
     if(upgradeData.Order && upgradeData.Order.length > 0) {
       OrderTable =  (
-        <div id="order-table">
+        <div>
           <table ref="mdl_table" className="mdl-data-table ml-table-striped mdl-js-data-table ">
             <colgroup>
               <col className="auto-cell-size p-r-20"/>
@@ -416,7 +416,7 @@ class ProjectOrderUpgrade extends React.Component {
           Keterangan: {upgradeData.Anggaran ? upgradeData.Anggaran.Keterangan : ''}<br/>
         </p>
 
-        <button type="button" onClick={this.handleCetak.bind(this, upgradeData.Anggaran.ID)} className="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
+        <button type="button" onClick={this.handleCetak.bind(this, upgradeData.Anggaran.ID)} className="mdl-button print-hide mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
           Cetak
         </button>
       </div>
@@ -450,7 +450,10 @@ class ProjectOrderUpgrade extends React.Component {
                   {this.props.order.status && this.props.order.status.error  ? <div className='alert alert-info text-red'>{this.props.order.status.message}</div> : ''}
                   <input ref="id" type="hidden" value={upgradeData.ProjectOrder ? upgradeData.ProjectOrder.ID : ''}/>
                   <h3 className="t-center">History Order</h3>
-                  <div className="mdl-cell mdl-cell--12-col  mdl-cell--12-col-tablet mdl-cell--12-col-phone">
+                  <div className="mdl-cell mdl-cell--12-col  mdl-cell--12-col-tablet mdl-cell--12-col-phone" id="order-table">
+                    <div className="hide print-show">
+                      {LeftDetail}
+                    </div>
                         {OrderTable}
 
 

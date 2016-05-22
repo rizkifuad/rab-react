@@ -3,7 +3,7 @@ import CONSTANTS from '../constants'
 
 
 const { 
-  FETCHING, 
+  FETCHING_PEMBAYARAN, 
   GET_PEMBAYARANS_SUCCESS, 
   GET_PEMBAYARANS_FAILURE, 
   SELECT_PEMBAYARAN, 
@@ -33,7 +33,7 @@ const initialState = {
 };
 
 export default createReducer(initialState, {
-    [FETCHING]: (state, payload) => {
+    [FETCHING_PEMBAYARAN]: (state, payload) => {
         return Object.assign({}, state, {
           fetching: true,
           data: []

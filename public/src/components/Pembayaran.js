@@ -2,11 +2,16 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import * as actionCreators from '../actions/ActionPembayaran'
+import { getAnggarans } from '../actions/ActionAnggaran'
 import { Link, browserHistory } from 'react-router'
 import $ from 'jquery'
 import TopBar from '../views/TopBar'
+import moment from 'moment'
+
+actionCreators.getAnggarans = getAnggarans
 
 
+let firstTime = true
 class Pembayaran extends React.Component {
   constructor(props) {
     super(props)
@@ -14,7 +19,7 @@ class Pembayaran extends React.Component {
 
 
   componentWillMount() {
-    this.props.actions.getPembayarans()
+    this.props.actions.getAnggarans()
   }
 
 
@@ -32,6 +37,18 @@ class Pembayaran extends React.Component {
       _this.props.actions.selectPembayarans(checked)
     })
     componentHandler.upgradeDom();
+
+    if (this.props.anggaran && this.props.anggaran.data.length > 0 && firstTime) {
+      const anggaran = this.props.anggaran.data
+      console.log(anggaran)
+      this.props.actions.getPembayarans(anggaran[0].ID)
+      firstTime = false
+    }
+  }
+
+  handleAnggaranChange(e) {
+    console.log(e.target.value)
+    this.props.actions.getPembayarans(e.target.value)
   }
 
   isFetching() {
@@ -47,8 +64,9 @@ class Pembayaran extends React.Component {
           return (
             <tr key={pembayaran.ID}>
               <td>{i}</td>
-              <td>{pembayaran.NamaPembayaran}</td>
-              <td>{pembayaran.Alamat}</td>
+              <td>{pembayaran.Cetak}</td>
+              <td>{pembayaran.JenisBarang} Jenis</td>
+              <td>{moment(pembayaran.CreatedAt).format('YYYY-MM-DD HH:mm')}</td>
               <td>
                 <button onClick={this.handleEdit.bind(this, pembayaran.ID)} className="mdl-button mdl-js-button mdl-button--fab mdl-button--tiny-fab mdl-js-ripple-effect mdl-button--accent">
                   <i className="material-icons">edit</i>
@@ -71,8 +89,9 @@ class Pembayaran extends React.Component {
             <thead>
               <tr>
                 <th className="mdl-data-table__header--sorted-ascending">No</th>
-                <th>Nama Pembayaran</th>
-                <th>Alamat</th>
+                <th>No cetak</th>
+                <th>Jenis Barang</th>
+                <th>Order Tanggal</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -101,6 +120,18 @@ class Pembayaran extends React.Component {
           <h2 className="t-center">No data found</h2>
         )
       }
+
+  let AnggaranOption = null
+  console.log(this.props.anggaran.fetching, this.props.anggaran.data.length)
+  if (this.props.anggaran.fetching == false && this.props.anggaran.data.length > 0) {
+    AnggaranOption = this.props.anggaran.data.map(function(ang) {
+      console.log(ang)
+      return (
+        <option key={ang.ID} value={ang.ID}>{ang.Lokasi}</option>
+      )
+    })
+  }
+  console.log('option', AnggaranOption)
 
     const title = "Data pembayaran"
     const description = "Manajemen pembayaran aplikasi"
@@ -141,7 +172,18 @@ class Pembayaran extends React.Component {
               <div className="mdl-card mdl-shadow--1dp m-b-30">
                 <div className="mdl-card__title">
                   <h2 className="mdl-card__title-text"></h2>
+                  <div className="mdl-grid mdl-grid--no-spacing">
+                    <div className="mdl-cell mdl-cell--12-col">
+                      <div className="mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label">
+                        <select className="mdl-selectfield__select" defaultValue={0} onChange={this.handleAnggaranChange.bind(this)}>
+                          {AnggaranOption}
+                        </select>
+                        <label className="mdl-selectfield__label" htmlhtmlFor="barang">Anggaran</label>
+                      </div>
+                    </div>
+                  </div>
                 </div>
+
                 {PembayaranTable}
                 <div id="p2" className={this.isFetching()}></div>
 
@@ -157,7 +199,8 @@ class Pembayaran extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    pembayaran: state.pembayaran
+    pembayaran: state.pembayaran,
+    anggaran: state.anggaran
   }
 }
 

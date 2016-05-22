@@ -46,6 +46,7 @@ export function getAnggarans() {
     request.then(function(response) {
       Dispatch(dispatch, getAnggaransSuccess,response.data)
     }).catch(function(err) {
+      console.log(err)
       Fallback(dispatch, getAnggaransFailure, err)
     })
   }
