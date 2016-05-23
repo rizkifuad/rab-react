@@ -51,10 +51,17 @@ func (pembayaran *Pembayaran) PrepareUpdate(w http.ResponseWriter, r *http.Reque
 
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"])
+	cetak, _ := strconv.Atoi(vars["cetak"])
 	pembayaran.ID = uint(id)
-
-	pembayaran.GetByID(id, 1)
-	result := *pembayaran
+	var anggaran Anggaran
+	anggaran.GetByID(id)
+	var result struct {
+		Detail   []PembayaranDetail
+		Anggaran Anggaran
+	}
+	detail := pembayaran.GetByID(id, cetak)
+	result.Detail = detail
+	result.Anggaran = anggaran
 
 	w.Write(ParseJSON(result))
 }

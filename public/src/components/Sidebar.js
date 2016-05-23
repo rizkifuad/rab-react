@@ -60,6 +60,7 @@ const Sidebar = React.createClass({
                     <MenuItem link="/anggaran" name="RAB" icon="format_list_numbered"/>
                     <MenuItem link="/project_order" name="Project Order" icon="local_shipping"/>
                     <MenuItem link="/pembayaran" name="Pembayaran" icon="payment"/>
+                    <MenuItem link="/Report" name="Report" icon="report"/>
                     <MenuItem link="/logout" name="Logout" icon="exit_to_app"/>
                 </ul>
             </div>

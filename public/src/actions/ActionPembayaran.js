@@ -71,8 +71,8 @@ function prepareUpgradeFailure(err) {
   }
 }
 
-export function prepareUpgrade(type, id) {
-  let url =  '/api/pembayaran/prepareUpgrade/' + id
+export function prepareUpgrade(type, id, cetak) {
+  let url =  '/api/pembayaran/prepareUpgrade/' + id + '/' + cetak
 
   return dispatch => {
   dispatch(fetching('PREPARE_UPGRADE_PEMBAYARAN'))

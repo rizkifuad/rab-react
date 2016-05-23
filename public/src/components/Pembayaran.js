@@ -23,8 +23,8 @@ class Pembayaran extends React.Component {
   }
 
 
-  handleEdit(id) {
-    browserHistory.push(`pembayaran/edit/${id}`)
+  handleEdit(id, cetak) {
+    browserHistory.push(`pembayaran/edit/${id}/${cetak}`)
   }
 
   componentDidUpdate() {
@@ -36,13 +36,15 @@ class Pembayaran extends React.Component {
       });
       _this.props.actions.selectPembayarans(checked)
     })
-    componentHandler.upgradeDom();
 
     if (this.props.anggaran && this.props.anggaran.data.length > 0 && firstTime) {
       const anggaran = this.props.anggaran.data
       console.log(anggaran)
       this.props.actions.getPembayarans(anggaran[0].ID)
       firstTime = false
+      componentHandler.upgradeDom();
+    } else {
+      componentHandler.upgradeDom();
     }
   }
 
@@ -68,7 +70,7 @@ class Pembayaran extends React.Component {
               <td>{pembayaran.JenisBarang} Jenis</td>
               <td>{moment(pembayaran.CreatedAt).format('YYYY-MM-DD HH:mm')}</td>
               <td>
-                <button onClick={this.handleEdit.bind(this, pembayaran.ID)} className="mdl-button mdl-js-button mdl-button--fab mdl-button--tiny-fab mdl-js-ripple-effect mdl-button--accent">
+                <button onClick={this.handleEdit.bind(this, pembayaran.ID, pembayaran.Cetak)} className="mdl-button mdl-js-button mdl-button--fab mdl-button--tiny-fab mdl-js-ripple-effect mdl-button--accent">
                   <i className="material-icons">edit</i>
                 </button>
               </td>
@@ -150,7 +152,7 @@ class Pembayaran extends React.Component {
 
               <div className="mdl-color-text--blue-grey-400 sticky" ml-sticky offset="80" body-className="mdl-layout__content">
                 <p>Klik menu dibawah untuk menambah/menghapus pembayaran</p>
-                <div className="m-t-30">
+                <div className="m-t-30 hide">
                   <ul className="list-bordered">
                     <li><Link to="/pembayaran/add">
                         <i className="material-icons m-r-5 f11">add</i>
