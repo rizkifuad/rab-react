@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux'
 import * as actionCreators from '../actions/ActionPembayaran'
 import TopBar from '../views/TopBar'
 import moment from 'moment'
+import $ from 'jquery'
 let ACTION = 'CREATE'
 
 class PembayaranUpgrade extends React.Component {
@@ -43,16 +44,14 @@ class PembayaranUpgrade extends React.Component {
   }
 
   componentDidMount() {
-    if (ACTION == 'CREATE') {
       componentHandler.upgradeDom();
-    }
 
     var dialogButton = document.querySelector('.dialog-button');
     var dialog = document.querySelector('#dialog');
     if (! dialog.showModal) {
       dialogPolyfill.registerDialog(dialog);
     }
-    dialog.querySelector('button:not([disabled])')
+    dialog.querySelector('.dialog-close-button')
     .addEventListener('click', function() {
       dialog.close();
     });
@@ -68,10 +67,23 @@ class PembayaranUpgrade extends React.Component {
 
   }
 
+  handleUpdateTotal(e) {
+    var harga = e.target.value
+    this.refs.total.value = harga * 10
+  }
+
   handleInputBayar(id) {
+    var order = this.props.pembayaran.upgradeData.Detail.find(function(d) {
+      return d.ID == id
+    })
 
     var dialog = document.querySelector('#dialog');
     dialog.showModal();
+    this.refs.jumlah.value = order.Jumlah
+    this.refs.total.value = 0
+    $('.supplier-input').addClass('is-dirty')
+    $('.jumlah-input').addClass('is-dirty')
+    $('.harga-input').addClass('is-dirty')
   }
 
 
@@ -157,6 +169,15 @@ class PembayaranUpgrade extends React.Component {
       </div>
       )
     }
+  let SupplierOption = null
+  if (this.props.pembayaran.fetching == false && this.props.pembayaran.upgradeData.Supplier) {
+    SupplierOption = this.props.pembayaran.upgradeData.Supplier.map(function(ang) {
+      console.log(ang)
+      return (
+        <option key={ang.ID} value={ang.ID}>{ang.NamaSupplier}</option>
+      )
+    })
+  }
     return (
       <section className="text-fields">
         <TopBar
@@ -166,17 +187,48 @@ class PembayaranUpgrade extends React.Component {
         />
 
 
-<dialog id="dialog" className="mdl-dialog">
-  <h3 className="mdl-dialog__title">Input Pembayaran</h3>
-  <div className="mdl-dialog__content">
-    <p>
-      Input Harga dan Supplier
-    </p>
-  </div>
-  <div className="mdl-dialog__actions">
-    <button type="button" className="mdl-button">Close</button>
-  </div>
-</dialog>
+      <dialog id="dialog" className="mdl-dialog">
+        <form onSubmit={this.handleSave}>
+          <h3 className="mdl-dialog__title">Input Pembayaran</h3>
+          <div className="mdl-dialog__content">
+            <p>
+              Input Harga dan Supplier
+            </p>
+            <div className="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-phone no-p-l">
+              <input ref="id" type="hidden" />
+              <input ref="jumlah" type="hidden" />
+              <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <div className="mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label">
+                  <select className="mdl-selectfield__select supplier-input" defaultValue={0}>
+                    {SupplierOption}
+                  </select>
+                  <label className="mdl-selectfield__label" htmlhtmlFor="barang">Supplier</label>
+                </div>
+              </div>
+              <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input ref="harga" className="mdl-textfield__input" type="text" id="sample2" onChange={this.handleUpdateTotal.bind(this)} />
+                <label className="mdl-textfield__label" htmlhtmlFor="sample2">Harga per satuan</label>
+              </div>
+              <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label is-dirty jumlah-input">
+                <input ref="jumlah" className="mdl-textfield__input" type="text" id="jumlah" disabled/>
+                <label className="mdl-textfield__label" htmlhtmlFor="jumlah">Jumlah Barang</label>
+              </div>
+              <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label is-dirty harga-input">
+                <input ref="total" className="mdl-textfield__input" type="text" id="total" disabled/>
+                <label className="mdl-textfield__label" htmlhtmlFor="total">Total Harga</label>
+              </div>
+            </div>
+
+          </div>
+          <div className="mdl-dialog__actions">
+            <button type="submit" className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">
+              Simpan
+            </button>
+            <button type="button" className="mdl-button dialog-close-button">Close</button>
+          </div>
+        </form>
+      </dialog>
+
         <div className="mdl-grid mdl-grid--no-spacing">
 
           <div className="mdl-cell mdl-cell--3-col mdl-cell--12-col-tablet mdl-cell--12-col-phone mdl-color--grey-100 no-p-l">

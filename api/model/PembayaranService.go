@@ -54,14 +54,18 @@ func (pembayaran *Pembayaran) PrepareUpdate(w http.ResponseWriter, r *http.Reque
 	cetak, _ := strconv.Atoi(vars["cetak"])
 	pembayaran.ID = uint(id)
 	var anggaran Anggaran
+	var supplier Supplier
+
 	anggaran.GetByID(id)
 	var result struct {
 		Detail   []PembayaranDetail
 		Anggaran Anggaran
+		Supplier []Supplier
 	}
 	detail := pembayaran.GetByID(id, cetak)
 	result.Detail = detail
 	result.Anggaran = anggaran
+	result.Supplier = supplier.GetSuppliers()
 
 	w.Write(ParseJSON(result))
 }
