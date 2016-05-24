@@ -88,3 +88,12 @@ export function print(divName) {
    }, 500)
    //newWin.close();
 }
+
+export function toRp(string) {
+ string = string+''
+ string = string.split('')
+ for (var i = string.length-3; i > 0; i-=3) {
+   string[i] = '.' + string[i]
+ }
+ return 'Rp ' + string.join('')
+}

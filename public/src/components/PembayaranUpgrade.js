@@ -5,6 +5,7 @@ import * as actionCreators from '../actions/ActionPembayaran'
 import TopBar from '../views/TopBar'
 import moment from 'moment'
 import $ from 'jquery'
+import {toRp} from '../utils/index'
 let ACTION = 'CREATE'
 
 class PembayaranUpgrade extends React.Component {
@@ -73,6 +74,8 @@ class PembayaranUpgrade extends React.Component {
     var harga = e.target.value
     var jumlah = this.refs.jumlah.value
     this.refs.total.value = harga * jumlah
+    var faketotal = toRp(harga* jumlah)
+    this.refs.faketotal.value = faketotal
   }
 
   handleInputBayar(id) {
@@ -85,6 +88,7 @@ class PembayaranUpgrade extends React.Component {
     const defaultAnggaran = this.props.pembayaran.upgradeData.Supplier ? this.props.pembayaran.upgradeData.Supplier[0].ID : null
     this.refs.jumlah.value = order.Jumlah
     this.refs.total.value = 0
+    this.refs.faketotal.value = 0
     this.refs.harga.value = ''
     this.refs.supplier.value = defaultAnggaran
     this.refs.id.value = order.ID
@@ -125,34 +129,49 @@ class PembayaranUpgrade extends React.Component {
     if (this.props.pembayaran.upgradeData.Detail && this.props.pembayaran.upgradeData.Detail.length > 0) {
       PembayaranList = this.props.pembayaran.upgradeData.Detail.map((pembayaran) => {
         i++
-      let status = null
-      if (pembayaran.Status == 0 || !pembayaran.Status) {
-        status = (
-          <div>
-          <button onClick={this.handleInputBayar.bind(this, pembayaran.ID)} type="button" className="mdl-button mdl-button-mini mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">
-          Input Bayar
-        </button>
-      </div>
-        )
-      }
-      else if (pembayaran.Status == 1) {
-        status = (
-          <div>
-          <button onClick={this.handleLunasi.bind(this, pembayaran.ID)} type="button" className="mdl-button mdl-button-mini mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
-            Lunasi
-          </button>
-        </div>
-        )
-      } else if (pembayaran.Status == 2) {
-        status = (<p className="t-green">Lunas</p>)
-      } else if (pembayaran.Status == 3) {
-        status = (<p className="t-red">Ditolak</p>)
-      }
+          let status = null
+          if (pembayaran.Status == 0 || !pembayaran.Status) {
+            status = (
+              <div>
+                <button onClick={this.handleInputBayar.bind(this, pembayaran.ID)} type="button" className="mdl-button mdl-button-mini mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">
+                Input Bayar
+              </button>
+            </div>
+            )
+          }
+          else if (pembayaran.Status == 1) {
+            status = (
+              <div>
+                <button onClick={this.handleLunasi.bind(this, pembayaran.ID)} type="button" className="mdl-button mdl-button-mini mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
+                Lunasi
+              </button>
+            </div>
+            )
+          } else if (pembayaran.Status == 2) {
+            status = (<p className="t-green">Lunas</p>)
+          } else if (pembayaran.Status == 3) {
+            status = (<p className="t-red">Ditolak</p>)
+          }
+
+          let supplier = null
+
+          if (this.props.pembayaran.upgradeData.Supplier) {
+            const getSupplier = this.props.pembayaran.upgradeData.Supplier.find(function(s) {
+              console.log(s.ID, pembayaran.SupplierId)
+              return s.ID == pembayaran.SupplierId
+            })
+
+            supplier = getSupplier == null ? '-' : getSupplier.NamaSupplier
+          }
+
           return (
             <tr key={pembayaran.ID}>
               <td>{i}</td>
               <td>{pembayaran.NamaBarang}</td>
               <td>{pembayaran.Jumlah} {pembayaran.Satuan}</td>
+              <td>{toRp(pembayaran.Harga)}</td>
+              <td>{toRp(pembayaran.Jumlah * pembayaran.Total)}</td>
+              <td>{supplier}</td>
               <td>{status}</td>
             </tr>
           )
@@ -166,13 +185,16 @@ class PembayaranUpgrade extends React.Component {
         <div>
           <table ref="mdl_table" className="mdl-data-table ml-table-striped mdl-js-data-table mdl-data-table--selectable">
             <colgroup>
-              <col className="auto-cell-size p-r-20"/>
+              <col className="auto-cell-size p-r-10"/>
             </colgroup>
             <thead>
               <tr>
                 <th className="mdl-data-table__header--sorted-ascending">No</th>
                 <th>Nama Barang</th>
                 <th>Jumlah</th>
+                <th>Harga</th>
+                <th>Total</th>
+                <th>Supplier</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -230,6 +252,7 @@ class PembayaranUpgrade extends React.Component {
           color={color}
           title={title}
           description={description}
+          data={LeftDetail}
         />
 
 
@@ -246,6 +269,7 @@ class PembayaranUpgrade extends React.Component {
               <input ref="anggaran_id" type="hidden" />
               <input ref="cetak" type="hidden" />
               <input ref="jumlah" type="hidden" />
+              <input ref="total" type="hidden" />
               <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                 <div className="mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label  supplier-input">
                   <select ref="supplier" className="mdl-selectfield__select" defaultValue={defaultAnggaran}>
@@ -263,7 +287,7 @@ class PembayaranUpgrade extends React.Component {
                 <label className="mdl-textfield__label" htmlhtmlFor="jumlah">Jumlah Barang</label>
               </div>
               <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label harga-input">
-                <input ref="total" className="mdl-textfield__input" type="text" id="total" disabled/>
+                <input ref="faketotal" className="mdl-textfield__input" type="text" id="total" disabled/>
                 <label className="mdl-textfield__label" htmlhtmlFor="total">Total Harga</label>
               </div>
             </div>
@@ -278,18 +302,12 @@ class PembayaranUpgrade extends React.Component {
         </form>
       </dialog>
 
-        <div className="mdl-grid mdl-grid--no-spacing">
+      <br/>
+      <br/>
+      <br/>
+      <div className="mdl-grid mdl-grid--no-spacing">
 
-          <div className="mdl-cell mdl-cell--3-col mdl-cell--12-col-tablet mdl-cell--12-col-phone mdl-color--grey-100 no-p-l">
-            <div className="p-40 p-r-20 p-20--small">
-              <div className=" mdl-color-text--blue-grey-400">
-                <h3><i className="material-icons f-left m-r-5">format_align_left</i> Anggaran</h3>
-                {LeftDetail}
-              </div>
-            </div>
-          </div>
-
-          <div className="mdl-cell mdl-cell--9-col mdl-cell--12-col-tablet mdl-cell--12-col-phone no-p-l">
+          <div className="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-phone no-p-l">
             <div className="p-20 ml-card-holder ml-card-holder-first">
               <div className="mdl-card mdl-shadow--1dp">
                 <div className="p-30">

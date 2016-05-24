@@ -70,7 +70,7 @@ class Pembayaran extends React.Component {
               <td>{pembayaran.JenisBarang} Jenis</td>
               <td>{moment(pembayaran.CreatedAt).format('YYYY-MM-DD HH:mm')}</td>
               <td>
-                <button onClick={this.handleEdit.bind(this, pembayaran.ID, pembayaran.Cetak)} className="mdl-button mdl-js-button mdl-button--fab mdl-button--tiny-fab mdl-js-ripple-effect mdl-button--accent">
+                <button onClick={this.handleEdit.bind(this, pembayaran.AnggaranId, pembayaran.Cetak)} className="mdl-button mdl-js-button mdl-button--fab mdl-button--tiny-fab mdl-js-ripple-effect mdl-button--accent">
                   <i className="material-icons">edit</i>
                 </button>
               </td>
