@@ -124,8 +124,10 @@ class Pembayaran extends React.Component {
       }
 
   let AnggaranOption = null
+  let defaultAnggaran = null
   console.log(this.props.anggaran.fetching, this.props.anggaran.data.length)
   if (this.props.anggaran.fetching == false && this.props.anggaran.data.length > 0) {
+    defaultAnggaran = this.props.anggaran.data[0]
     AnggaranOption = this.props.anggaran.data.map(function(ang) {
       console.log(ang)
       return (
@@ -177,7 +179,7 @@ class Pembayaran extends React.Component {
                   <div className="mdl-grid mdl-grid--no-spacing">
                     <div className="mdl-cell mdl-cell--12-col">
                       <div className="mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label">
-                        <select className="mdl-selectfield__select" defaultValue={0} onChange={this.handleAnggaranChange.bind(this)}>
+                        <select className="mdl-selectfield__select" defaultValue={defaultAnggaran} onChange={this.handleAnggaranChange.bind(this)}>
                           {AnggaranOption}
                         </select>
                         <label className="mdl-selectfield__label" htmlhtmlFor="barang">Anggaran</label>

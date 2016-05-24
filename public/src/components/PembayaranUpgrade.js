@@ -60,16 +60,19 @@ class PembayaranUpgrade extends React.Component {
   handleSave(e) {
     e.preventDefault()
     if (ACTION == 'CREATE') {
-      this.props.actions.create(this.refs)
+      this.props.actions.update(this.refs)
     } else if (ACTION == 'UPDATE') {
       this.props.actions.update(this.refs)
     }
+    var dialog = document.querySelector('#dialog');
+    dialog.close()
 
   }
 
   handleUpdateTotal(e) {
     var harga = e.target.value
-    this.refs.total.value = harga * 10
+    var jumlah = this.refs.jumlah.value
+    this.refs.total.value = harga * jumlah
   }
 
   handleInputBayar(id) {
@@ -79,11 +82,34 @@ class PembayaranUpgrade extends React.Component {
 
     var dialog = document.querySelector('#dialog');
     dialog.showModal();
+    const defaultAnggaran = this.props.pembayaran.upgradeData.Supplier ? this.props.pembayaran.upgradeData.Supplier[0].ID : null
     this.refs.jumlah.value = order.Jumlah
     this.refs.total.value = 0
+    this.refs.harga.value = ''
+    this.refs.supplier.value = defaultAnggaran
+    this.refs.id.value = order.ID
+    this.refs.anggaran_id.value = order.AnggaranId
+    this.refs.cetak.value = order.Cetak
     $('.supplier-input').addClass('is-dirty')
     $('.jumlah-input').addClass('is-dirty')
     $('.harga-input').addClass('is-dirty')
+  }
+
+  handleLunasi(id) {
+    var order = this.props.pembayaran.upgradeData.Detail.find(function(d) {
+      return d.ID == id
+    })
+    console.log('oder', order)
+    this.props.actions.update({}, {
+      jumlah: order.Jumlah+'',
+      total: order.Total+'',
+      status: 2+'',
+      harga: order.Harga+'',
+      supplier: order.SupplierId+'',
+      id: order.ID+'',
+      anggaran_id: order.AnggaranId,
+      cetak: order.Cetak
+    })
   }
 
 
@@ -99,16 +125,35 @@ class PembayaranUpgrade extends React.Component {
     if (this.props.pembayaran.upgradeData.Detail && this.props.pembayaran.upgradeData.Detail.length > 0) {
       PembayaranList = this.props.pembayaran.upgradeData.Detail.map((pembayaran) => {
         i++
+      let status = null
+      if (pembayaran.Status == 0 || !pembayaran.Status) {
+        status = (
+          <div>
+          <button onClick={this.handleInputBayar.bind(this, pembayaran.ID)} type="button" className="mdl-button mdl-button-mini mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">
+          Input Bayar
+        </button>
+      </div>
+        )
+      }
+      else if (pembayaran.Status == 1) {
+        status = (
+          <div>
+          <button onClick={this.handleLunasi.bind(this, pembayaran.ID)} type="button" className="mdl-button mdl-button-mini mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
+            Lunasi
+          </button>
+        </div>
+        )
+      } else if (pembayaran.Status == 2) {
+        status = (<p className="t-green">Lunas</p>)
+      } else if (pembayaran.Status == 3) {
+        status = (<p className="t-red">Ditolak</p>)
+      }
           return (
             <tr key={pembayaran.ID}>
               <td>{i}</td>
               <td>{pembayaran.NamaBarang}</td>
               <td>{pembayaran.Jumlah} {pembayaran.Satuan}</td>
-              <td>
-                <button onClick={this.handleInputBayar.bind(this, pembayaran.ID)} type="button" className="mdl-button mdl-button-mini mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">
-                Input Bayar
-              </button>
-              </td>
+              <td>{status}</td>
             </tr>
           )
       })
@@ -178,6 +223,7 @@ class PembayaranUpgrade extends React.Component {
       )
     })
   }
+  const defaultAnggaran = this.props.pembayaran.upgradeData.Supplier ? this.props.pembayaran.upgradeData.Supplier[0].ID : null
     return (
       <section className="text-fields">
         <TopBar
@@ -196,10 +242,13 @@ class PembayaranUpgrade extends React.Component {
             </p>
             <div className="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-phone no-p-l">
               <input ref="id" type="hidden" />
+              <input ref="status" type="hidden" value="1" />
+              <input ref="anggaran_id" type="hidden" />
+              <input ref="cetak" type="hidden" />
               <input ref="jumlah" type="hidden" />
               <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <div className="mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label">
-                  <select className="mdl-selectfield__select supplier-input" defaultValue={0}>
+                <div className="mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label  supplier-input">
+                  <select ref="supplier" className="mdl-selectfield__select" defaultValue={defaultAnggaran}>
                     {SupplierOption}
                   </select>
                   <label className="mdl-selectfield__label" htmlhtmlFor="barang">Supplier</label>
@@ -209,11 +258,11 @@ class PembayaranUpgrade extends React.Component {
                 <input ref="harga" className="mdl-textfield__input" type="text" id="sample2" onChange={this.handleUpdateTotal.bind(this)} />
                 <label className="mdl-textfield__label" htmlhtmlFor="sample2">Harga per satuan</label>
               </div>
-              <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label is-dirty jumlah-input">
+              <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label jumlah-input">
                 <input ref="jumlah" className="mdl-textfield__input" type="text" id="jumlah" disabled/>
                 <label className="mdl-textfield__label" htmlhtmlFor="jumlah">Jumlah Barang</label>
               </div>
-              <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label is-dirty harga-input">
+              <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label harga-input">
                 <input ref="total" className="mdl-textfield__input" type="text" id="total" disabled/>
                 <label className="mdl-textfield__label" htmlhtmlFor="total">Total Harga</label>
               </div>

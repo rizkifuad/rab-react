@@ -11,6 +11,7 @@ type Pembayaran struct {
 	AnggaranId string
 	BarangId   uint
 	Cetak      int
+	SupplierId int
 	Jumlah     int
 	Status     int
 	Harga      int
@@ -64,14 +65,12 @@ func (pembayaran *Pembayaran) GetByID(anggaranId int, cetak int) []PembayaranDet
 }
 
 type PembayaranInput struct {
-	AnggaranId string
-	BarangId   string
-	CetakId    string
-	Jumlah     string
-	Status     string
-	Harga      string
-	ListOrder  string
-	ID         string `json:"id"`
+	Supplier string
+	CetakId  string
+	Jumlah   string
+	Status   string
+	Harga    string
+	ID       string `json:"id"`
 }
 
 func (input *PembayaranInput) ValidateInput(action string) (*Pembayaran, APIMessage) {
@@ -81,14 +80,11 @@ func (input *PembayaranInput) ValidateInput(action string) (*Pembayaran, APIMess
 	}
 	var pembayaran Pembayaran
 
-	if input.AnggaranId == "" {
+	fmt.Printf("%+v", input)
+
+	if input.ID == "" {
 		result.Error = true
 		result.Message = "Anggaran tidak ditemukan"
-	}
-
-	if input.BarangId == "" {
-		result.Error = true
-		result.Message = "Barang tidak ditemukan"
 	}
 
 	if input.Jumlah == "" {
@@ -105,12 +101,12 @@ func (input *PembayaranInput) ValidateInput(action string) (*Pembayaran, APIMess
 		return &pembayaran, result
 	}
 
-	barangId, _ := strconv.Atoi(input.BarangId)
-
-	pembayaran.AnggaranId = input.AnggaranId
+	id, _ := strconv.Atoi(input.ID)
+	pembayaran.ID = uint(id)
 	pembayaran.Jumlah, _ = strconv.Atoi(input.Jumlah)
-	pembayaran.BarangId = uint(barangId)
+	pembayaran.SupplierId, _ = strconv.Atoi(input.Supplier)
 	pembayaran.Harga, _ = strconv.Atoi(input.Harga)
+	pembayaran.Status, _ = strconv.Atoi(input.Status)
 	pembayaran.Total = pembayaran.Harga * pembayaran.Jumlah
 
 	return &pembayaran, result

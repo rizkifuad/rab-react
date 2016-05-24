@@ -88,7 +88,6 @@ export function prepareUpgrade(type, id, cetak) {
 
 
 export function updatePembayaranSuccess(data) {
-  browserHistory.push('/pembayaran')
   return {
     type: UPDATE_PEMBAYARAN_SUCCESS,
     payload: data
@@ -103,15 +102,16 @@ export function updatePembayaranFailure(data) {
 }
 
 
-export function update(formData) {
+export function update(formData, add) {
   return dispatch => {
     const url = '/api/pembayaran/save'
-    const data = serializeForm(formData)
+    const data = Object.assign(serializeForm(formData), add)
     const request = API().put(url, data)
 
     dispatch(fetching('UPDATE_PEMBAYARAN'))
     request.then(function(response) {
       Dispatch(dispatch, updatePembayaranSuccess, response.data)
+      dispatch(prepareUpgrade('', data.anggaran_id, data.cetak))
     }).catch(function(err) {
       Fallback(dispatch, updatePembayaranFailure, err)
     })
