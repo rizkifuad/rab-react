@@ -16,6 +16,7 @@ class BarangInput extends React.Component {
     this.firstTime = true
     this.handleChange = this.handleChange.bind(this)
   }
+
   componentWillMount() {
     let item = {}
 
@@ -170,6 +171,15 @@ class ProjectOrderUpgrade extends React.Component {
     if (ACTION == 'CREATE') {
       componentHandler.upgradeDom();
     }
+    var dialogButton = document.querySelector('.dialog-button');
+    var dialog = document.querySelector('#dialog');
+    if (! dialog.showModal) {
+      dialogPolyfill.registerDialog(dialog);
+    }
+    dialog.querySelector('.dialog-close-button')
+    .addEventListener('click', function() {
+      dialog.close();
+    });
   }
 
   handleSave(e) {
@@ -236,6 +246,18 @@ class ProjectOrderUpgrade extends React.Component {
     } else {
       alert('Tidak ada barang yang pending')
     }
+
+  }
+  handleDialogCetak(id) {
+    var dialog = document.querySelector('#dialog');
+    dialog.showModal();
+  }
+
+  handleCetakUlang(e) {
+    console.log('menggila')
+    const cetak = this.refs.cetak.value
+    print('order-table', cetak)
+    e.preventDefault()
   }
 
   render() {
@@ -326,7 +348,7 @@ class ProjectOrderUpgrade extends React.Component {
       let status = null
 
       console.log('if', order.ID, auth.role)
-      var printClass = ""
+      var printClass = 'print-'+order.Cetak
       if ((order.Status == 0 || !order.Status) && auth.role == 'manager') {
         status = (
           <div>
@@ -344,7 +366,7 @@ class ProjectOrderUpgrade extends React.Component {
       }
       else if (order.Status == 1) {
         status = (<p className="t-green">Disetujui</p>)
-        printClass = "print-row"
+        printClass += " print-row"
       } else if (order.Status == 2) {
         status = (<p className="t-blue">Dicetak({order.Cetak})</p>)
       } else if (order.Status == 3) {
@@ -419,12 +441,63 @@ class ProjectOrderUpgrade extends React.Component {
         <button type="button" onClick={this.handleCetak.bind(this, upgradeData.Anggaran.ID)} className="mdl-button print-hide mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
           Cetak
         </button>
+        <br/>
+        <br/>
+        <button type="button" onClick={this.handleDialogCetak.bind(this, upgradeData.Anggaran.ID)} className="mdl-button print-hide mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
+          Cetak Ulang
+        </button>
       </div>
       )
     }
-    return (
+    let CetakOption = null
+    let defaultCetak = null
+    if (upgradeData.Order && upgradeData.Order.length > 0) {
+      defaultCetak = 1
+      const uniqueCetak = []
+      CetakOption = upgradeData.Order.map(function(ang) {
+        const notUnique = uniqueCetak.find(function(i, v) {
+          return i == ang.Cetak
+        })
 
+        
+        if (notUnique == null && ang.Cetak) {
+          uniqueCetak.push(ang.Cetak)
+          return (
+            <option key={ang.Cetak} value={ang.Cetak}>{ang.Cetak}</option>
+          )
+        }else {
+          return null
+        }
+
+      })
+    }
+    return (
       <form onSubmit={this.handleSave}>
+        <dialog id="dialog" className="mdl-dialog">
+            <h3 className="mdl-dialog__title">Cetak Ulang</h3>
+            <div className="mdl-dialog__content">
+              <p>
+                Pilih nomor cetak
+              </p>
+              <div className="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-phone no-p-l">
+                <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                  <div className="mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label  supplier-input">
+                    <select ref="cetak" className="mdl-selectfield__select" defaultValue={defaultCetak}>
+                      {CetakOption}
+                    </select>
+                    <label className="mdl-selectfield__label" htmlhtmlFor="barang">Nomor cetak</label>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            <div className="mdl-dialog__actions">
+              <button onClick={this.handleCetakUlang.bind(this)} type="button" className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">
+                Cetak
+              </button>
+              <button type="button" className="mdl-button dialog-close-button">Close</button>
+            </div>
+        </dialog>
         <section className="text-fields">
           <TopBar
             color={color}

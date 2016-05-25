@@ -78,11 +78,22 @@ export function createRoutes(path, component) {
   ]
 }
 
-export function print(divName) {
+export function print(divName, cetak) {
  var divToPrint=document.getElementById(divName);
    var newWin= window.open("");
    newWin.document.write('<link rel="stylesheet" href="http://localhost:3000/assets/css/print.css">')
    newWin.document.write(divToPrint.outerHTML);
+   if (cetak) {
+     var r = newWin.document.querySelectorAll('tbody tr.print-row');
+     var a = newWin.document.querySelectorAll('tbody tr.print-'+cetak);
+
+     for (var i = 0, len = r.length; i < len; i++) {
+       r[i].classList.remove('print-row')
+     }
+     for (var i = 0, len = a.length; i < len; i++) {
+       a[i].classList.add('print-row')
+     }
+   }
    setTimeout(function() {
      newWin.print();
    }, 500)

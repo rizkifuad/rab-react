@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import * as actionCreators from '../actions/ActionPembayaran'
+import * as actionCreators from '../actions/ActionReport'
 import { getAnggarans } from '../actions/ActionAnggaran'
 import { Link, browserHistory } from 'react-router'
 import $ from 'jquery'
@@ -13,14 +13,13 @@ actionCreators.getAnggarans = getAnggarans
 
 let firstTime = true
 let upgraded = false
-class Pembayaran extends React.Component {
+class Report extends React.Component {
   constructor(props) {
     super(props)
   }
 
 
   componentWillMount() {
-    firstTime = true
     this.props.actions.getAnggarans()
   }
 
@@ -36,32 +35,30 @@ class Pembayaran extends React.Component {
       $('td .mdl-checkbox__input').each(function(i, k){
         this.checked && checked.push(_this.props.pembayaran.data[i])
       });
-      _this.props.actions.selectPembayarans(checked)
+      _this.props.actions.selectReports(checked)
     })
 
     if (this.props.anggaran && this.props.anggaran.data.length > 0 && firstTime) {
       const anggaran = this.props.anggaran.data
       console.log(anggaran)
-      this.props.actions.getPembayarans(anggaran[0].ID)
+      this.props.actions.getReports(anggaran[0].ID)
       firstTime = false
-      setTimeout(function() {
-        $('.anggaran-input').addClass('is-dirty')
-      }, 200)
+      $('.anggaran-input').addClass('is-dirty')
     } else {
-      setTimeout(function() {
-        $('.anggaran-input').addClass('is-dirty')
-      }, 200)
-      componentHandler.upgradeDom();
+      //componentHandler.upgradeDom();
     }
   }
 
   componentDidMount() {
-    //componentHandler.upgradeDom();
+    if (!upgraded) {
+      componentHandler.upgradeDom();
+      upgraded = true
+    }
   }
 
   handleAnggaranChange(e) {
     console.log(e.target.value)
-    this.props.actions.getPembayarans(e.target.value)
+    this.props.actions.getReports(e.target.value)
   }
 
   isFetching() {
@@ -69,10 +66,10 @@ class Pembayaran extends React.Component {
   }
 
   render()  {
-    let PembayaranList = null
+    let ReportList = null
     let i = 0
     if (this.props.pembayaran.data.length > 0) {
-      PembayaranList = this.props.pembayaran.data.map((pembayaran) => {
+      ReportList = this.props.pembayaran.data.map((pembayaran) => {
         i++
           return (
             <tr key={pembayaran.ID}>
@@ -90,10 +87,10 @@ class Pembayaran extends React.Component {
       })
     } 
 
-    let PembayaranTable = null
+    let ReportTable = null
 
     if(this.props.pembayaran.data.length > 0) {
-      PembayaranTable =  (
+      ReportTable =  (
         <div>
           <table ref="mdl_table" className="mdl-data-table ml-table-striped mdl-js-data-table mdl-data-table--selectable">
             <colgroup>
@@ -109,7 +106,7 @@ class Pembayaran extends React.Component {
               </tr>
             </thead>
             <tbody>
-              { PembayaranList }
+              { ReportList }
             </tbody>
           </table>
 
@@ -129,7 +126,7 @@ class Pembayaran extends React.Component {
 
       ) 
     } else if(this.props.pembayaran.fetching === false){
-        PembayaranTable = (
+        ReportTable = (
           <h2 className="t-center">No data found</h2>
         )
       }
@@ -200,7 +197,7 @@ class Pembayaran extends React.Component {
                   </div>
                 </div>
 
-                {PembayaranTable}
+                {ReportTable}
                 <div id="p2" className={this.isFetching()}></div>
 
               </div>
@@ -224,5 +221,5 @@ const mapDispatchToProps = (dispatch) => ({
   actions : bindActionCreators(actionCreators, dispatch)
 });
 
-const PembayaranContainer = connect(mapStateToProps, mapDispatchToProps)(Pembayaran)
-module.exports = PembayaranContainer
+const ReportContainer = connect(mapStateToProps, mapDispatchToProps)(Report)
+module.exports = ReportContainer
