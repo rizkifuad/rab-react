@@ -172,9 +172,11 @@ class ProjectOrderUpgrade extends React.Component {
       order: this.props.order.selected,
       supplierId: this.refs.supplier.value
     }
-    this.props.actions.cetakOrder(this.props.order.upgradeData.Anggaran.ID, data)
-        const dialogCetak= document.querySelector('#dialog-cetak');
-        dialogCetak.close()
+    this.props.actions.cetakOrder(this.props.order.upgradeData.Anggaran.ID, data, this.refs.maxCetak.value)
+
+    const dialogCetak= document.querySelector('#dialog-cetak');
+    dialogCetak.close()
+
   }
 
 
@@ -376,6 +378,7 @@ class ProjectOrderUpgrade extends React.Component {
     }
     let CetakOption = null
     let defaultCetak = null
+    let maxCetak = null
     if (upgradeData.Order && upgradeData.Order.length > 0) {
       defaultCetak = 1
       const uniqueCetak = []
@@ -395,6 +398,9 @@ class ProjectOrderUpgrade extends React.Component {
         }
 
       })
+
+      maxCetak = Math.max.apply(null, uniqueCetak)
+      console.log('maxCetak', maxCetak)
     }
 
     let BarangOption = null
@@ -432,6 +438,7 @@ class ProjectOrderUpgrade extends React.Component {
           <div className="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-phone no-p-l">
             <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label ">
               <div className="mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label  supplier-input">
+                <input type="hidden" ref="maxCetak" value={maxCetak}/>
                 <select ref="supplier" className="mdl-selectfield__select" defaultValue={defaultSupplier}>
                   {SupplierOption}
                 </select>

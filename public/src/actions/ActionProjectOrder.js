@@ -1,5 +1,5 @@
 import { browserHistory } from 'react-router'
-import { API, serializeForm, Dispatch, Fallback } from '../utils/'
+import { print, API, serializeForm, Dispatch, Fallback } from '../utils/'
 import CONSTANTS from '../constants/index'
 
 const { 
@@ -83,7 +83,7 @@ function prepareUpgradeFailure(err) {
   }
 }
 
-export function prepareUpgrade(type, id) {
+export function prepareUpgrade(type, id, cetak) {
   let url = ''
   switch (type) {
     case 'CREATE':
@@ -102,6 +102,10 @@ export function prepareUpgrade(type, id) {
     const request = API().get(url)
     request.then(function(response) {
       Dispatch(dispatch, prepareUpgradeSuccess, response.data)
+      if (cetak) {
+        console.log('nomer cetak', cetak)
+        print('order-table', cetak)
+      }
     }).catch(function(err) {
       Fallback(dispatch, prepareUpgradeFailure, err)
     })
@@ -268,13 +272,13 @@ export function cetakOrderFailure(data) {
   }
 }
 
-export function cetakOrder(id, data) {
+export function cetakOrder(id, data, cetak) {
   return function(dispatch) {
     let request = API().post('/api/project_order/cetak/'+id, data)
     dispatch(fetching('CETAK_ORDER'))
     request.then(function(response) {
       Dispatch(dispatch, cetakOrderSuccess, response)
-      dispatch(prepareUpgrade('UPDATE', id))
+      dispatch(prepareUpgrade('UPDATE', id, cetak))
     }).catch(function(err) {
       Fallback(dispatch, cetakOrderFailure, err)
     })
