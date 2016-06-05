@@ -5,6 +5,7 @@ import * as actionCreators from '../actions/ActionAnggaran'
 import { Link, browserHistory } from 'react-router'
 import $ from 'jquery'
 import TopBar from '../views/TopBar'
+import {limit} from '../utils/index'
 
 
 class Anggaran extends React.Component {
@@ -106,8 +107,8 @@ class Anggaran extends React.Component {
       )
     }
 
-    const title = "Data anggaran"
-    const description = "Manajemen anggaran aplikasi"
+    const title = "Data project order"
+    const description = "Manajemen project order aplikasi"
     return (
       <section className="tables-data">
         <TopBar
@@ -121,7 +122,7 @@ class Anggaran extends React.Component {
           <div className="mdl-cell mdl-cell--3-col mdl-cell--12-col-tablet mdl-cell--12-col-phone mdl-color--grey-100">
             <div className="p-40 p-20--small">
 
-              <div className="mdl-color-text--blue-grey-400 sticky" ml-sticky offset="80" body-className="mdl-layout__content">
+              <div className="hide mdl-color-text--blue-grey-400 sticky" ml-sticky offset="80" body-className="mdl-layout__content">
                 <p>Klik menu dibawah untuk menambah/menghapus anggaran</p>
                 <div className="m-t-30">
                   <ul className="list-bordered">
@@ -140,7 +141,7 @@ class Anggaran extends React.Component {
             </div>
           </div>
 
-          <div className="mdl-cell mdl-cell--9-col  mdl-cell--12-col-tablet mdl-cell--12-col-phone">
+          <div className="mdl-cell mdl-cell--12-col  mdl-cell--12-col-tablet mdl-cell--12-col-phone">
             <div className="p-20 ml-card-holder ml-card-holder-first">
               <div className="mdl-card mdl-shadow--1dp m-b-30">
                 <div className="mdl-card__title">
@@ -161,7 +162,8 @@ class Anggaran extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    anggaran: state.anggaran
+    anggaran: state.anggaran,
+    auth: state.auth
   }
 }
 

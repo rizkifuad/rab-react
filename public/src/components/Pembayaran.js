@@ -102,7 +102,7 @@ class Pembayaran extends React.Component {
             <thead>
               <tr>
                 <th className="mdl-data-table__header--sorted-ascending">No</th>
-                <th>No cetak</th>
+                <th>PO</th>
                 <th>Jenis Barang</th>
                 <th>Order Tanggal</th>
                 <th>Action</th>
@@ -164,7 +164,7 @@ class Pembayaran extends React.Component {
           <div className="mdl-cell mdl-cell--3-col mdl-cell--12-col-tablet mdl-cell--12-col-phone mdl-color--grey-100">
             <div className="p-40 p-20--small">
 
-              <div className="mdl-color-text--blue-grey-400 sticky" ml-sticky offset="80" body-className="mdl-layout__content">
+              <div className="hide mdl-color-text--blue-grey-400 sticky" ml-sticky offset="80" body-className="mdl-layout__content">
                 <p>Klik menu dibawah untuk menambah/menghapus pembayaran</p>
                 <div className="m-t-30 hide">
                   <ul className="list-bordered">
@@ -183,7 +183,7 @@ class Pembayaran extends React.Component {
             </div>
           </div>
 
-          <div className="mdl-cell mdl-cell--9-col  mdl-cell--12-col-tablet mdl-cell--12-col-phone">
+          <div className="mdl-cell mdl-cell--12-col  mdl-cell--12-col-tablet mdl-cell--12-col-phone">
             <div className="p-20 ml-card-holder ml-card-holder-first">
               <div className="mdl-card mdl-shadow--1dp m-b-30">
                 <div className="mdl-card__title">

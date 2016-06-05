@@ -7,113 +7,10 @@ import TopBar from '../views/TopBar'
 import moment from 'moment'
 import { print } from '../utils/index'
 import $ from 'jquery'
+import {limit} from '../utils/index'
 let ACTION = 'CREATE'
 
 
-class BarangInput extends React.Component {
-  constructor(props) {
-    super(props)
-    this.firstTime = true
-    this.handleChange = this.handleChange.bind(this)
-  }
-
-  componentWillMount() {
-    let item = {}
-
-    this.setState({ item })
-  }
-
-
-  handleChange() {
-    let item = {}
-    item.barang = []
-    item.jumlah = []
-    for (var i = 0; i < this.props.count ; i++) {
-      item.barang[i] =  this.refs['barang' + i].value
-      item.jumlah[i] =  this.refs['jumlah' + i].value
-    }
-
-    this.setState({item})
-    console.log(item)
-  }
-
-  componentDidUpdate() {
-    const items = this.props.items
-    if (this.firstTime && items) {
-      let item = {}
-      item.barang = []
-      item.jumlah = []
-      for (var i = 0; i < items.length ; i++) {
-        const detail = items[i]
-        if (detail.BarangId) {
-          item.barang[i]= detail.BarangId
-        } 
-        if (detail.Jumlah) {
-          item.jumlah[i]= detail.Jumlah
-        }
-      }
-      console.log('item', item)
-      this.setState({item})
-      this.firstTime = false
-    }
-  }
-
-
-  render() {
-    let count = this.props.count
-    let Inputs = []
-
-    let BarangList;
-
-    if (this.props.barangs) {
-      BarangList = this.props.barangs.map((barang) => {
-        console.log('barangas', barang)
-        return (
-          <option key={barang.BarangId} value={barang.BarangId}>{barang.NamaBarang}</option>
-
-        )
-      })
-    }
-    
-
-    for (var id = 0; id < count; id++) {
-      let jumlah = 0
-      let barang = 1
-      if (this.state.item && this.state.item.jumlah) {
-       jumlah = this.state.item.jumlah[id] ? this.state.item.jumlah[id] : 0
-       barang = this.state.item.barang[id] ? this.state.item.barang[id] : 1
-      }
-      Inputs.push(
-        <div className="mdl-grid mdl-grid--no-spacing" key={id}>
-          <div className="mdl-cell mdl-cell--6-col">
-            <div className="mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label">
-              <select ref={'barang' + id} className="mdl-selectfield__select" defaultValue={barang}>
-                {BarangList}
-              </select>
-              <label className="mdl-selectfield__label" htmlhtmlFor="barang">Barang</label>
-              <span className="mdl-selectfield__error">Pilih barang</span>
-            </div>
-          </div>
-
-          <div className="mdl-cell mdl-cell--3-col">
-            <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-              <input ref={'jumlah' + id} className="mdl-textfield__input" type="text" id="sample2" onChange={this.handleChange} value={jumlah} />
-              <label className="mdl-textfield__label" htmlFor="sample2">Jumlah</label>
-            </div>
-          </div>
-
-        </div>
-      )
-    }
-
-    return (
-      <div>
-        { Inputs }
-      </div>
-    )
-  }
-
-}
 
 class ProjectOrderUpgrade extends React.Component {
   constructor(props) {
@@ -149,36 +46,46 @@ class ProjectOrderUpgrade extends React.Component {
 
   componentDidUpdate() {
     let upgradeData = this.props.order.upgradeData
-    if (this.firstTime && upgradeData.Items) {
-      this.setState({barangInput: upgradeData.Items.length})
-      this.firstTime = false
-    }
+    console.log('menggila')
 
-    if (upgradeData.Anggaran) {
-      //this.refs.lokasi.value = upgradeData.ProjectOrder.Lokasi
-      //this.refs.blokRumah.value = upgradeData.ProjectOrder.BlokRumah
-      //this.refs.keterangan.value = upgradeData.ProjectOrder.Keterangan
-      componentHandler.upgradeDom();
-    }
 
-    if (ACTION == 'CREATE') {
-      componentHandler.upgradeDom();
+    $('.barang-option').addClass('is-dirty')
+    if (document.getElementsByClassName('order-table').length > 0) {
+      $('.order-table th label, .order-table td label').parent().remove()
+      $('.order-table th label, .order-table td label').parent().remove()
+      $('.order-table').attr('data-upgraded', '')
+      componentHandler.upgradeElement(document.getElementsByClassName('order-table')[0],'MaterialDataTable')
     }
+    componentHandler.upgradeDom();
+    $('.order-table tbody tr').each(function(o, v) {
+      const status = $(v).attr('data-order-status')
+      if (status != '1') {
+        $(v).find('input').prop('disabled', true)
+      }
+    })
   }
 
 
   componentDidMount() {
-    if (ACTION == 'CREATE') {
-      componentHandler.upgradeDom();
+    const dialogCetak= document.querySelector('#dialog-cetak');
+    const dialogCetakUlang = document.querySelector('#dialog-cetak-ulang');
+
+    if (dialogCetak && ! dialogCetak.showModal) {
+      dialogPolyfill.registerDialog(dialogCetak);
     }
-    var dialogButton = document.querySelector('.dialog-button');
-    var dialog = document.querySelector('#dialog');
-    if (! dialog.showModal) {
-      dialogPolyfill.registerDialog(dialog);
+
+    if (dialogCetakUlang && ! dialogCetakUlang.showModal) {
+      dialogPolyfill.registerDialog(dialogCetakUlang);
     }
-    dialog.querySelector('.dialog-close-button')
+
+    dialogCetak.querySelector('.dialog-close-button')
     .addEventListener('click', function() {
-      dialog.close();
+      dialogCetak.close();
+    });
+
+    dialogCetakUlang.querySelector('.dialog-close-button')
+    .addEventListener('click', function() {
+      dialogCetakUlang.close();
     });
   }
 
@@ -186,11 +93,11 @@ class ProjectOrderUpgrade extends React.Component {
     //e.preventDefault()
     //let barangs = this.refs.barangs.state.item
     //if (ACTION == 'CREATE') {
-      //console.log(this.refs)
-      //this.props.actions.create(this.refs, barangs)
+    //console.log(this.refs)
+    //this.props.actions.create(this.refs, barangs)
     //} else if (ACTION == 'UPDATE') {
-      //console.log(this.refs)
-      //this.props.actions.update(this.refs, barangs)
+    //console.log(this.refs)
+    //this.props.actions.update(this.refs, barangs)
     //}
 
   }
@@ -208,15 +115,12 @@ class ProjectOrderUpgrade extends React.Component {
 
   handleTambahOrder(e) {
     e.preventDefault()
-    console.log('barang', this.refs.barangs.state.item)
     const upgradeData = this.props.order.upgradeData
-    const addData = this.refs.barangs.state.item
-    console.log('upgradata', upgradeData)
 
     const data = {
       anggaran_id: upgradeData.Anggaran.ID + "",
-      barang_id: addData.barang[0],
-      jumlah: addData.jumlah[0]
+      barang_id: this.refs.barang.value,
+      jumlah: this.refs.jumlah.value
     }
     console.log('data', data)
 
@@ -232,26 +136,47 @@ class ProjectOrderUpgrade extends React.Component {
     this.props.actions.tolakOrder(id)
   }
 
-  handleCetak(id) {
-    let upgradeData = this.props.order.upgradeData
-    var approved = upgradeData.Order.filter(function(e) {
-      return e.Status == '1'
+  handleDialogCetak(id) {
+    let list = []
+    $('.order-table .is-selected').each(function(o, v) {
+      const status = $(v).attr('data-order-status')
+      const no = $(v).attr('data-no')
+
+      list.push($(v).attr('data-id'))
     })
-    if (approved.length > 0) {
-      let i = confirm('Apakah anda yakin mencetak order yang sudah disetujui?')
-      if (i) {
-        this.props.actions.cetakOrder(id)
-        print('order-table')
-      }
+
+    console.log(list)
+
+    this.props.order.selected = list
+
+    let upgradeData = this.props.order.upgradeData
+    if (list.length > 0) {
+      //let i = confirm('Apakah anda yakin mencetak order yang sudah disetujui?')
+      //if (i) {
+        const dialogCetak= document.querySelector('#dialog-cetak');
+        dialogCetak.showModal()
+        //print('order-table')
+      //}
     } else {
-      alert('Tidak ada barang yang pending')
+      alert('Tidak ada barang yang dipilih')
     }
 
   }
-  handleDialogCetak(id) {
-    var dialog = document.querySelector('#dialog');
-    dialog.showModal();
+  handleDialogCetakUlang(id) {
+    const dialogCetakUlang = document.querySelector('#dialog-cetak-ulang');
+    dialogCetakUlang.showModal();
   }
+
+  handleCetak()  {
+    let data = {
+      order: this.props.order.selected,
+      supplierId: this.refs.supplier.value
+    }
+    this.props.actions.cetakOrder(this.props.order.upgradeData.Anggaran.ID, data)
+        const dialogCetak= document.querySelector('#dialog-cetak');
+        dialogCetak.close()
+  }
+
 
   handleCetakUlang(e) {
     console.log('menggila')
@@ -342,47 +267,47 @@ class ProjectOrderUpgrade extends React.Component {
     if (upgradeData.Order && upgradeData.Order.length > 0) {
       OrderList = upgradeData.Order.map((order) => {
         i++
-      const b= barangs.find(function(bar) {
-        return parseInt(bar.BarangId) == parseInt(order.BarangId)
-      })
-      let status = null
+          const b = barangs.find(function(bar) {
+            return parseInt(bar.BarangId) == parseInt(order.BarangId)
+          })
+          let status = null
 
-      console.log('if', order.ID, auth.role)
-      var printClass = 'print-'+order.Cetak
-      if ((order.Status == 0 || !order.Status) && auth.role == 'manager') {
-        status = (
-          <div>
-          <button onClick={this.handleApprove.bind(this, order.ID)} type="button" className="mdl-button mdl-button-mini mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">
-            Approve
-          </button>
-          &nbsp;
-          <button onClick={this.handleTolak.bind(this, order.ID)} type="button" className="mdl-button mdl-button-mini mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
-            Tolak
-          </button>
-        </div>
-        )
-      } else if (order.Status == 0 || !order.Status) {
-        status = (<p className="t-red">Belum di Setujui</p>)
-      }
-      else if (order.Status == 1) {
-        status = (<p className="t-green">Disetujui</p>)
-        printClass += " print-row"
-      } else if (order.Status == 2) {
-        status = (<p className="t-blue">Dicetak({order.Cetak})</p>)
-      } else if (order.Status == 3) {
-        status = (<p className="t-red">Ditolak</p>)
-      }
-      return (
-        <tr key={order.ID} className={printClass}>
-          <td>{i}</td>
-          <td>{b.NamaBarang}</td>
-          <td>{order.Jumlah}</td>
-          <td>{moment(order.CreatedAt).format('YYYY-MM-DD HH:mm')}</td>
-          <td>
-            {status}
-          </td>
-        </tr>
-      )
+          console.log('if', order.ID, auth.role)
+          var printClass = 'print-'+order.Cetak
+          if ((order.Status == 0 || !order.Status) && auth.role == 'manager') {
+            status = (
+              <div>
+                <button onClick={this.handleApprove.bind(this, order.ID)} type="button" className="mdl-button mdl-button-mini mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">
+                Approve
+              </button>
+              &nbsp;
+              <button onClick={this.handleTolak.bind(this, order.ID)} type="button" className="mdl-button mdl-button-mini mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
+                Tolak
+              </button>
+            </div>
+            )
+          } else if (order.Status == 0 || !order.Status) {
+            status = (<p className="t-red">Belum di Setujui</p>)
+          }
+          else if (order.Status == 1) {
+            status = (<p className="t-green">Disetujui</p>)
+            printClass += " print-row"
+          } else if (order.Status == 2) {
+            status = (<p className="t-blue">PO({order.Cetak})</p>)
+          } else if (order.Status == 3) {
+            status = (<p className="t-red">Ditolak</p>)
+          }
+          return (
+            <tr data-no={i} data-order-status={order.Status} data-id={order.ID} key={order.ID} className={printClass}>
+              <td>{i}</td>
+              <td>{b.NamaBarang}</td>
+              <td>{order.Jumlah}</td>
+              <td>{moment(order.CreatedAt).format('YYYY-MM-DD HH:mm')}</td>
+              <td className="print-hide">
+                {status}
+              </td>
+            </tr>
+          )
       })
     }
     let OrderTable = null
@@ -390,7 +315,7 @@ class ProjectOrderUpgrade extends React.Component {
     if(upgradeData.Order && upgradeData.Order.length > 0) {
       OrderTable =  (
         <div>
-          <table ref="mdl_table" className="mdl-data-table ml-table-striped mdl-js-data-table ">
+          <table ref="mdl_table" className="order-table mdl-data-table ml-table-striped mdl-js-data-table mdl-data-table--selectable">
             <colgroup>
               <col className="auto-cell-size p-r-20"/>
             </colgroup>
@@ -400,7 +325,7 @@ class ProjectOrderUpgrade extends React.Component {
                 <th>Nama Barang</th>
                 <th>Jumlah</th>
                 <th>Tanggal order</th>
-                <th>Status</th>
+                <th className="print-hide">Status</th>
               </tr>
             </thead>
             <tbody>
@@ -433,20 +358,20 @@ class ProjectOrderUpgrade extends React.Component {
     if (upgradeData.Anggaran) {
       LeftDetail = (
         <div>
-        <p>Lokasi: {upgradeData.Anggaran ? upgradeData.Anggaran.Lokasi : ''}<br/>
-          Blok Rumah: {upgradeData.Anggaran ? upgradeData.Anggaran.BlokRumah : ''}<br/>
-          Keterangan: {upgradeData.Anggaran ? upgradeData.Anggaran.Keterangan : ''}<br/>
-        </p>
+          <p>Lokasi: {upgradeData.Anggaran ? upgradeData.Anggaran.Lokasi : ''}<br/>
+            Blok Rumah: {upgradeData.Anggaran ? upgradeData.Anggaran.BlokRumah : ''}<br/>
+            Keterangan: {upgradeData.Anggaran ? upgradeData.Anggaran.Keterangan : ''}<br/>
+          </p>
 
-        <button type="button" onClick={this.handleCetak.bind(this, upgradeData.Anggaran.ID)} className="mdl-button print-hide mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
+          <button type="button" onClick={this.handleDialogCetak.bind(this, upgradeData.Anggaran.ID)} className="mdl-button print-hide mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
           Cetak
         </button>
         <br/>
         <br/>
-        <button type="button" onClick={this.handleDialogCetak.bind(this, upgradeData.Anggaran.ID)} className="mdl-button print-hide mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
-          Cetak Ulang
-        </button>
-      </div>
+        <button type="button" onClick={this.handleDialogCetakUlang.bind(this, upgradeData.Anggaran.ID)} className="mdl-button print-hide mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
+        Cetak Ulang
+      </button>
+    </div>
       )
     }
     let CetakOption = null
@@ -459,7 +384,7 @@ class ProjectOrderUpgrade extends React.Component {
           return i == ang.Cetak
         })
 
-        
+
         if (notUnique == null && ang.Cetak) {
           uniqueCetak.push(ang.Cetak)
           return (
@@ -471,90 +396,158 @@ class ProjectOrderUpgrade extends React.Component {
 
       })
     }
+
+    let BarangOption = null
+    if (this.props.order.fetching == false && this.props.order.upgradeData.Barangs) {
+      BarangOption = this.props.order.upgradeData.Barangs.map(function(b) {
+        console.log(b)
+        return (
+          <option key={b.BarangId} value={b.BarangId}>{b.NamaBarang}</option>
+        )
+      })
+    }
+
+
+    let SupplierOption = null
+    let defaultSupplier = null
+    if (this.props.order.fetching == false && this.props.order.upgradeData.Suppliers && this.props.order.upgradeData.Suppliers.length > 0) {
+      defaultSupplier  = this.props.order.upgradeData.Suppliers[0].ID
+      SupplierOption = this.props.order.upgradeData.Suppliers.map(function(b) {
+        console.log(b)
+        return (
+          <option key={b.ID} value={b.ID}>{b.NamaSupplier}</option>
+        )
+      })
+    }
+
+    const defaultBarang = this.props.order.upgradeData.Barangs && this.props.order.upgradeData.Barangs.length > 0 ? this.props.order.upgradeData.Barangs[0].ID : null
     return (
-      <form onSubmit={this.handleSave}>
-        <dialog id="dialog" className="mdl-dialog">
-            <h3 className="mdl-dialog__title">Cetak Ulang</h3>
-            <div className="mdl-dialog__content">
-              <p>
-                Pilih nomor cetak
-              </p>
-              <div className="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-phone no-p-l">
-                <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                  <div className="mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label  supplier-input">
-                    <select ref="cetak" className="mdl-selectfield__select" defaultValue={defaultCetak}>
-                      {CetakOption}
-                    </select>
-                    <label className="mdl-selectfield__label" htmlhtmlFor="barang">Nomor cetak</label>
+      <section className="text-fields">
+      <dialog id="dialog-cetak" className="mdl-dialog">
+        <h3 className="mdl-dialog__title">Project Order</h3>
+        <div className="mdl-dialog__content">
+          <p>
+            Pilih supplier
+          </p>
+          <div className="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-phone no-p-l">
+            <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label ">
+              <div className="mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label  supplier-input">
+                <select ref="supplier" className="mdl-selectfield__select" defaultValue={defaultSupplier}>
+                  {SupplierOption}
+                </select>
+                <label className="mdl-selectfield__label" htmlhtmlFor="barang">Supplier</label>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div className="mdl-dialog__actions">
+          <button onClick={this.handleCetak.bind(this)} type="button" className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">
+            Cetak
+          </button>
+          <button type="button" className="mdl-button dialog-close-button">Close</button>
+        </div>
+      </dialog>
+      <dialog id="dialog-cetak-ulang" className="mdl-dialog">
+        <h3 className="mdl-dialog__title">Cetak Ulang</h3>
+        <div className="mdl-dialog__content">
+          <p>
+            Pilih nomor cetak
+          </p>
+          <div className="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-phone no-p-l">
+            <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label ">
+              <div className="mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label  supplier-input">
+                <select ref="cetak" className="mdl-selectfield__select" defaultValue={defaultCetak}>
+                  {CetakOption}
+                </select>
+                <label className="mdl-selectfield__label" htmlhtmlFor="barang">Nomor cetak</label>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div className="mdl-dialog__actions">
+          <button onClick={this.handleCetakUlang.bind(this)} type="button" className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">
+            Cetak
+          </button>
+          <button type="button" className="mdl-button dialog-close-button">Close</button>
+        </div>
+      </dialog>
+        <TopBar
+          color={color}
+          title={title}
+          description={description}
+        />
+
+      <div className="mdl-grid mdl-grid--no-spacing">
+
+        <div className="mdl-cell mdl-cell--3-col mdl-cell--12-col-tablet mdl-cell--12-col-phone mdl-color--grey-100 no-p-l">
+          <div className="p-40 p-r-20 p-20--small">
+            <div className=" mdl-color-text--blue-grey-400">
+              <h3><i className="material-icons f-left m-r-5">format_align_left</i> Anggaran</h3>
+              {LeftDetail}
+            </div>
+          </div>
+        </div>
+
+        <div className="mdl-cell mdl-cell--9-col mdl-cell--12-col-tablet mdl-cell--12-col-phone no-p-l">
+          <div className="p-20 ml-card-holder ml-card-holder-first">
+            <div className="mdl-card mdl-shadow--1dp">
+              <div className="p-30">
+                {this.props.order.status && this.props.order.status.error  ? <div className='alert alert-info text-red'>{this.props.order.status.message}</div> : ''}
+                <input ref="id" type="hidden" value={upgradeData.ProjectOrder ? upgradeData.ProjectOrder.ID : ''}/>
+                <h3 className="t-center">History Order</h3>
+                <div className="mdl-cell mdl-cell--12-col  mdl-cell--12-col-tablet mdl-cell--12-col-phone" id="order-table">
+                  <div className="hide print-show">
+                    {LeftDetail}
                   </div>
+                  {OrderTable}
+
+
+                </div>
+                <h3 className="t-center">Total Order</h3>
+                <div className="mdl-cell mdl-cell--12-col  mdl-cell--12-col-tablet mdl-cell--12-col-phone">
+                  {TotalOrderTable}
                 </div>
               </div>
-
-            </div>
-            <div className="mdl-dialog__actions">
-              <button onClick={this.handleCetakUlang.bind(this)} type="button" className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">
-                Cetak
-              </button>
-              <button type="button" className="mdl-button dialog-close-button">Close</button>
-            </div>
-        </dialog>
-        <section className="text-fields">
-          <TopBar
-            color={color}
-            title={title}
-            description={description}
-          />
-
-        <div className="mdl-grid mdl-grid--no-spacing">
-
-          <div className="mdl-cell mdl-cell--3-col mdl-cell--12-col-tablet mdl-cell--12-col-phone mdl-color--grey-100 no-p-l">
-            <div className="p-40 p-r-20 p-20--small">
-              <div className=" mdl-color-text--blue-grey-400">
-                <h3><i className="material-icons f-left m-r-5">format_align_left</i> Anggaran</h3>
-                {LeftDetail}
-              </div>
             </div>
           </div>
+        </div>
 
-          <div className="mdl-cell mdl-cell--9-col mdl-cell--12-col-tablet mdl-cell--12-col-phone no-p-l">
-            <div className="p-20 ml-card-holder ml-card-holder-first">
-              <div className="mdl-card mdl-shadow--1dp">
-                <div className="p-30">
-                  {this.props.order.status && this.props.order.status.error  ? <div className='alert alert-info text-red'>{this.props.order.status.message}</div> : ''}
-                  <input ref="id" type="hidden" value={upgradeData.ProjectOrder ? upgradeData.ProjectOrder.ID : ''}/>
-                  <h3 className="t-center">History Order</h3>
-                  <div className="mdl-cell mdl-cell--12-col  mdl-cell--12-col-tablet mdl-cell--12-col-phone" id="order-table">
-                    <div className="hide print-show">
-                      {LeftDetail}
-                    </div>
-                        {OrderTable}
-
-
-                  </div>
-                  <h3 className="t-center">Total Order</h3>
-                  <div className="mdl-cell mdl-cell--12-col  mdl-cell--12-col-tablet mdl-cell--12-col-phone">
-                        {TotalOrderTable}
-                  </div>
-                </div>
-              </div>
+        <div className={limit(this) + ' mdl-cell mdl-cell--3-col mdl-cell--12-col-tablet mdl-cell--12-col-phone mdl-color--grey-100 no-p-l'}>
+          <div className="p-40 p-r-20 p-20--small">
+            <div className=" mdl-color-text--blue-grey-400">
+              <h3><i className="material-icons f-left m-r-5">format_align_left</i> Barang</h3>
+              <p>Tambah order pada anggaran</p>
             </div>
           </div>
+        </div>
 
-          <div className="mdl-cell mdl-cell--3-col mdl-cell--12-col-tablet mdl-cell--12-col-phone mdl-color--grey-100 no-p-l">
-            <div className="p-40 p-r-20 p-20--small">
-              <div className=" mdl-color-text--blue-grey-400">
-                <h3><i className="material-icons f-left m-r-5">format_align_left</i> Barang</h3>
-                <p>Tambah order pada anggaran</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="mdl-cell mdl-cell--9-col mdl-cell--12-col-tablet mdl-cell--12-col-phone no-p-l">
+          <div className={limit(this) + ' mdl-cell mdl-cell--9-col mdl-cell--12-col-tablet mdl-cell--12-col-phone no-p-l'}>
             <div className="p-20 ml-card-holder">
               <div className="mdl-card mdl-shadow--1dp">
+                <form onSubmit={this.handleTambahOrder}>
                 <div className="p-30">
 
-                  <BarangInput barangs={barangs} ref="barangs" count={this.state.barangInput}  />
+                  <div className="mdl-grid mdl-grid--no-spacing">
+                    <div className="mdl-cell mdl-cell--6-col">
+                      <div className="mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label barang-option">
+                        <select ref="barang" className="mdl-selectfield__select" defaultValue={defaultBarang}>
+                          {BarangOption}
+                        </select>
+                        <label className="mdl-selectfield__label" htmlhtmlFor="barang">Barang</label>
+                        <span className="mdl-selectfield__error">Pilih barang</span>
+                      </div>
+                    </div>
+
+                    <div className="mdl-cell mdl-cell--3-col">
+                      <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                        <input ref="jumlah" className="mdl-textfield__input" type="text" id="sample2" />
+                        <label className="mdl-textfield__label" htmlFor="sample2">Jumlah</label>
+                      </div>
+                    </div>
+
+                  </div>
 
                   <div className="mdl-grid">
                     <div className=" m-t-20">
@@ -569,14 +562,14 @@ class ProjectOrderUpgrade extends React.Component {
                     </div>
                   </div>
                 </div>
+        </form>
               </div>
             </div>
           </div>
 
-        </div>  
+      </div>  
 
-      </section>
-    </form>
+    </section>
     )
   }
 }

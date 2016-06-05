@@ -5,6 +5,7 @@ import * as actionCreators from '../actions/ActionUser'
 import { Link, browserHistory } from 'react-router'
 import $ from 'jquery'
 import TopBar from '../views/TopBar'
+import {limit} from '../utils/index'
 
 
 class User extends React.Component {
@@ -45,6 +46,7 @@ class User extends React.Component {
     return 'mdl-progress mdl-js-progress mdl-progress__indeterminate' + (!this.props.user.fetching ? ' hide': '')
   }
 
+
   render()  {
     let UserList = null
     let i = 0
@@ -58,7 +60,7 @@ class User extends React.Component {
               <td>{user.Nama}</td>
               <td>{user.Username}</td>
               <td>{user.Role}</td>
-              <td>
+              <td className={limit(this)}>
                 <button onClick={this.handleEdit.bind(this, user.ID)} className="mdl-button mdl-js-button mdl-button--fab mdl-button--tiny-fab mdl-js-ripple-effect mdl-button--accent">
                   <i className="material-icons">edit</i>
                 </button>
@@ -90,7 +92,7 @@ class User extends React.Component {
                 <th>Nama Pegawai</th>
                 <th>Username</th>
                 <th>Role</th>
-                <th>Action</th>
+                <th className={limit(this)}>Action</th>
               </tr>
             </thead>
             <tbody>
@@ -130,7 +132,7 @@ class User extends React.Component {
           <div className="mdl-cell mdl-cell--3-col mdl-cell--12-col-tablet mdl-cell--12-col-phone mdl-color--grey-100">
             <div className="p-40 p-20--small">
 
-              <div className="mdl-color-text--blue-grey-400 sticky" ml-sticky offset="80" body-className="mdl-layout__content">
+              <div className={'mdl-color-text--blue-grey-400 sticky ' + limit(this)} ml-sticky offset="80" body-className="mdl-layout__content">
                 <p>Klik menu dibawah untuk menambah/menghapus user</p>
                 <div className="m-t-30">
                   <ul className="list-bordered">
@@ -170,7 +172,8 @@ class User extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    user: state.user
+    user: state.user,
+    auth: state.auth
   }
 }
 

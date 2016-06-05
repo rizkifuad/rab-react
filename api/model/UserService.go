@@ -69,7 +69,7 @@ func (u *User) Validate(w http.ResponseWriter, r *http.Request) {
 
 	//db := initDb()
 	var user User
-	db.Where("username = ?", req.Username).Find(&user)
+	db.Table("user").Where("username = ?", req.Username).Find(&user)
 
 	if user.Username != req.Username {
 		result.Error = true

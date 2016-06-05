@@ -108,3 +108,10 @@ export function toRp(string) {
  }
  return 'Rp ' + string.join('')
 }
+
+export function limit(_this) {
+
+    const auth = _this.props.auth
+
+    return auth.role == 'pegawai' ? 'hide' : ''
+}

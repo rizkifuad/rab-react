@@ -268,9 +268,9 @@ export function cetakOrderFailure(data) {
   }
 }
 
-export function cetakOrder(id) {
+export function cetakOrder(id, data) {
   return function(dispatch) {
-    let request = API().get('/api/project_order/cetak/'+id)
+    let request = API().post('/api/project_order/cetak/'+id, data)
     dispatch(fetching('CETAK_ORDER'))
     request.then(function(response) {
       Dispatch(dispatch, cetakOrderSuccess, response)

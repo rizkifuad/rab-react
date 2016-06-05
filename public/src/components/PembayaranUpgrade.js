@@ -109,7 +109,6 @@ class PembayaranUpgrade extends React.Component {
       total: order.Total+'',
       status: 2+'',
       harga: order.Harga+'',
-      supplier: order.SupplierId+'',
       id: order.ID+'',
       anggaran_id: order.AnggaranId,
       cetak: order.Cetak
@@ -270,7 +269,7 @@ class PembayaranUpgrade extends React.Component {
               <input ref="cetak" type="hidden" />
               <input ref="jumlah" type="hidden" />
               <input ref="total" type="hidden" />
-              <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+              <div className="hide mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                 <div className="mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label  supplier-input">
                   <select ref="supplier" className="mdl-selectfield__select" defaultValue={defaultAnggaran}>
                     {SupplierOption}
@@ -312,7 +311,7 @@ class PembayaranUpgrade extends React.Component {
               <div className="mdl-card mdl-shadow--1dp">
                 <div className="p-30">
                   {this.props.pembayaran.status && this.props.pembayaran.status.error  ? <div className='alert alert-info text-red'>{this.props.pembayaran.status.message}</div> : ''}
-                  <h2 className="t-center">Order Cetak({this.props.params.cetak})</h2>
+                  <h2 className="t-center">PO ({this.props.params.cetak})</h2>
                   {PembayaranTable}
                 </div>
               </div>

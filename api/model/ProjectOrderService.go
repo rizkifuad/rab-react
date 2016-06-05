@@ -78,15 +78,18 @@ func (order *ProjectOrder) PrepareUpdate(w http.ResponseWriter, r *http.Request)
 		Anggaran   Anggaran
 		Order      []ProjectOrder
 		Barangs    []BarangAnggaran
+		Suppliers  []Supplier
 		TotalOrder []TotalOrder
 	}
 
 	var anggaran Anggaran
+	var supplier Supplier
 	var totalOrder TotalOrder
 	anggaran.GetByID(id)
 
 	result.Order = order.GetOrders(id)
 	result.Anggaran = anggaran
+	result.Suppliers = supplier.GetSuppliers()
 	result.Barangs = anggaran.GetBarang(id)
 	result.TotalOrder = totalOrder.GetTotalOrder(id)
 
@@ -169,6 +172,17 @@ func (order *ProjectOrder) CetakOrder(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"])
 
+	decoder := json.NewDecoder(r.Body)
+
+	var input struct {
+		Order      []string
+		SupplierID string `json:supplierId`
+	}
+	_ = decoder.Decode(&input)
+
+	println("who i am")
+	fmt.Printf("%+v", input)
+
 	var result struct {
 		Max int
 	}
@@ -176,13 +190,17 @@ func (order *ProjectOrder) CetakOrder(w http.ResponseWriter, r *http.Request) {
 		Scan(&result)
 	nextCetak := result.Max + 1
 
-	db.Exec("UPDATE project_order SET Cetak=?, status=2 WHERE status = 1 and anggaran_id=?", nextCetak, id)
+	for _, order := range input.Order {
+		db.Exec("UPDATE project_order SET Cetak=?, status=2, supplier_id=? WHERE status = 1 and anggaran_id=? and id=?", nextCetak, input.SupplierID, id, order)
+	}
+
+	//db.Exec("UPDATE project_order SET Cetak=?, status=2 WHERE status = 1 and anggaran_id=?", nextCetak, id)
 
 	//should insert this into pembayaran
 
 	var pembayaran Pembayaran
 
-	pembayaran.SaveOrder(id, nextCetak)
+	pembayaran.SaveOrder(id, nextCetak, input.Order, input.SupplierID)
 
 	w.Write(ParseJSON(order))
 

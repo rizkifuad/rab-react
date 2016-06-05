@@ -5,6 +5,7 @@ import * as actionCreators from '../actions/ActionBarang'
 import { Link, browserHistory } from 'react-router'
 import $ from 'jquery'
 import TopBar from '../views/TopBar'
+import {limit} from '../utils/index'
 
 
 class Barang extends React.Component {
@@ -49,7 +50,7 @@ class Barang extends React.Component {
               <td>{i}</td>
               <td>{barang.NamaBarang}</td>
               <td>{barang.Satuan}</td>
-              <td>
+              <td className={limit(this)}>
                 <button onClick={this.handleEdit.bind(this, barang.ID)} className="mdl-button mdl-js-button mdl-button--fab mdl-button--tiny-fab mdl-js-ripple-effect mdl-button--accent">
                   <i className="material-icons">edit</i>
                 </button>
@@ -80,7 +81,7 @@ class Barang extends React.Component {
                 <th className="mdl-data-table__header--sorted-ascending">No</th>
                 <th>Nama Barang</th>
                 <th>Satuan</th>
-                <th>Action</th>
+                <th className={limit(this)}>Action</th>
               </tr>
             </thead>
             <tbody>
@@ -121,7 +122,7 @@ class Barang extends React.Component {
           <div className="mdl-cell mdl-cell--3-col mdl-cell--12-col-tablet mdl-cell--12-col-phone mdl-color--grey-100">
             <div className="p-40 p-20--small">
 
-              <div className="mdl-color-text--blue-grey-400 sticky" ml-sticky offset="80" body-className="mdl-layout__content">
+              <div className={'mdl-color-text--blue-grey-400 sticky ' + limit(this)} ml-sticky offset="80" body-className="mdl-layout__content">
                 <p>Klik menu dibawah untuk menambah/menghapus barang</p>
                 <div className="m-t-30">
                   <ul className="list-bordered">
@@ -161,7 +162,8 @@ class Barang extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    barang: state.barang
+    barang: state.barang,
+    auth: state.auth
   }
 }
 

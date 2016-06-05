@@ -12,6 +12,7 @@ type ProjectOrder struct {
 	BarangId   uint
 	Jumlah     int
 	Status     int
+	SupplierId int
 	Cetak      int
 	gorm.Model
 }
