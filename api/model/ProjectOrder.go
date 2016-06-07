@@ -14,6 +14,8 @@ type ProjectOrder struct {
 	Status     int
 	SupplierId int
 	Cetak      int
+	UserId     int
+	Kegunaan   string
 	gorm.Model
 }
 type TotalOrder struct {
@@ -28,7 +30,7 @@ func (order *TotalOrder) GetTotalOrder(id int) []TotalOrder {
 
 	var result []TotalOrder
 
-	db.Raw("select *, jumlah_order > jumlah_anggaran as status from (select barang_id, sum(jumlah) as jumlah_order from project_order po  where anggaran_id=? and deleted_at is null group by barang_id) po,(select barang_id, sum(jumlah) as jumlah_anggaran from anggaran_detail ad where anggaran_id=? and deleted_at is null group by barang_id) ad  join barang b on b.id=barang_id where po.barang_id=ad.barang_id;", id, id).
+	db.Raw("select *, jumlah_order > jumlah_anggaran as status from (select barang_id, sum(jumlah) as jumlah_order from project_order po  where anggaran_id=? and deleted_at is null and status<>3 group by barang_id) po,(select barang_id, sum(jumlah) as jumlah_anggaran from anggaran_detail ad where anggaran_id=? and deleted_at is null group by barang_id) ad  join barang b on b.id=barang_id where po.barang_id=ad.barang_id;", id, id).
 		Scan(&result)
 
 	return result
@@ -62,6 +64,7 @@ type ProjectOrderInput struct {
 	AnggaranId string `json:"anggaran_id"`
 	BarangId   string `json:"barang_id"`
 	Jumlah     string `json:"jumlah"`
+	Kegunaan   string `json:"kegunaan"`
 }
 
 func (input *ProjectOrderInput) ValidateInput(action string) (*ProjectOrder, APIMessage) {
@@ -97,6 +100,7 @@ func (input *ProjectOrderInput) ValidateInput(action string) (*ProjectOrder, API
 
 	order.AnggaranId = uint(AnggaranId)
 	order.BarangId = uint(BarangId)
+	order.Kegunaan = input.Kegunaan
 
 	order.Jumlah, _ = strconv.Atoi(input.Jumlah)
 

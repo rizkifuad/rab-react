@@ -2,6 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import * as actionCreators from '../actions/ActionProjectOrder'
+import { getUsers } from '../actions/ActionUser'
 import { browserHistory } from 'react-router'
 import TopBar from '../views/TopBar'
 import moment from 'moment'
@@ -9,6 +10,7 @@ import { print } from '../utils/index'
 import $ from 'jquery'
 import {limit} from '../utils/index'
 let ACTION = 'CREATE'
+actionCreators.getUsers = getUsers
 
 
 
@@ -69,6 +71,7 @@ class ProjectOrderUpgrade extends React.Component {
   componentDidMount() {
     const dialogCetak= document.querySelector('#dialog-cetak');
     const dialogCetakUlang = document.querySelector('#dialog-cetak-ulang');
+    this.props.actions.getUsers()
 
     if (dialogCetak && ! dialogCetak.showModal) {
       dialogPolyfill.registerDialog(dialogCetak);
@@ -120,7 +123,8 @@ class ProjectOrderUpgrade extends React.Component {
     const data = {
       anggaran_id: upgradeData.Anggaran.ID + "",
       barang_id: this.refs.barang.value,
-      jumlah: this.refs.jumlah.value
+      jumlah: this.refs.jumlah.value,
+      kegunaan: this.refs.kegunaan.value
     }
     console.log('data', data)
 
@@ -155,6 +159,8 @@ class ProjectOrderUpgrade extends React.Component {
       //if (i) {
         const dialogCetak= document.querySelector('#dialog-cetak');
         dialogCetak.showModal()
+        $('.supplier-input').addClass('is-dirty')
+        $('.pj-input').addClass('is-dirty')
         //print('order-table')
       //}
     } else {
@@ -168,11 +174,40 @@ class ProjectOrderUpgrade extends React.Component {
   }
 
   handleCetak()  {
+    const _this = this
+    const user = this.props.user.data.find(function(v) {
+      return v.ID = _this.refs.user.value
+    })
     let data = {
       order: this.props.order.selected,
-      supplierId: this.refs.supplier.value
+      supplierId: this.refs.supplier.value,
+      userId: this.refs.user.value,
+      nama: user.Nama
     }
-    this.props.actions.cetakOrder(this.props.order.upgradeData.Anggaran.ID, data, this.refs.maxCetak.value)
+
+    const upgradeData = this.props.order.upgradeData
+
+    let maxCetak = 0
+    let CetakOption = null
+    if (upgradeData.Order && upgradeData.Order.length > 0) {
+      const uniqueCetak = []
+      CetakOption = upgradeData.Order.map(function(ang) {
+        const notUnique = uniqueCetak.find(function(i, v) {
+          return i == ang.Cetak
+        })
+
+        if (notUnique == null && ang.Cetak) {
+          uniqueCetak.push(ang.Cetak)
+        }else {
+          return null
+        }
+      })
+
+      maxCetak = Math.max.apply(null, uniqueCetak) + 1
+      console.log('maxCetaki', maxCetak)
+    }
+
+    this.props.actions.cetakOrder(this.props.order.upgradeData.Anggaran.ID, data, maxCetak)
 
     const dialogCetak= document.querySelector('#dialog-cetak');
     dialogCetak.close()
@@ -305,6 +340,7 @@ class ProjectOrderUpgrade extends React.Component {
               <td>{b.NamaBarang}</td>
               <td>{order.Jumlah}</td>
               <td>{moment(order.CreatedAt).format('YYYY-MM-DD HH:mm')}</td>
+              <td>{order.Kegunaan}</td>
               <td className="print-hide">
                 {status}
               </td>
@@ -327,6 +363,7 @@ class ProjectOrderUpgrade extends React.Component {
                 <th>Nama Barang</th>
                 <th>Jumlah</th>
                 <th>Tanggal order</th>
+                <th>Kegunaan</th>
                 <th className="print-hide">Status</th>
               </tr>
             </thead>
@@ -426,6 +463,19 @@ class ProjectOrderUpgrade extends React.Component {
       })
     }
 
+
+    let UserOption = null
+    let defaultUser = null
+    if (this.props.user.fetching == false && this.props.user.data && this.props.user.data.length > 0) {
+      defaultUser  = this.props.user.data[0].ID
+      UserOption = this.props.user.data.map(function(b) {
+        console.log(b)
+        return (
+          <option key={b.ID} value={b.ID}>{b.Nama}</option>
+        )
+      })
+    }
+
     const defaultBarang = this.props.order.upgradeData.Barangs && this.props.order.upgradeData.Barangs.length > 0 ? this.props.order.upgradeData.Barangs[0].ID : null
     return (
       <section className="text-fields">
@@ -433,7 +483,7 @@ class ProjectOrderUpgrade extends React.Component {
         <h3 className="mdl-dialog__title">Project Order</h3>
         <div className="mdl-dialog__content">
           <p>
-            Pilih supplier
+            Pilih supplier dan penanggung jawab
           </p>
           <div className="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-phone no-p-l">
             <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label ">
@@ -443,6 +493,14 @@ class ProjectOrderUpgrade extends React.Component {
                   {SupplierOption}
                 </select>
                 <label className="mdl-selectfield__label" htmlhtmlFor="barang">Supplier</label>
+              </div>
+            </div>
+            <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label ">
+              <div className="mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label  pj-input">
+                <select ref="user" className="mdl-selectfield__select" defaultValue={defaultUser}>
+                  {UserOption}
+                </select>
+                <label className="mdl-selectfield__label" htmlhtmlFor="barang">Penanggung Jawab</label>
               </div>
             </div>
           </div>
@@ -488,7 +546,7 @@ class ProjectOrderUpgrade extends React.Component {
 
       <div className="mdl-grid mdl-grid--no-spacing">
 
-        <div className="mdl-cell mdl-cell--3-col mdl-cell--12-col-tablet mdl-cell--12-col-phone mdl-color--grey-100 no-p-l">
+        <div className="mdl-cell mdl-cell--2-col mdl-cell--12-col-tablet mdl-cell--12-col-phone mdl-color--grey-100 no-p-l">
           <div className="p-40 p-r-20 p-20--small">
             <div className=" mdl-color-text--blue-grey-400">
               <h3><i className="material-icons f-left m-r-5">format_align_left</i> Anggaran</h3>
@@ -497,7 +555,7 @@ class ProjectOrderUpgrade extends React.Component {
           </div>
         </div>
 
-        <div className="mdl-cell mdl-cell--9-col mdl-cell--12-col-tablet mdl-cell--12-col-phone no-p-l">
+        <div className="mdl-cell mdl-cell--10-col mdl-cell--12-col-tablet mdl-cell--12-col-phone no-p-l">
           <div className="p-20 ml-card-holder ml-card-holder-first">
             <div className="mdl-card mdl-shadow--1dp">
               <div className="p-30">
@@ -554,6 +612,13 @@ class ProjectOrderUpgrade extends React.Component {
                       </div>
                     </div>
 
+                    <div className="mdl-cell mdl-cell--9-col p-0">
+                      <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                      <textarea ref="kegunaan" className="mdl-textfield__input"/>
+                      <label className="mdl-textfield__label" htmlhtmlFor="sample2">Kegunaan</label>
+                    </div>
+                    </div>
+
                   </div>
 
                   <div className="mdl-grid">
@@ -584,7 +649,8 @@ class ProjectOrderUpgrade extends React.Component {
 function mapStateToProps(state) {
   return {
     order: state.order,
-    auth: state.auth
+    auth: state.auth,
+    user: state.user
   }
 }
 

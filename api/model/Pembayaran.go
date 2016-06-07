@@ -12,6 +12,7 @@ type Pembayaran struct {
 	BarangId   uint
 	Cetak      int
 	SupplierId int
+	UserId     int
 	Jumlah     int
 	Status     int
 	Harga      int
@@ -23,7 +24,7 @@ type Pembayaran struct {
 func (pembayaran *Pembayaran) SaveOrder(anggaranId int, cetak int, orders []string, supplierID string) {
 	var bayars []Pembayaran
 	db.Table("project_order").
-		Select("max(anggaran_id) anggaran_id, max(cetak) cetak, barang_id, sum(jumlah) jumlah, GROUP_CONCAT(id SEPARATOR ',') list_order, supplier_id").
+		Select("max(anggaran_id) anggaran_id, max(cetak) cetak, barang_id, sum(jumlah) jumlah, GROUP_CONCAT(id SEPARATOR ',') list_order, supplier_id, user_id").
 		Where("anggaran_id = ? and cetak = ? and supplier_id=? and id in(?)", anggaranId, cetak, supplierID, orders).Group("barang_id").Scan(&bayars)
 
 	fmt.Printf("%+v", bayars)

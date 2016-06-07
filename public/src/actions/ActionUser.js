@@ -5,7 +5,7 @@ import axios from 'axios'
 import { loginUserFailure } from './ActionAuth'
 
 const { 
-  FETCHING, 
+  FETCHING_USER, 
   GET_USERS_SUCCESS, 
   GET_USERS_FAILURE, 
   SELECT_USER, 
@@ -22,7 +22,7 @@ const {
 
 export function fetching(action) {
   return {
-    type: FETCHING,
+    type: FETCHING_USER,
     payload: action
   }
 }

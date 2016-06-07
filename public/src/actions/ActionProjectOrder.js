@@ -83,7 +83,7 @@ function prepareUpgradeFailure(err) {
   }
 }
 
-export function prepareUpgrade(type, id, cetak) {
+export function prepareUpgrade(type, id, dataCetak) {
   let url = ''
   switch (type) {
     case 'CREATE':
@@ -102,9 +102,9 @@ export function prepareUpgrade(type, id, cetak) {
     const request = API().get(url)
     request.then(function(response) {
       Dispatch(dispatch, prepareUpgradeSuccess, response.data)
-      if (cetak) {
-        console.log('nomer cetak', cetak)
-        print('order-table', cetak)
+      if (dataCetak) {
+        console.log('nomer cetak', dataCetak)
+        print('order-table', dataCetak)
       }
     }).catch(function(err) {
       Fallback(dispatch, prepareUpgradeFailure, err)
@@ -278,7 +278,7 @@ export function cetakOrder(id, data, cetak) {
     dispatch(fetching('CETAK_ORDER'))
     request.then(function(response) {
       Dispatch(dispatch, cetakOrderSuccess, response)
-      dispatch(prepareUpgrade('UPDATE', id, cetak))
+      dispatch(prepareUpgrade('UPDATE', id, {cetak: cetak, user: data.nama}))
     }).catch(function(err) {
       Fallback(dispatch, cetakOrderFailure, err)
     })
