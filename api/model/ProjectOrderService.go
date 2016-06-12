@@ -177,6 +177,7 @@ func (order *ProjectOrder) CetakOrder(w http.ResponseWriter, r *http.Request) {
 	var input struct {
 		Order      []string
 		SupplierID string `json:supplierId`
+		UserID     string `json:userId`
 	}
 	_ = decoder.Decode(&input)
 
@@ -191,7 +192,7 @@ func (order *ProjectOrder) CetakOrder(w http.ResponseWriter, r *http.Request) {
 	nextCetak := result.Max + 1
 
 	for _, order := range input.Order {
-		db.Exec("UPDATE project_order SET Cetak=?, status=2, supplier_id=? WHERE status = 1 and anggaran_id=? and id=?", nextCetak, input.SupplierID, id, order)
+		db.Exec("UPDATE project_order SET Cetak=?, status=2, supplier_id=?, user_id=? WHERE status = 1 and anggaran_id=? and id=?", nextCetak, input.SupplierID, input.UserID, id, order)
 	}
 
 	//db.Exec("UPDATE project_order SET Cetak=?, status=2 WHERE status = 1 and anggaran_id=?", nextCetak, id)

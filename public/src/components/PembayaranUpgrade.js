@@ -12,6 +12,8 @@ class PembayaranUpgrade extends React.Component {
   constructor(props) {
     super(props)
     this.handleSave = this.handleSave.bind(this)
+    this.handleUploadGambar = this.handleUploadGambar.bind(this)
+    this.handleLihatGambar = this.handleLihatGambar.bind(this)
   }
 
   componentWillMount(){
@@ -113,6 +115,49 @@ class PembayaranUpgrade extends React.Component {
       anggaran_id: order.AnggaranId,
       cetak: order.Cetak
     })
+  }
+
+  handleUploadDialog() {
+    var dialogUpload = document.querySelector('#dialog-upload');
+    if (! dialogUpload.showModal) {
+      dialogPolyfill.registerDialog(dialogUpload);
+    }
+    dialogUpload.showModal()
+
+    dialogUpload.querySelector('.dialog-close-button')
+    .addEventListener('click', function() {
+      dialogUpload.close();
+    });
+  }
+
+
+  handleUploadGambar(e) {
+    e.preventDefault()
+    const upgradeData = this.props.pembayaran.upgradeData
+    const cetak = upgradeData.Detail[0].Cetak
+    const anggaranId = upgradeData.Detail[0].AnggaranId
+    let fd = new FormData();    
+    //console.log('formdata', this.refs.gambar.files)
+    fd.append( 'file', this.refs.gambar.files[0]);
+    fd.append('cetak', cetak)
+    fd.append('anggaran_id', anggaranId)
+    this.props.actions.uploadGambar({file:fd}, anggaranId, cetak)
+
+    var dialogUpload = document.querySelector('#dialog-upload');
+    dialogUpload.close()
+  }
+
+
+  handleLihatGambar(e) {
+    const upgradeData = this.props.pembayaran.upgradeData
+    console.log(upgradeData)
+    const detail = upgradeData.Detail
+    if (detail && detail.length > 0 && detail[0].Gambar != '') {
+      console.log('menggila')
+      window.open ( 'http://localhost:7000/gambar/' + detail[0].Gambar)
+    } else {
+      alert('Gambar tidak ditemukan')
+    }
   }
 
 
@@ -254,6 +299,29 @@ class PembayaranUpgrade extends React.Component {
           data={LeftDetail}
         />
 
+      <dialog id="dialog-upload" className="mdl-dialog">
+        <form onSubmit={this.handleUploadGambar} encType='multipart/form-data'>
+          <h3 className="mdl-dialog__title">Upload Gambar Nota</h3>
+          <div className="mdl-dialog__content">
+            <p>
+              Detail gambar pembayaran
+            </p>
+            <div className="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-phone no-p-l">
+              <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input ref="gambar" type="file" name="file" />
+              </div>
+            </div>
+
+          </div>
+          <div className="mdl-dialog__actions">
+            <button type="submit" className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">
+              Simpan
+            </button>
+            <button type="button" className="mdl-button dialog-close-button">Close</button>
+          </div>
+        </form>
+      </dialog>
+
 
       <dialog id="dialog" className="mdl-dialog">
         <form onSubmit={this.handleSave}>
@@ -305,11 +373,16 @@ class PembayaranUpgrade extends React.Component {
       <br/>
       <br/>
       <div className="mdl-grid mdl-grid--no-spacing">
-
           <div className="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-phone no-p-l">
             <div className="p-20 ml-card-holder ml-card-holder-first">
               <div className="mdl-card mdl-shadow--1dp">
                 <div className="p-30">
+        <button onClick={this.handleUploadDialog} type="submit" className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">
+          Upload Gambar
+        </button>&nbsp;
+        <button onClick={this.handleLihatGambar} type="button" className="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
+          Lihat Gambar
+        </button>
                   {this.props.pembayaran.status && this.props.pembayaran.status.error  ? <div className='alert alert-info text-red'>{this.props.pembayaran.status.message}</div> : ''}
                   <h2 className="t-center">PO ({this.props.params.cetak})</h2>
                   {PembayaranTable}

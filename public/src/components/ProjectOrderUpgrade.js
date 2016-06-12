@@ -218,7 +218,20 @@ class ProjectOrderUpgrade extends React.Component {
   handleCetakUlang(e) {
     console.log('menggila')
     const cetak = this.refs.cetak.value
-    print('order-table', cetak)
+    const userid = $('.cetak-input option[value='+ cetak +']').attr('data-user-id')
+    console.log('userid', userid)
+
+    const user = this.props.user.data.find(function(u) {
+      console.log('user', u)
+      return u.ID == userid
+    })
+    let nama = 'Direktur'
+
+    if (user) {
+      nama = user.Nama
+    }
+
+    print('order-table', {cetak:cetak, user: nama})
     e.preventDefault()
   }
 
@@ -428,7 +441,7 @@ class ProjectOrderUpgrade extends React.Component {
         if (notUnique == null && ang.Cetak) {
           uniqueCetak.push(ang.Cetak)
           return (
-            <option key={ang.Cetak} value={ang.Cetak}>{ang.Cetak}</option>
+            <option key={ang.Cetak} value={ang.Cetak} data-user-id={ang.UserId}>{ang.Cetak}</option>
           )
         }else {
           return null
@@ -521,7 +534,7 @@ class ProjectOrderUpgrade extends React.Component {
           </p>
           <div className="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-phone no-p-l">
             <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label ">
-              <div className="mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label  supplier-input">
+              <div className="mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label  cetak-input">
                 <select ref="cetak" className="mdl-selectfield__select" defaultValue={defaultCetak}>
                   {CetakOption}
                 </select>
@@ -546,7 +559,7 @@ class ProjectOrderUpgrade extends React.Component {
 
       <div className="mdl-grid mdl-grid--no-spacing">
 
-        <div className="mdl-cell mdl-cell--2-col mdl-cell--12-col-tablet mdl-cell--12-col-phone mdl-color--grey-100 no-p-l">
+        <div className="mdl-cell mdl-cell--3-col mdl-cell--12-col-tablet mdl-cell--12-col-phone mdl-color--grey-100 no-p-l">
           <div className="p-40 p-r-20 p-20--small">
             <div className=" mdl-color-text--blue-grey-400">
               <h3><i className="material-icons f-left m-r-5">format_align_left</i> Anggaran</h3>
@@ -555,7 +568,7 @@ class ProjectOrderUpgrade extends React.Component {
           </div>
         </div>
 
-        <div className="mdl-cell mdl-cell--10-col mdl-cell--12-col-tablet mdl-cell--12-col-phone no-p-l">
+        <div className="mdl-cell mdl-cell--9-col mdl-cell--12-col-tablet mdl-cell--12-col-phone no-p-l">
           <div className="p-20 ml-card-holder ml-card-holder-first">
             <div className="mdl-card mdl-shadow--1dp">
               <div className="p-30">

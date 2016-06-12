@@ -14,6 +14,10 @@ const {
   CREATE_PEMBAYARAN_SUCCESS,
   CREATE_PEMBAYARAN_FAILURE,
 
+  UPLOAD_GAMBAR, 
+  UPLOAD_GAMBAR_SUCCESS, 
+  UPLOAD_GAMBAR_FAILURE,
+
   UPDATE_PEMBAYARAN_SUCCESS, 
   UPDATE_PEMBAYARAN_FAILURE } = CONSTANTS
 
@@ -146,6 +150,43 @@ export function create(formData) {
       Dispatch(dispatch, createPembayaranSuccess,response.data)
     }).catch(function(err) {
       Fallback(dispatch, createPembayaranFailure, err)
+    })
+  }
+}
+
+
+export function uploadGambarSuccess(data) {
+  return {
+    type: UPLOAD_GAMBAR_SUCCESS,
+    payload: data
+  }
+}
+
+
+export function uploadGambarFailure(data) {
+  return {
+    type: UPLOAD_GAMBAR_FAILURE,
+    payload: data
+  }
+}
+
+export function uploadGambar(formData, anggaranId, cetak) {
+  console.log('formdata',formData)
+  return dispatch => {
+    const url = '/api/pembayaran/upload'
+    //const data = serializeForm(formData)
+    const config = {
+      headers: {'Content-Type': 'multipart/form-data'}
+    }
+    const request = API().post(url, formData.file, config)
+
+
+    dispatch(fetching('UPLOAD_GAMBAR'))
+    request.then(function(response) {
+      Dispatch(dispatch, uploadGambarSuccess,response.data)
+      dispatch(prepareUpgrade('', anggaranId, cetak))
+    }).catch(function(err) {
+      Fallback(dispatch, uploadGambarFailure, err)
     })
   }
 }

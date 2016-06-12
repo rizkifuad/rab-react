@@ -227,6 +227,18 @@ const Routes = {
           ]
         },
 
+        { 
+          childRoutes: [
+            // Protected routes that don't share the dashboard UI
+            { path: '/report',
+              getComponent: (location, cb) => {
+                require.ensure([], (require) => {
+                  cb(null, require('../components/Report'))
+                })
+              }
+            }
+          ]
+        },
 
         { 
           childRoutes: [

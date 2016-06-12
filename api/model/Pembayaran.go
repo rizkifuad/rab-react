@@ -18,6 +18,7 @@ type Pembayaran struct {
 	Harga      int
 	Total      int
 	ListOrder  string
+	Gambar     string
 	gorm.Model
 }
 
@@ -40,12 +41,13 @@ type PembayaranDetail struct {
 	ListOrders  string
 	NamaBarang  string
 	Satuan      string
+	Gambar      string
 }
 
 func (pembayaran *Pembayaran) GetPembayarans(id int) []PembayaranDetail {
 	var pembayarans []PembayaranDetail
 	db.Table("pembayaran").
-		Select("*, count(barang_id) jenis_barang, GROUP_CONCAT(barang_id SEPARATOR ',') list_barang, GROUP_CONCAT(list_order SEPARATOR ',') list_orders").
+		Select("*,gambar, count(barang_id) jenis_barang, GROUP_CONCAT(barang_id SEPARATOR ',') list_barang, GROUP_CONCAT(list_order SEPARATOR ',') list_orders").
 		Where("anggaran_id = ?", id).
 		Group("anggaran_id, cetak").
 		Scan(&pembayarans)
@@ -56,7 +58,7 @@ func (pembayaran *Pembayaran) GetPembayarans(id int) []PembayaranDetail {
 func (pembayaran *Pembayaran) GetByID(anggaranId int, cetak int) []PembayaranDetail {
 	var pembayarans []PembayaranDetail
 	db.Table("pembayaran").
-		Select("*, count(barang_id) jenis_barang, GROUP_CONCAT(list_order SEPARATOR ',') list_orders").
+		Select("*,gambar, count(barang_id) jenis_barang, GROUP_CONCAT(list_order SEPARATOR ',') list_orders").
 		Where("anggaran_id = ? and cetak = ?", anggaranId, cetak).
 		Joins("join barang on pembayaran.barang_id = barang.id").
 		Group("anggaran_id, cetak, barang_id").

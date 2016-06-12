@@ -52,6 +52,7 @@ func main() {
 	rAuth.HandleFunc("/pembayaran/prepareUpgrade/{id:[0-9]+}/{cetak:[0-9]+}", pembayaran.PrepareUpdate)
 	rAuth.HandleFunc("/pembayaran/save", pembayaran.Update).Methods("PUT")
 	rAuth.HandleFunc("/pembayaran/save", pembayaran.Create).Methods("POST")
+	rAuth.HandleFunc("/pembayaran/upload", pembayaran.Upload).Methods("POST")
 
 	rAuth.HandleFunc("/report/all", report.All)
 	rAuth.HandleFunc("/report/{id:[0-9+]}", report.List)
@@ -71,6 +72,7 @@ func main() {
 	rAuth.HandleFunc("/project_order/tolak/{id:[0-9]+}", projectOrder.Tolak).Methods("GET")
 	rAuth.HandleFunc("/project_order/cetak/{id:[0-9]+}", projectOrder.CetakOrder).Methods("POST")
 
+	r.HandleFunc("/gambar/{gambar}", pembayaran.GambarServe).Methods("GET")
 	//r.Handle("/api", Middleware(rAuth))
 	http.Handle("/", (Middleware(r)))
 	println("Listen and serve at port 7000")
@@ -79,6 +81,7 @@ func main() {
 
 func Middleware(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		println("menggila")
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Add("Access-Control-Allow-Headers", "Content-Type")
 		w.Header().Add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")

@@ -256,7 +256,6 @@ export function approveOrder(id) {
   }
 }
 
-
 export function cetakOrderSuccess(data) {
   return {
     type: CETAK_ORDER_SUCCESS,
