@@ -82,9 +82,8 @@ func (pembayaran *Pembayaran) GetTotalHarga(anggaranId int) int {
 func (pembayaran *Pembayaran) GetByStatus(anggaranId int, status int) []PembayaranDetail {
 	var pembayarans []PembayaranDetail
 	db.Table("pembayaran").
-		Select("*,gambar, count(barang_id) jenis_barang, GROUP_CONCAT(list_order SEPARATOR ',') list_orders").
+		Select("*").
 		Where("anggaran_id = ? and status = ?", anggaranId, status).
-		Joins("join barang on pembayaran.barang_id = barang.id").
 		Scan(&pembayarans)
 
 	return pembayarans
