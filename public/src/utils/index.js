@@ -78,11 +78,73 @@ export function createRoutes(path, component) {
   ]
 }
 
+
+export function printUlang(dataCetak) {
+  console.log('cok', dataCetak)
+   var newWin= window.open("");
+   newWin.document.write('<link rel="stylesheet" href="http://localhost:3000/assets/css/print.css">')
+   newWin.document.write('<h1 align="center">PT. Putra Rindu Serumpun</h1><br><br>')
+   console.log('dataCetak', dataCetak)
+
+   if (dataCetak) {
+     newWin.document.write('\
+     <div class="left text-left"><strong>TIPE: </strong></div>\
+     <div class="right text-left"><strong>PROYEK: </strong>'+ dataCetak.detail.Lokasi +'<br><br>\
+     <strong>BLOK: </strong>'+ dataCetak.detail.BlokRumah +'\
+     </div>\
+     <br>\
+     <br>\
+     <br>\
+     <br>\
+     <br>\
+       <table style="width:100%;">\
+        <thead>\
+          <tr>\
+            <th>No</th>\
+            <th>Nama Barang</th>\
+            <th>Jumlah</th>\
+            <th>Keterangan</th>\
+            <th>Total</th>\
+          </tr>\
+        </thead>\
+        <tbody>\
+       ');
+     for (var i = 0, len = dataCetak.order.length; i < len; i++) {
+       var item = dataCetak.order[i]
+       var no = i + 1
+
+       const b = dataCetak.barang.find(function(bar) {
+         return parseInt(bar.BarangId) == parseInt(item.BarangId)
+       })
+
+       newWin.document.write('\
+       <tr>\
+        <td>'+ no +'</td>\
+        <td>'+ b.NamaBarang +'</td>\
+        <td>'+ item.Jumlah +'</td>\
+        <td>'+ item.Kegunaan +'</td>\
+        <td></td>\
+       </tr>\
+       ')
+     }
+     newWin.document.write('</tbody></table><br><br>');
+     newWin.document.write('<div class="right"><strong>Pekanbaru,                 </strong></div>');
+     newWin.document.write('<br><br><br><div class="left"><strong>Disetujui,</strong><br><br><br>')
+     newWin.document.write(dataCetak.user+"</div>")
+     newWin.document.write('<div class="right"><strong>Dipesan oleh,</strong><br><br><br>')
+   }
+   setTimeout(function() {
+     newWin.print();
+   }, 500)
+   //newWin.close();
+}
+
 export function print(divName, dataCetak) {
   console.log('cok', dataCetak)
  var divToPrint=document.getElementById(divName);
    var newWin= window.open("");
    newWin.document.write('<link rel="stylesheet" href="http://localhost:3000/assets/css/print.css">')
+   newWin.document.write('<h1 align="center">PT. Putra Rindu Serumpun</h1>')
    newWin.document.write(divToPrint.outerHTML);
    console.log('dataCetak', dataCetak)
    if (dataCetak) {
@@ -95,7 +157,8 @@ export function print(divName, dataCetak) {
      for (var i = 0, len = a.length; i < len; i++) {
        a[i].classList.add('print-row')
      }
-     newWin.document.write('<br><br><br>Penanggung Jawab<br><br><br>')
+     newWin.document.write('<div class="right">Pekanbaru,                 </div>');
+     newWin.document.write('<br><br><br>Disetujui,<br><br><br>')
      newWin.document.write(dataCetak.user)
    }
    setTimeout(function() {

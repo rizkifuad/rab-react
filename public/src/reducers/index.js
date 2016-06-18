@@ -6,6 +6,7 @@ import supplier from './SupplierReducer'
 import anggaran from './AnggaranReducer'
 import order from './ProjectOrderReducer'
 import pembayaran from './PembayaranReducer'
+import report from './ReportReducer'
 import { syncHistoryWithStore, routerReducer } from 'react-router-redux'
 
 const rootReducers = combineReducers({
@@ -16,6 +17,7 @@ const rootReducers = combineReducers({
     anggaran,
     order,
     pembayaran,
+    report,
     routing: routerReducer
 
 })

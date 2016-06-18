@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import * as actionCreators from '../actions/ActionReport'
 import { getAnggarans } from '../actions/ActionAnggaran'
+import { toRp } from '../utils/index'
 import { Link, browserHistory } from 'react-router'
 import $ from 'jquery'
 import TopBar from '../views/TopBar'
@@ -25,7 +26,7 @@ class Report extends React.Component {
 
 
   handleEdit(id, cetak) {
-    browserHistory.push(`pembayaran/edit/${id}/${cetak}`)
+    browserHistory.push(`report/edit/${id}/${cetak}`)
   }
 
   componentDidUpdate() {
@@ -33,7 +34,7 @@ class Report extends React.Component {
     $('table').on('change','td .mdl-checkbox__input',function(){
       var checked = []
       $('td .mdl-checkbox__input').each(function(i, k){
-        this.checked && checked.push(_this.props.pembayaran.data[i])
+        this.checked && checked.push(_this.props.report.data[i])
       });
       _this.props.actions.selectReports(checked)
     })
@@ -43,9 +44,14 @@ class Report extends React.Component {
       console.log(anggaran)
       this.props.actions.getReports(anggaran[0].ID)
       firstTime = false
-      $('.anggaran-input').addClass('is-dirty')
+      setTimeout(function() {
+        $('.anggaran-input').addClass('is-dirty')
+      }, 200)
     } else {
-      //componentHandler.upgradeDom();
+      setTimeout(function() {
+        $('.anggaran-input').addClass('is-dirty')
+      }, 200)
+      componentHandler.upgradeDom();
     }
   }
 
@@ -62,52 +68,70 @@ class Report extends React.Component {
   }
 
   isFetching() {
-    return 'mdl-progress mdl-js-progress mdl-progress__indeterminate' + (!this.props.pembayaran.fetching ? ' hide': '')
+    return 'mdl-progress mdl-js-progress mdl-progress__indeterminate' + (!this.props.report.fetching ? ' hide': '')
   }
 
   render()  {
     let ReportList = null
     let i = 0
-    if (this.props.pembayaran.data.length > 0) {
-      ReportList = this.props.pembayaran.data.map((pembayaran) => {
-        i++
-          return (
-            <tr key={pembayaran.ID}>
-              <td>{i}</td>
-              <td>{pembayaran.Cetak}</td>
-              <td>{pembayaran.JenisBarang} Jenis</td>
-              <td>{moment(pembayaran.CreatedAt).format('YYYY-MM-DD HH:mm')}</td>
-              <td>
-                <button onClick={this.handleEdit.bind(this, pembayaran.AnggaranId, pembayaran.Cetak)} className="mdl-button mdl-js-button mdl-button--fab mdl-button--tiny-fab mdl-js-ripple-effect mdl-button--accent">
-                  <i className="material-icons">edit</i>
-                </button>
-              </td>
-            </tr>
-          )
-      })
+    if (this.props.report.data) {
+      const report = this.props.report.data
+       ReportList = (
+        <tbody>
+        <tr>
+          <th>Order Pending</th>
+          <td>{report.OrderPending}</td>
+        </tr>
+        <tr>
+          <th>Order Approved</th>
+          <td>{report.OrderApproved}</td>
+        </tr>
+        <tr>
+          <th>Order Dicetak</th>
+          <td>{report.OrderDicetak}</td>
+        </tr>
+        <tr>
+          <th>Order Ditolak</th>
+          <td>{report.OrderDitolak}</td>
+        </tr>
+        <tr>
+          <th>Total Order</th>
+          <td>{report.TotalOrder}</td>
+        </tr>
+        <tr>
+          <th>Total Barang</th>
+          <td>{report.TotalBarang}</td>
+        </tr>
+        <tr>
+          <th>Total Harga</th>
+          <td>{toRp(report.TotalHarga)}</td>
+        </tr>
+        <tr>
+          <th>Pembayaran Pending</th>
+          <td>{report.PembayaranPending}</td>
+        </tr>
+        <tr>
+          <th>Pembayaran Diinput</th>
+          <td>{report.PembayaranDiinput}</td>
+        </tr>
+        <tr>
+          <th>Pembayaran Lunas</th>
+          <td>{report.PembayaranLunas}</td>
+        </tr>
+      </tbody>
+      )
     } 
 
     let ReportTable = null
 
-    if(this.props.pembayaran.data.length > 0) {
+    if(this.props.report.data) {
       ReportTable =  (
         <div>
-          <table ref="mdl_table" className="mdl-data-table ml-table-striped mdl-js-data-table mdl-data-table--selectable">
+          <table ref="mdl_table" className="mdl-data-table ml-table-striped mdl-js-data-table">
             <colgroup>
               <col className="auto-cell-size p-r-20"/>
             </colgroup>
-            <thead>
-              <tr>
-                <th className="mdl-data-table__header--sorted-ascending">No</th>
-                <th>No cetak</th>
-                <th>Jenis Barang</th>
-                <th>Order Tanggal</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
               { ReportList }
-            </tbody>
           </table>
 
           <div className="hide ml-data-table-pager p-10 t-center">
@@ -125,7 +149,7 @@ class Report extends React.Component {
         </div>
 
       ) 
-    } else if(this.props.pembayaran.fetching === false){
+    } else if(this.props.report.fetching === false){
         ReportTable = (
           <h2 className="t-center">No data found</h2>
         )
@@ -146,8 +170,8 @@ class Report extends React.Component {
   console.log('option', AnggaranOption)
   console.log('defaultAnggaran', defaultAnggaran)
 
-    const title = "Data pembayaran"
-    const description = "Manajemen pembayaran aplikasi"
+    const title = "Data report"
+    const description = "Manajemen report aplikasi"
     return (
       <section className="tables-data">
         <TopBar
@@ -158,29 +182,8 @@ class Report extends React.Component {
 
         <div className="mdl-grid mdl-grid--no-spacing">
 
-          <div className="mdl-cell mdl-cell--3-col mdl-cell--12-col-tablet mdl-cell--12-col-phone mdl-color--grey-100">
-            <div className="p-40 p-20--small">
 
-              <div className="mdl-color-text--blue-grey-400 sticky" ml-sticky offset="80" body-className="mdl-layout__content">
-                <p>Klik menu dibawah untuk menambah/menghapus pembayaran</p>
-                <div className="m-t-30 hide">
-                  <ul className="list-bordered">
-                    <li><Link to="/pembayaran/add">
-                        <i className="material-icons m-r-5 f11">add</i>
-                        Tambah pembayaran
-                    </Link></li>
-                    <li><a href="">
-                        <i className="material-icons m-r-5 f11">delete</i>
-                        Delete
-                    </a></li>
-                  </ul>
-                </div>
-              </div>
-
-            </div>
-          </div>
-
-          <div className="mdl-cell mdl-cell--9-col  mdl-cell--12-col-tablet mdl-cell--12-col-phone">
+          <div className="mdl-cell mdl-cell--12-col  mdl-cell--12-col-tablet mdl-cell--12-col-phone">
             <div className="p-20 ml-card-holder ml-card-holder-first">
               <div className="mdl-card mdl-shadow--1dp m-b-30">
                 <div className="mdl-card__title">
@@ -212,7 +215,7 @@ class Report extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    pembayaran: state.pembayaran,
+    report: state.report,
     anggaran: state.anggaran
   }
 }

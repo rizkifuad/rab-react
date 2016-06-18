@@ -48,7 +48,7 @@ func main() {
 	rAuth.HandleFunc("/supplier/save", supplier.Update).Methods("PUT")
 	rAuth.HandleFunc("/supplier/save", supplier.Create).Methods("POST")
 
-	rAuth.HandleFunc("/pembayaran/{id:[0-9+]}", pembayaran.List)
+	rAuth.HandleFunc("/pembayaran/{id:[0-9]+}", pembayaran.List)
 	rAuth.HandleFunc("/pembayaran/prepareUpgrade/{id:[0-9]+}/{cetak:[0-9]+}", pembayaran.PrepareUpdate)
 	rAuth.HandleFunc("/pembayaran/save", pembayaran.Update).Methods("PUT")
 	rAuth.HandleFunc("/pembayaran/save", pembayaran.Create).Methods("POST")

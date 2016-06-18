@@ -214,7 +214,7 @@ class PembayaranUpgrade extends React.Component {
               <td>{pembayaran.NamaBarang}</td>
               <td>{pembayaran.Jumlah} {pembayaran.Satuan}</td>
               <td>{toRp(pembayaran.Harga)}</td>
-              <td>{toRp(pembayaran.Jumlah * pembayaran.Total)}</td>
+              <td>{toRp(pembayaran.Total)}</td>
               <td>{supplier}</td>
               <td>{status}</td>
             </tr>

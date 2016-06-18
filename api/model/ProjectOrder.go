@@ -55,9 +55,37 @@ func (order *ProjectOrder) GetOrders(id int) []ProjectOrder {
 	return orders
 }
 
+//func (order *ProjectOrder) GetTotalOrders(id int) int {
+////db := initDb()
+//var orders struct {
+//TotalOrder int
+//}
+
+//db.Table("project_order").Select("*").Where("anggaran_id = ? and status <> 0", id).Scan(&orders)
+//return orders
+//}
+
+func (order *ProjectOrder) GetCountBarangs(id int) int {
+	//db := initDb()
+	var orders struct {
+		TotalBarang int
+	}
+
+	db.Table("project_order").Select("sum(jumlah) total_barang").Where("anggaran_id = ?", id).Scan(&orders)
+	return orders.TotalBarang
+}
+
 func (order *ProjectOrder) GetByID(id int) {
 	//db := initDb()
 	db.Where("id = ?", id).Find(&order)
+}
+
+func (order *ProjectOrder) GetByStatus(id int, status int) []ProjectOrder {
+	//db := initDb()
+	var o []ProjectOrder
+	db.Where("anggaran_id = ? and status=?", id, status).Find(&o)
+
+	return o
 }
 
 type ProjectOrderInput struct {

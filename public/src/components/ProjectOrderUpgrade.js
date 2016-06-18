@@ -6,9 +6,10 @@ import { getUsers } from '../actions/ActionUser'
 import { browserHistory } from 'react-router'
 import TopBar from '../views/TopBar'
 import moment from 'moment'
-import { print } from '../utils/index'
+import { print, printUlang } from '../utils/index'
 import $ from 'jquery'
 import {limit} from '../utils/index'
+import _ from 'lodash'
 let ACTION = 'CREATE'
 actionCreators.getUsers = getUsers
 
@@ -178,8 +179,9 @@ class ProjectOrderUpgrade extends React.Component {
     const user = this.props.user.data.find(function(v) {
       return v.ID = _this.refs.user.value
     })
+    const selected = this.props.order.selected
     let data = {
-      order: this.props.order.selected,
+      order: selected,
       supplierId: this.refs.supplier.value,
       userId: this.refs.user.value,
       nama: user.Nama
@@ -207,6 +209,13 @@ class ProjectOrderUpgrade extends React.Component {
       console.log('maxCetaki', maxCetak)
     }
 
+    const orderCetak = upgradeData.Order.filter(function(o) {
+      console.log('includes', selected, o.ID, _.includes(selected, o.ID))
+      return _.includes(selected, o.ID+"")
+    })
+
+    printUlang({cetak:maxCetak, user: user.Nama, order: orderCetak, detail: upgradeData.Anggaran, barang: upgradeData.Barangs  })
+
     this.props.actions.cetakOrder(this.props.order.upgradeData.Anggaran.ID, data, maxCetak)
 
     const dialogCetak= document.querySelector('#dialog-cetak');
@@ -231,7 +240,12 @@ class ProjectOrderUpgrade extends React.Component {
       nama = user.Nama
     }
 
-    print('order-table', {cetak:cetak, user: nama})
+    const upgradeData = this.props.order.upgradeData
+    const order = this.props.order.upgradeData.Order.filter(function(o) {
+      return o.Cetak == cetak
+    })
+
+    printUlang({cetak:cetak, user: nama, order, detail: upgradeData.Anggaran, barang: upgradeData.Barangs})
     e.preventDefault()
   }
 

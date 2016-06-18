@@ -27,9 +27,6 @@ func (report *Report) GetByID(id int) {
 	db.Where("id = ?", id).Find(&report)
 }
 
-func (report *Report) List(w http.ResponseWriter, r *http.Request) {
-
-}
 func (report *Report) All(w http.ResponseWriter, r *http.Request) {
 
 }

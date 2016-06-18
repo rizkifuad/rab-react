@@ -104,7 +104,7 @@ export function prepareUpgrade(type, id, dataCetak) {
       Dispatch(dispatch, prepareUpgradeSuccess, response.data)
       if (dataCetak) {
         console.log('nomer cetak', dataCetak)
-        print('order-table', dataCetak)
+        //print('order-table', dataCetak)
       }
     }).catch(function(err) {
       Fallback(dispatch, prepareUpgradeFailure, err)

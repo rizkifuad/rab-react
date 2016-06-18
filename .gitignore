@@ -3,3 +3,4 @@ public/node_modules/
 api/config/database.go
 public/dist/
 api/api
+image/

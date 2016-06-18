@@ -3,19 +3,19 @@ import CONSTANTS from '../constants'
 
 
 const { 
-  FETCHING_PEMBAYARAN, 
-  GET_PEMBAYARANS_SUCCESS, 
-  GET_PEMBAYARANS_FAILURE, 
-  SELECT_PEMBAYARAN, 
+  FETCHING_REPORT, 
+  GET_REPORTS_SUCCESS, 
+  GET_REPORTS_FAILURE, 
+  SELECT_REPORT, 
 
-  PREPARE_UPGRADE_PEMBAYARAN_SUCCESS, 
-  PREPARE_UPGRADE_PEMBAYARAN_FAILURE, 
+  PREPARE_UPGRADE_REPORT_SUCCESS, 
+  PREPARE_UPGRADE_REPORT_FAILURE, 
 
-  CREATE_PEMBAYARAN_SUCCESS,
-  CREATE_PEMBAYARAN_FAILURE,
+  CREATE_REPORT_SUCCESS,
+  CREATE_REPORT_FAILURE,
 
-  UPDATE_PEMBAYARAN_SUCCESS, 
-  UPDATE_PEMBAYARAN_FAILURE } = CONSTANTS
+  UPDATE_REPORT_SUCCESS, 
+  UPDATE_REPORT_FAILURE } = CONSTANTS
 
 const initialState = {
     terms: '',
@@ -33,13 +33,13 @@ const initialState = {
 };
 
 export default createReducer(initialState, {
-    [FETCHING_PEMBAYARAN]: (state, payload) => {
+    [FETCHING_REPORT]: (state, payload) => {
         return Object.assign({}, state, {
           fetching: true,
           data: []
         });
     },
-    [GET_PEMBAYARANS_SUCCESS]: (state, payload) => {
+    [GET_REPORTS_SUCCESS]: (state, payload) => {
         return Object.assign({}, state, {
           upgradeData: {},
           data: payload,
@@ -50,12 +50,12 @@ export default createReducer(initialState, {
           }
         });
     },
-    [SELECT_PEMBAYARAN]: (state, payload) => {
+    [SELECT_REPORT]: (state, payload) => {
         return Object.assign({}, state, {
           selected: payload
         });
     },
-    [PREPARE_UPGRADE_PEMBAYARAN_SUCCESS]: (state, payload) => {
+    [PREPARE_UPGRADE_REPORT_SUCCESS]: (state, payload) => {
         return Object.assign({}, state, {
           upgradeData: payload,
           fetching: false,
@@ -65,7 +65,7 @@ export default createReducer(initialState, {
           }
         });
     },
-    [UPDATE_PEMBAYARAN_SUCCESS]: (state, payload) => {
+    [UPDATE_REPORT_SUCCESS]: (state, payload) => {
       payload = handleError(payload)
         return Object.assign({}, state, {
           fetching: false,
@@ -75,7 +75,7 @@ export default createReducer(initialState, {
           }
         });
     },
-    [UPDATE_PEMBAYARAN_FAILURE]: (state, payload) => {
+    [UPDATE_REPORT_FAILURE]: (state, payload) => {
       payload = handleError(payload)
         return Object.assign({}, state, {
           fetching: false,
@@ -85,7 +85,7 @@ export default createReducer(initialState, {
           }
         });
     },
-    [CREATE_PEMBAYARAN_SUCCESS]: (state, payload) => {
+    [CREATE_REPORT_SUCCESS]: (state, payload) => {
       payload = handleError(payload)
         return Object.assign({}, state, {
           fetching: false,
@@ -95,7 +95,7 @@ export default createReducer(initialState, {
           }
         });
     },
-    [CREATE_PEMBAYARAN_FAILURE]: (state, payload) => {
+    [CREATE_REPORT_FAILURE]: (state, payload) => {
       payload = handleError(payload)
       console.log(payload)
         return Object.assign({}, state, {

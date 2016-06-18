@@ -15,23 +15,14 @@ td, th {
 th {
   background: #DFDFDF;  /* Darken header a bit */
   font-weight: bold;
+    border: 1px solid;
 }
 
 td {
   background: #FAFAFA;
   text-align: center;
+    border: 1px solid;
 }
-tr:not(.print-row) {
-  display:none
-}
-td:nth-child(1) {
-  display: none;
-}
-
-th:nth-child(1) {
-  display: none;
-}
-
 /* Cells in even rows (2,4,6...) are one color */ 
 tr:nth-child(even) td { background: #F1F1F1; }   
 
@@ -46,6 +37,21 @@ tr td:hover { background: #666; color: #FFF; } /* Hover cell effect! */
 }
 .print-show{
   display:block;
+}
+
+div.left{
+  float:left;
+  width: 50%;
+  text-align:center
+}
+div.right{
+  float:right;
+  width: 50%;
+  text-align:center
+}
+
+div.text-left {
+  text-align: left
 }
 @media print {
   table { 
@@ -65,11 +71,15 @@ tr td:hover { background: #666; color: #FFF; } /* Hover cell effect! */
   th {
     background: #DFDFDF;  /* Darken header a bit */
     font-weight: bold;
+
+    border: 1px solid;
   }
 
   td {
     background: #FAFAFA;
     text-align: center;
+
+    border: 1px solid;
   }
 
   /* Cells in even rows (2,4,6...) are one color */ 
@@ -80,16 +90,6 @@ tr td:hover { background: #666; color: #FFF; } /* Hover cell effect! */
 
   tr td:hover { background: #666; color: #FFF; } /* Hover cell effect! */
 
-  tr:not(.print-row) {
-    display:none
-  }
-  td:nth-child(1) {
-    display: none;
-  }
-
-  th:nth-child(1) {
-    display: none;
-  }
   .hide{display:none}
 
 .print-show{
@@ -98,6 +98,19 @@ tr td:hover { background: #666; color: #FFF; } /* Hover cell effect! */
 
 .print-hide{
   display:none;
+}
+div.left{
+  float:left;
+  width: 50%;
+  text-align:center
+}
+div.right{
+  float:right;
+  width: 50%;
+  text-align:center
+}
+div.text-left {
+  text-align: left
 }
 
 }

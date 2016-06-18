@@ -67,6 +67,29 @@ func (pembayaran *Pembayaran) GetByID(anggaranId int, cetak int) []PembayaranDet
 	return pembayarans
 }
 
+func (pembayaran *Pembayaran) GetTotalHarga(anggaranId int) int {
+	var pembayarans struct {
+		TotalHarga int
+	}
+	db.Table("pembayaran").
+		Select("sum(total) as total_harga").
+		Where("anggaran_id = ?", anggaranId).
+		Scan(&pembayarans)
+
+	return pembayarans.TotalHarga
+}
+
+func (pembayaran *Pembayaran) GetByStatus(anggaranId int, status int) []PembayaranDetail {
+	var pembayarans []PembayaranDetail
+	db.Table("pembayaran").
+		Select("*,gambar, count(barang_id) jenis_barang, GROUP_CONCAT(list_order SEPARATOR ',') list_orders").
+		Where("anggaran_id = ? and status = ?", anggaranId, status).
+		Joins("join barang on pembayaran.barang_id = barang.id").
+		Scan(&pembayarans)
+
+	return pembayarans
+}
+
 type PembayaranInput struct {
 	Supplier string
 	CetakId  string
