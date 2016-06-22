@@ -2,6 +2,10 @@ var path = require('path');
 var webpack = require('webpack');
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
+var dotenv = require('dotenv')
+
+dotenv.load({path: '../.env'})
+
 module.exports = {
     devtool: 'source-map',
     entry: [
@@ -14,6 +18,12 @@ module.exports = {
         publicPath: '/dist/'
     },
     plugins: [
+      new webpack.DefinePlugin({
+        'process.env': {
+          'ROOT_API': JSON.stringify(process.env.ROOT_API)
+          'ROOT_URL': JSON.stringify(process.env.ROOT_URL)
+        }
+      }),
       new webpack.optimize.OccurrenceOrderPlugin(),
       new ExtractTextPlugin('styles.css'),
       new webpack.DefinePlugin({

@@ -34,7 +34,7 @@ const Sidebar = React.createClass({
 
                     <div className="clear">
                         <div className="f-left m-l-30 m-r-10">
-                          <img src="http://localhost:3000/assets/img/icons/ballicons/workspace.svg" className="demo-avatar img-responsive"/>
+                          <img src={process.env.ROOT_URL + "/assets/img/icons/ballicons/workspace.svg"} className="demo-avatar img-responsive"/>
                         </div>
                         <div className="f-left">
                             <h4 className="mdl-color-text--white m-t-6 no-m-b">R.A.B</h4>

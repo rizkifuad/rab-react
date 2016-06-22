@@ -1,7 +1,9 @@
 var path = require('path');
 var webpack = require('webpack');
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
+var dotenv = require('dotenv')
 
+dotenv.load({path: '../.env'})
 
 module.exports = {
     // or devtool: 'eval' to debug issues with compiled output:
@@ -38,6 +40,12 @@ module.exports = {
     },
 
     plugins: [
+      new webpack.DefinePlugin({
+        'process.env': {
+          'ROOT_API': JSON.stringify(process.env.ROOT_API),
+          'ROOT_URL': JSON.stringify(process.env.ROOT_URL)
+        }
+      }),
       new webpack.HotModuleReplacementPlugin(),
       new ExtractTextPlugin(path.join(__dirname, 'dist/styles.css'))
     ],

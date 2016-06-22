@@ -12,13 +12,6 @@ template(){
   done < ${1}
 }
 
-git reset --hard
-git pull origin master
-pm2 restart rab_api
-
 cd public/
-npm install
-npm run build
-rm -rf dist/
-mv dist_future dist
 template index.tpl > index.html
+node server.js
