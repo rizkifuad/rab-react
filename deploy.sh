@@ -14,9 +14,10 @@ template(){
 
 git reset --hard
 git pull origin master
+cd api/
 pm2 restart rab_api
 
-cd public/
+cd ../public/
 npm install
 npm run build
 rm -rf dist/
