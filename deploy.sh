@@ -14,13 +14,14 @@ template(){
 
 git reset --hard
 git pull origin master
+template public/index.tpl > public/index.html
 cd api/
 go build
-pm2 restart rab_api
+pm2 delete rab_api
+pm2 start api.sh --name rab_api
 
 cd ../public/
 npm install
 npm run build
 rm -rf dist/
 mv dist_future dist
-template index.tpl > index.html
