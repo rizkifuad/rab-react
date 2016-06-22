@@ -21,7 +21,7 @@ export function createConstants(...constants) {
 
 export function API() {
   axios.defaults.headers.common['Authorization'] =  localStorage.token;
-  axios.defaults.baseURL = process.env.ROOT_API;
+  axios.defaults.baseURL = process.env.ROOT_API + '/';
   axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
   axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded';
   return axios

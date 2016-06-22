@@ -2,7 +2,7 @@ import { browserHistory } from 'react-router'
 import axios from 'axios'
 import CONSTANTS from '../constants/index'
 console.log(CONSTANTS)
-const ROOT_URL = process.env.ROOT_API
+const ROOT_URL = process.env.ROOT_API + '/'
 
 const {LOGIN_USER_REQUEST, LOGIN_USER_SUCCESS, LOGIN_USER_FAILURE, LOGOUT_USER} = CONSTANTS
 
