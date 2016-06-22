@@ -20,7 +20,7 @@ module.exports = {
     plugins: [
       new webpack.DefinePlugin({
         'process.env': {
-          'ROOT_API': JSON.stringify(process.env.ROOT_API)
+          'ROOT_API': JSON.stringify(process.env.ROOT_API),
           'ROOT_URL': JSON.stringify(process.env.ROOT_URL)
         }
       }),

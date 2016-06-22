@@ -15,6 +15,7 @@ template(){
 git reset --hard
 git pull origin master
 cd api/
+go build
 pm2 restart rab_api
 
 cd ../public/
