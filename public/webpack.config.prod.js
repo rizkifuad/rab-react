@@ -12,7 +12,7 @@ module.exports = {
         './src/index'
     ],
     output: {
-        path: path.join(__dirname, 'dist'),
+        path: path.join(__dirname, 'dist_future'),
         filename: 'bundle.js',
         chunkFilename: '[id].chunk.js',
         publicPath: '/dist/'
@@ -21,21 +21,12 @@ module.exports = {
       new webpack.DefinePlugin({
         'process.env': {
           'ROOT_API': JSON.stringify(process.env.ROOT_API),
-          'ROOT_URL': JSON.stringify(process.env.ROOT_URL)
+          'ROOT_URL': JSON.stringify(process.env.ROOT_URL),
+          'NODE_ENV': JSON.stringify('production')
         }
       }),
-      new webpack.optimize.OccurrenceOrderPlugin(),
-      new ExtractTextPlugin('styles.css'),
-      new webpack.DefinePlugin({
-        'process.env': {
-                'NODE_ENV': JSON.stringify('production')
-            }
-        }),
-        new webpack.optimize.UglifyJsPlugin({
-            compressor: {
-                warnings: false
-            }
-        })
+      //new webpack.optimize.OccurrenceOrderPlugin(),
+      new ExtractTextPlugin('styles.css')
     ],
     module: {
         loaders: [{
