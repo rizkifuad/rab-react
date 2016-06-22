@@ -168,6 +168,9 @@ export function print(divName, dataCetak) {
 }
 
 export function toRp(string) {
+  if (!string) {
+    return 'Rp 0'
+  }
  string = string+''
  string = string.split('')
  for (var i = string.length-3; i > 0; i-=3) {

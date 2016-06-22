@@ -5,11 +5,12 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"regexp"
-	"rizki/rab/api/config"
 	"strings"
 
 	"github.com/jinzhu/gorm"
+	"github.com/joho/godotenv"
 )
 
 var db *gorm.DB
@@ -19,7 +20,19 @@ func Init() {
 }
 
 func initDb() *gorm.DB {
-	db, err := gorm.Open(config.DRIVER, config.CONN)
+
+	errEnv := godotenv.Load("../.env")
+
+	if errEnv != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	DRIVER := "mysql"
+	CONN := os.Getenv("DB_USER") + ":" + os.Getenv("DB_PASSWORD") + "@tcp(" + os.Getenv("DB_HOST") + ":3306)/" + os.Getenv("DB_DATABASE") + "?parseTime=true"
+
+	//println(CONN)
+
+	db, err := gorm.Open(DRIVER, CONN)
 	if err != nil {
 		panic(err.Error())
 
