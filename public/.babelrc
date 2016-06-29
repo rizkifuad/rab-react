@@ -1,13 +1,17 @@
 {
-    presets: [
-        "react",
-        "es2015"
-    ],
-    env: {
-        development: {
-            presets: [
-                "react-hmre"
-            ]
-        }
+  plugins: [
+    "transform-react-constant-elements",
+    "transform-react-inline-elements"
+  ],
+  presets: [
+    "react",
+    "es2015"
+  ],
+  env: {
+    development: {
+      presets: [
+        "react-hmre"
+      ]
     }
+  }
 }

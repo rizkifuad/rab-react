@@ -14,7 +14,7 @@ const MenuItem = function(props) {
 }
 
 
-const Sidebar = React.createClass({
+class Sidebar extends React.Component {
 
     render() {
         let username = this.props.auth.username
@@ -67,6 +67,6 @@ const Sidebar = React.createClass({
         )
     }
 
-})
+}
 
 module.exports = Sidebar

@@ -1,15 +1,15 @@
 import  React  from 'react'
 
-const TopBar = React.createClass({
+class TopBar extends React.Component {
 
   handleBgColor() {
     const color = this.props.color
     return `ml-header relative clear mdl-color--${color}`
-  },
+  }
   handleTextColor() {
     const color = this.props.color
     return `m-b-20 no-m-t w100 mdl-color-text--${color}-100`
-  },
+  }
   render() {
     return (
       <div className={this.handleBgColor()}>
@@ -21,6 +21,6 @@ const TopBar = React.createClass({
       </div>
     )
   }
-})
+}
 
 export default TopBar

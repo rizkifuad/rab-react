@@ -1,7 +1,7 @@
 import React from 'react'
 import $ from 'jquery'
 
-const Header = React.createClass({
+class Header extends React.Component {
   render() {
     return (
       <header className="demo-header mdl-layout__header mdl-color--white mdl-color--grey-100 mdl-color-text--grey-600">
@@ -31,6 +31,6 @@ const Header = React.createClass({
     )
   }
 
-})
+}
 
 module.exports = Header

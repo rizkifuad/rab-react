@@ -71,29 +71,197 @@ class Report extends React.Component {
     return 'mdl-progress mdl-js-progress mdl-progress__indeterminate' + (!this.props.report.fetching ? ' hide': '')
   }
 
+  GetBarang(barang, id_barang) {
+    const b =  barang.find((x) => {
+      return x.ID == id_barang
+    })
+    if (b) {
+      return b.NamaBarang
+    }
+    return '-'
+  }
+
+  GetSupplier(supplier, id_supplier) {
+    const s =  supplier.find((x) => {
+      return x.ID == id_supplier
+    })
+    if (s) {
+      return s.NamaSupplier
+    }
+    return '-'
+  }
+
   render()  {
     let ReportList = null
     let i = 0
-    if (this.props.report.data) {
+
+
+    const data = this.props.report.data
+    let OrderPendingTable = null
+
+    if(data.OrderPending && data.OrderPending.length > 0) {
+      let OrderPendingList = data.OrderPending.map((order) => {
+        i++
+        return (
+          <tbody>
+            <tr>
+              <td>{this.GetBarang(data.Barang, order.BarangId)}</td>
+              <td>{this.GetSupplier(data.Supplier, order.SupplierId)}</td>
+              <td>{order.Jumlah}</td>
+            </tr>
+          </tbody>
+        )
+      })
+
+      OrderPendingTable = (
+        <tr>
+          <th></th>
+          <td>
+            <table>
+              <thead>
+                <tr>
+                  <th>Barang</th>
+                  <th>Supplier</th>
+                  <th>Jumlah</th>
+                </tr>
+              </thead>
+              {OrderPendingList}
+            </table>
+          </td>
+        </tr>
+      )
+    }
+    let OrderApprovedTable = null
+
+    if(data.OrderApproved && data.OrderApproved.length > 0) {
+      let OrderApprovedList = data.OrderApproved.map((order) => {
+        i++
+        return (
+          <tbody>
+            <tr>
+              <td>{this.GetBarang(data.Barang, order.BarangId)}</td>
+              <td>{this.GetSupplier(data.Supplier, order.SupplierId)}</td>
+              <td>{order.Jumlah}</td>
+            </tr>
+          </tbody>
+        )
+      })
+
+      OrderApprovedTable = (
+        <tr>
+          <th></th>
+          <td>
+            <table>
+              <thead>
+                <tr>
+                  <th>Barang</th>
+                  <th>Supplier</th>
+                  <th>Jumlah</th>
+                </tr>
+              </thead>
+              {OrderApprovedList}
+            </table>
+          </td>
+        </tr>
+      )
+    }
+    let OrderDitolakTable = null
+
+    if(data.OrderDitolak && data.OrderDitolak.length > 0) {
+      let OrderDitolakList = data.OrderDitolak.map((order) => {
+        i++
+        return (
+          <tbody>
+            <tr>
+              <td>{this.GetBarang(data.Barang, order.BarangId)}</td>
+              <td>{this.GetSupplier(data.Supplier, order.SupplierId)}</td>
+              <td>{order.Jumlah}</td>
+            </tr>
+          </tbody>
+        )
+      })
+
+      OrderDitolakTable = (
+        <tr>
+          <th></th>
+          <td>
+            <table>
+              <thead>
+                <tr>
+                  <th>Barang</th>
+                  <th>Supplier</th>
+                  <th>Jumlah</th>
+                </tr>
+              </thead>
+              {OrderDitolakList}
+            </table>
+          </td>
+        </tr>
+      )
+    }
+
+
+    let OrderDicetakTable = null
+
+    if(data.OrderDicetak && data.OrderDicetak.length > 0) {
+      let OrderDicetakList = data.OrderDicetak.map((order) => {
+        i++
+        return (
+          <tbody>
+            <tr>
+              <td>{order.Cetak}</td>
+              <td>{this.GetBarang(data.Barang, order.BarangId)}</td>
+              <td>{this.GetSupplier(data.Supplier, order.SupplierId)}</td>
+              <td>{order.Jumlah}</td>
+            </tr>
+          </tbody>
+        )
+      })
+
+      OrderDicetakTable = (
+        <tr>
+          <th></th>
+          <td>
+            <table>
+              <thead>
+                <tr>
+                  <th>Nomer Order</th>
+                  <th>Barang</th>
+                  <th>Supplier</th>
+                  <th>Jumlah</th>
+                </tr>
+              </thead>
+              {OrderDicetakList}
+            </table>
+          </td>
+        </tr>
+      )
+    }
+
+    if (data) {
       const report = this.props.report.data
        ReportList = (
         <tbody>
         <tr>
           <th>Order Pending</th>
-          <td>{report.OrderPending}</td>
+          <td>{report.OrderPending ? report.OrderPending.length : 0}</td>
         </tr>
+        {OrderPendingTable}
         <tr>
           <th>Order Approved</th>
-          <td>{report.OrderApproved}</td>
+          <td>{report.OrderApproved ? report.OrderApproved.length : 0}</td>
         </tr>
+        {OrderApprovedTable}
         <tr>
           <th>Order Dicetak</th>
-          <td>{report.OrderDicetak}</td>
+          <td>{report.OrderDicetak ? report.OrderDicetak.length : 0}</td>
         </tr>
+        {OrderDicetakTable}
         <tr>
           <th>Order Ditolak</th>
-          <td>{report.OrderDitolak}</td>
+          <td>{report.OrderDitolak ? report.OrderDitolak.length : 0}</td>
         </tr>
+        {OrderDitolakTable}
         <tr>
           <th>Total Order</th>
           <td>{report.TotalOrder}</td>
@@ -108,15 +276,15 @@ class Report extends React.Component {
         </tr>
         <tr>
           <th>Pembayaran Pending</th>
-          <td>{report.PembayaranPending}</td>
+          <td>{report.PembayaranPending ? report.PembayaranPending.length : 0}</td>
         </tr>
         <tr>
           <th>Pembayaran Diinput</th>
-          <td>{report.PembayaranDiinput}</td>
+          <td>{report.PembayaranDiinput ? report.PembayaranDiinput.length : 0}</td>
         </tr>
         <tr>
           <th>Pembayaran Lunas</th>
-          <td>{report.PembayaranLunas}</td>
+          <td>{report.PembayaranLunas ? report.PembayaranLunas.length : 0}</td>
         </tr>
       </tbody>
       )
