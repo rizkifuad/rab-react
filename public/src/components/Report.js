@@ -238,6 +238,129 @@ class Report extends React.Component {
       )
     }
 
+
+    let PembayaranPendingTable = null
+
+    if(data.PembayaranPending && data.PembayaranPending.length > 0) {
+      let PembayaranPendingList = data.PembayaranPending.map((order) => {
+        i++
+        return (
+          <tbody>
+            <tr>
+              <td>{order.Cetak}</td>
+              <td>{this.GetBarang(data.Barang, order.BarangId)}</td>
+              <td>{this.GetSupplier(data.Supplier, order.SupplierId)}</td>
+              <td>{order.Jumlah}</td>
+              <td>{toRp(order.Harga)}</td>
+              <td>{toRp(order.Harga*order.Jumlah)}</td>
+            </tr>
+          </tbody>
+        )
+      })
+
+      PembayaranPendingTable = (
+        <tr>
+          <th></th>
+          <td>
+            <table>
+              <thead>
+                <tr>
+                  <th>Nomer Order</th>
+                  <th>Barang</th>
+                  <th>Supplier</th>
+                  <th>Jumlah</th>
+                  <th>Harga Satuan</th>
+                  <th>Total Harga</th>
+                </tr>
+              </thead>
+              {PembayaranPendingList}
+            </table>
+          </td>
+        </tr>
+      )
+    }
+
+    let PembayaranDiinputTable = null
+
+    if(data.PembayaranDiinput && data.PembayaranDiinput.length > 0) {
+      let PembayaranDiinputList = data.PembayaranDiinput.map((order) => {
+        i++
+        return (
+          <tbody>
+            <tr>
+              <td>{order.Cetak}</td>
+              <td>{this.GetBarang(data.Barang, order.BarangId)}</td>
+              <td>{this.GetSupplier(data.Supplier, order.SupplierId)}</td>
+              <td>{order.Jumlah}</td>
+              <td>{toRp(order.Harga)}</td>
+              <td>{toRp(order.Harga*order.Jumlah)}</td>
+            </tr>
+          </tbody>
+        )
+      })
+
+      PembayaranDiinputTable = (
+        <tr>
+          <th></th>
+          <td>
+            <table>
+              <thead>
+                <tr>
+                  <th>Nomer Order</th>
+                  <th>Barang</th>
+                  <th>Supplier</th>
+                  <th>Jumlah</th>
+                  <th>Harga Satuan</th>
+                  <th>Total Harga</th>
+                </tr>
+              </thead>
+              {PembayaranDiinputList}
+            </table>
+          </td>
+        </tr>
+      )
+    }
+    let PembayaranLunasTable = null
+
+    if(data.PembayaranLunas && data.PembayaranLunas.length > 0) {
+      let PembayaranLunasList = data.PembayaranLunas.map((order) => {
+        i++
+        return (
+          <tbody>
+            <tr>
+              <td>{order.Cetak}</td>
+              <td>{this.GetBarang(data.Barang, order.BarangId)}</td>
+              <td>{this.GetSupplier(data.Supplier, order.SupplierId)}</td>
+              <td>{order.Jumlah}</td>
+              <td>{toRp(order.Harga)}</td>
+              <td>{toRp(order.Harga*order.Jumlah)}</td>
+            </tr>
+          </tbody>
+        )
+      })
+
+      PembayaranLunasTable = (
+        <tr>
+          <th></th>
+          <td>
+            <table>
+              <thead>
+                <tr>
+                  <th>Nomer Order</th>
+                  <th>Barang</th>
+                  <th>Supplier</th>
+                  <th>Jumlah</th>
+                  <th>Harga Satuan</th>
+                  <th>Total Harga</th>
+                </tr>
+              </thead>
+              {PembayaranLunasList}
+            </table>
+          </td>
+        </tr>
+      )
+    }
+
     if (data) {
       const report = this.props.report.data
        ReportList = (
@@ -278,14 +401,17 @@ class Report extends React.Component {
           <th>Pembayaran Pending</th>
           <td>{report.PembayaranPending ? report.PembayaranPending.length : 0}</td>
         </tr>
+        {PembayaranPendingTable}
         <tr>
           <th>Pembayaran Diinput</th>
           <td>{report.PembayaranDiinput ? report.PembayaranDiinput.length : 0}</td>
         </tr>
+        {PembayaranDiinputTable}
         <tr>
           <th>Pembayaran Lunas</th>
           <td>{report.PembayaranLunas ? report.PembayaranLunas.length : 0}</td>
         </tr>
+        {PembayaranLunasTable}
       </tbody>
       )
     } 

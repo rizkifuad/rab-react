@@ -7,3 +7,4 @@ public/src/config/index.js
 public/index.html
 api/api
 image/
+.env
