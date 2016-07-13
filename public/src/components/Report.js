@@ -117,8 +117,8 @@ class Report extends React.Component {
 
       OrderPendingTable = (
         <tr>
-          <th></th>
-          <td>
+          
+          <td colSpan="2">
             <table>
               <thead>
                 <tr>
@@ -151,8 +151,8 @@ class Report extends React.Component {
 
       OrderApprovedTable = (
         <tr>
-          <th></th>
-          <td>
+          
+          <td colSpan="2">
             <table>
               <thead>
                 <tr>
@@ -185,8 +185,8 @@ class Report extends React.Component {
 
       OrderDitolakTable = (
         <tr>
-          <th></th>
-          <td>
+          
+          <td colSpan="2">
             <table>
               <thead>
                 <tr>
@@ -222,8 +222,8 @@ class Report extends React.Component {
 
       OrderDicetakTable = (
         <tr>
-          <th></th>
-          <td>
+          
+          <td colSpan="2">
             <table>
               <thead>
                 <tr>
@@ -262,8 +262,8 @@ class Report extends React.Component {
 
       PembayaranPendingTable = (
         <tr>
-          <th></th>
-          <td>
+          
+          <td colSpan="2">
             <table>
               <thead>
                 <tr>
@@ -303,8 +303,8 @@ class Report extends React.Component {
 
       PembayaranDiinputTable = (
         <tr>
-          <th></th>
-          <td>
+          
+          <td colSpan="2">
             <table>
               <thead>
                 <tr>
@@ -343,8 +343,8 @@ class Report extends React.Component {
 
       PembayaranLunasTable = (
         <tr>
-          <th></th>
-          <td>
+          
+          <td colSpan="2">
             <table>
               <thead>
                 <tr>
