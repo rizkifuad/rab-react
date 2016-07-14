@@ -36,6 +36,11 @@ func (order *TotalOrder) GetTotalOrder(id int) []TotalOrder {
 	return result
 }
 
+type OrderBarangSummary struct {
+	BarangId int
+	Jumlah   int
+}
+
 func (order *ProjectOrder) CountBarang(id int, barangId int) int {
 	//db := initDb()
 
@@ -43,7 +48,7 @@ func (order *ProjectOrder) CountBarang(id int, barangId int) int {
 		Jumlah int
 	}
 
-	db.Table("project_order").Select("sum(jumlah) as jumlah").Where("anggaran_id=? AND barang_id=?", id, barangId).Scan(&result)
+	db.Table("project_order").Select("barang_id, sum(jumlah) as jumlah").Where("anggaran_id=? AND barang_id=?", id, barangId).Group("barang_id").Scan(&result)
 	return result.Jumlah
 }
 
@@ -73,6 +78,13 @@ func (order *ProjectOrder) GetCountBarangs(id int) int {
 
 	db.Table("project_order").Select("sum(jumlah) total_barang").Where("anggaran_id = ?", id).Scan(&orders)
 	return orders.TotalBarang
+}
+func (order *ProjectOrder) GetCountBarangsSummary(id int) []OrderBarangSummary {
+	//db := initDb()
+	var results []OrderBarangSummary
+
+	db.Table("project_order").Select("barang_id, sum(jumlah) jumlah").Group("barang_id").Where("anggaran_id = ?", id).Scan(&results)
+	return results
 }
 
 func (order *ProjectOrder) GetByID(id int) {

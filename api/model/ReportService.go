@@ -17,18 +17,19 @@ func (report *Report) List(w http.ResponseWriter, r *http.Request) {
 	var supplier Supplier
 
 	var result struct {
-		OrderDitolak      []ProjectOrder
-		OrderPending      []ProjectOrder
-		OrderApproved     []ProjectOrder
-		OrderDicetak      []ProjectOrder
-		TotalOrder        int
-		TotalBarang       int
-		TotalHarga        int
-		PembayaranPending []PembayaranDetail
-		PembayaranDiinput []PembayaranDetail
-		PembayaranLunas   []PembayaranDetail
-		Barang            []Barang
-		Supplier          []Supplier
+		OrderDitolak       []ProjectOrder
+		OrderPending       []ProjectOrder
+		OrderApproved      []ProjectOrder
+		OrderDicetak       []ProjectOrder
+		TotalOrder         int
+		TotalBarang        int
+		TotalBarangSummary []OrderBarangSummary
+		TotalHarga         int
+		PembayaranPending  []PembayaranDetail
+		PembayaranDiinput  []PembayaranDetail
+		PembayaranLunas    []PembayaranDetail
+		Barang             []Barang
+		Supplier           []Supplier
 	}
 
 	result.OrderDitolak = order.GetByStatus(id, 3)
@@ -38,6 +39,7 @@ func (report *Report) List(w http.ResponseWriter, r *http.Request) {
 
 	result.TotalOrder = len(order.GetOrders(id))
 	result.TotalBarang = order.GetCountBarangs(id)
+	result.TotalBarangSummary = order.GetCountBarangsSummary(id)
 
 	result.TotalHarga = pembayaran.GetTotalHarga(id)
 	result.PembayaranPending = pembayaran.GetByStatus(id, 0)

@@ -363,6 +363,43 @@ class Report extends React.Component {
       )
     }
 
+
+    let TotalSummaryTable = null
+
+    if(data.TotalBarangSummary && data.TotalBarangSummary.length > 0) {
+      let TotalBarangSummaryList = data.TotalBarangSummary.map((order) => {
+        i++
+        return (
+          <tbody>
+            <tr>
+              <td>{this.GetBarang(data.Barang, order.BarangId)}</td>
+              <td>{order.Jumlah}</td>
+            </tr>
+          </tbody>
+        )
+      })
+
+      TotalSummaryTable = (
+        <tr>
+          
+          <td colSpan="2">
+            <table>
+              <thead>
+                <tr>
+                  <th>Barang</th>
+                  <th>Jumlah</th>
+                </tr>
+              </thead>
+              {TotalBarangSummaryList}
+            </table>
+          </td>
+        </tr>
+      )
+    }
+
+
+    // all table
+
     if (data) {
       const report = this.props.report.data
        ReportList = (
@@ -395,6 +432,7 @@ class Report extends React.Component {
           <th>Total Barang</th>
           <td>{report.TotalBarang}</td>
         </tr>
+        {TotalSummaryTable}
         <tr>
           <th>Total Harga</th>
           <td>{toRp(report.TotalHarga)}</td>
